@@ -21,16 +21,15 @@ gestion de elementos relacionados con la red
 
 var logger = log.New(os.Stdout, "Logger: ", log.Ldate|log.Ltime|log.Lshortfile)
 
-func ValidarIP(ip string) bool {
+func ValidateIP(ip string) bool {
 	if net.ParseIP(ip) == nil {
 		return false // La IP no es válida
 	}
 	return true // La IP es válida
 }
 
-
-func Marcapasos(rutallaveprivata string, usuario string, ip string) bool {
-	if !ValidarIP(ip) {
+func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
+	if !ValidateIP(ip) {
 		logger.Println("IP no válida:", ip)
 		return false
 	}
@@ -86,7 +85,6 @@ func Marcapasos(rutallaveprivata string, usuario string, ip string) bool {
 	return salida
 }
 
-
 /*
 Funciòn que establece un disparador cada 10 minutos el cual invoca la funciòn checkMachineTime
 */
@@ -103,7 +101,6 @@ func CheckTime(privateKeyPath string) {
 	}
 }
 
-
 /*
 Funciòn que se encarga de enviar los comandos a travès de la conexiòn SSH con el host
 
@@ -112,7 +109,7 @@ Funciòn que se encarga de enviar los comandos a travès de la conexiòn SSH con
 @config Paràmetro que contiene la configuraciòn SSH
 @return Retorna la respuesta del host si la hay
 */
-func EnviarComandoSSH(host string, comando string, config *ssh.ClientConfig) (salida string, err error) {
+func SendSSHCommand(host string, comando string, config *ssh.ClientConfig) (salida string, err error) {
 
 	//Establece la conexiòn SSH
 	conn, err := ssh.Dial("tcp", host+":22", config)
@@ -137,7 +134,6 @@ func EnviarComandoSSH(host string, comando string, config *ssh.ClientConfig) (sa
 	}
 	return string(output), nil
 }
-
 
 /*
 Funciòn que dada una direcciòn IP permite conocer si pertenece o no a un host registrado en la base de datos.
@@ -166,7 +162,7 @@ Funciòn que se encarga de realizar la configuraciòn SSH con el host por medio 
 @privateKeyPath Paràmetro que contiene la ruta de la llave privada SSH
 */
 
-func ConfigurarSSHContrasenia(user string) (*ssh.ClientConfig, error) {
+func ConfigureSSHPassword(user string) (*ssh.ClientConfig, error) {
 
 	fmt.Println("\nconfigurarSSH")
 

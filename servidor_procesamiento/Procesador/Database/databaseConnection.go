@@ -42,8 +42,7 @@ func DBConnection() {
 		host = "localhost"
 	}
 
-
-	var dsn = "root:andres_1@tcp("+host+":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
+	var dsn = "root:1234@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
 
 	for {
 		var err error

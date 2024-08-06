@@ -36,7 +36,7 @@ func CreateImageDockerHubHandler(w http.ResponseWriter, r *http.Request) {
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	mensaje := utilities.CrearImagenDockerHub(imagen, version, ip, hostname)
+	mensaje := utilities.CreateImageDockerHub(imagen, version, ip, hostname)
 
 	fmt.Println(mensaje)
 
@@ -69,7 +69,7 @@ func CreateImageDockerTarHandler(w http.ResponseWriter, r *http.Request) {
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	mensaje := utilities.CrearImagenArchivoTar(nombreArchivo, ip, hostname)
+	mensaje := utilities.CreateImageTarFile(nombreArchivo, ip, hostname)
 
 	fmt.Println(mensaje)
 
@@ -102,7 +102,7 @@ func CreateImageDockerfileHandler(w http.ResponseWriter, r *http.Request) {
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	mensaje := utilities.CrearImagenDockerFile(nombreArchivo, nombreImagen, ip, hostname)
+	mensaje := utilities.CreateImageDockerFile(nombreArchivo, nombreImagen, ip, hostname)
 
 	fmt.Println(mensaje)
 
@@ -158,7 +158,7 @@ func CheckVirtualMachineDockerImagesHandler(w http.ResponseWriter, r *http.Reque
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	imagenes, err := utilities.RevisarImagenes(ip, hostname)
+	imagenes, err := utilities.ListImages(ip, hostname)
 
 	if err != nil && err.Error() != "Fallo en la ejecucion" {
 		fmt.Println(err)
@@ -194,7 +194,7 @@ func CreateDockerHandler(w http.ResponseWriter, r *http.Request) {
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	mensaje := utilities.CrearContenedor(imagen, comando, ip, hostname)
+	mensaje := utilities.CreateContainer(imagen, comando, ip, hostname)
 
 	// Respondemos con la lista de máquinas virtuales en formato JSON
 	response := map[string]string{"mensaje": mensaje}
@@ -249,7 +249,7 @@ func CheckContainersHandler(w http.ResponseWriter, r *http.Request) {
 	ip := payload["ip"].(string)
 	hostname := payload["hostname"].(string)
 
-	contenedor, err := utilities.RevisarContenedores(ip, hostname)
+	contenedor, err := utilities.ListContainers(ip, hostname)
 
 	if err != nil && err.Error() != "Fallo en la ejecucion" {
 		fmt.Println(err)

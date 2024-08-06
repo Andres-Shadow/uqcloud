@@ -11,7 +11,7 @@ import (
 
 // Funcion encargada de gestionar los cambios que ocurren la cola de creación y gestión de maquinas virtualesl.
 
-func CheckMaquinasVirtualesQueueChanges() {
+func CheckVirtualMachinesQueueChanges() {
 	for {
 		// Verifica si el tamaño de la cola de especificaciones ha cambiado.
 		mu := config.GetMu()
@@ -65,7 +65,7 @@ func CheckMaquinasVirtualesQueueChanges() {
 			go utilities.CreateVM(specifications, clientIP)
 			config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
 			//maquina_virtualesQueue.Queue.Remove(firstElement)
-			utilities.PrintMaquinaVirtual(specifications, true)
+			utilities.PrintVirtualMachine(specifications, true)
 		}
 
 		// Espera un segundo antes de verificar nuevamente.
