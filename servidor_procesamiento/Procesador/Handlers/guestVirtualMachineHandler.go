@@ -13,12 +13,6 @@ para invitados
 
 // Funcion que responde al endpoint encargado de crear maquinas virtuales para invitados
 func CreateGuestVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var datos map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
