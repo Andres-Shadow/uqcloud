@@ -35,14 +35,14 @@ Funciòn que permite eliminar una cuenta de un usuario de la base de datos
 @email Paràmetro que contiene el email del usuario a eliminar
 */
 
-func deleteAccount(email string) {
+// func deleteAccount(email string) {
 
-	//Elimina la cuenta de la base de datos
-	err := DB.QueryRow("DELETE FROM persona WHERE email = ?", email)
-	if err == nil {
-		log.Println("Error al eliminar el registro de la base de datos: ", err)
-	}
-}
+// 	//Elimina la cuenta de la base de datos
+// 	err := DB.QueryRow("DELETE FROM persona WHERE email = ?", email)
+// 	if err == nil {
+// 		log.Println("Error al eliminar el registro de la base de datos: ", err)
+// 	}
+// }
 
 /*
 Funciòn que permite conocer el total de màquianas virtuales que tiene creadas un usuario
@@ -50,18 +50,18 @@ Funciòn que permite conocer el total de màquianas virtuales que tiene creadas 
 @return retorna un entero con el nùmero de màquinas creadas
 */
 
-func countUserMachinesCreated(email string) (int, error) {
+// func countUserMachinesCreated(email string) (int, error) {
 
-	//Obtiene la cantidad total de hosts que hay en la base de datos
-	var count int
-	err := DB.QueryRow("SELECT COUNT(*) FROM maquina_virtual where persona_email = ?", email).Scan(&count)
-	if err != nil {
-		log.Println("Error al contar las màquinas del usuario que hay en la base de datos: " + err.Error())
-		return 0, err
-	}
+// 	//Obtiene la cantidad total de hosts que hay en la base de datos
+// 	var count int
+// 	err := DB.QueryRow("SELECT COUNT(*) FROM maquina_virtual where persona_email = ?", email).Scan(&count)
+// 	if err != nil {
+// 		log.Println("Error al contar las màquinas del usuario que hay en la base de datos: " + err.Error())
+// 		return 0, err
+// 	}
 
-	return count, nil
-}
+// 	return count, nil
+// }
 
 
 
