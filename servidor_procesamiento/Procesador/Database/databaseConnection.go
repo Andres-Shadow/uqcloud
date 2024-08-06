@@ -23,8 +23,9 @@ var DB *sql.DB
 func ManageSqlConecction() {
 	fmt.Println("Conectando a la base de datos...")
 	var err error
-
-	DB, err = sql.Open("mysql", "root:root@tcp(uqcloud)/uqcloud")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbUser := os.Getenv("DB_USER")
+	DB, err = sql.Open("mysql", dbUser+":" + dbPassword + "@tcp(uqcloud)/uqcloud")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -41,8 +42,9 @@ func DBConnection() {
 	if host == "" {
 		host = "localhost"
 	}
-
-	var dsn = "root:1234@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbUser := os.Getenv("DB_USER")
+	var dsn = dbUser+":"+dbPassword+"@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
 
 	for {
 		var err error

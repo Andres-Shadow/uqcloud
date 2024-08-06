@@ -12,6 +12,7 @@ import (
 	models "servidor_procesamiento/Procesador/Models"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/godotenv"
 )
 
 // Variable que almacena la ruta de la llave privada ingresada por paametro cuando de ejecuta el programa
@@ -26,6 +27,12 @@ func main() {
 		fmt.Println("Debe ingresar la ruta de la llave privada SSH")
 		return
 	}
+
+	// Carga las variables de entorno del archivo .env
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatalf("Error loading .env file: %v", err)
+    }
 
 	// Inicializa la ruta de la llave privada SSH
 	config.InitPrivateKeyPath(*privateKeyPath)
