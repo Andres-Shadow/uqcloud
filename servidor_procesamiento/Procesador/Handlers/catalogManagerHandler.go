@@ -14,10 +14,6 @@ Clase encargada de contener los handlers que responden a los eventos de la gesti
 // Función que responde a la solicitud de consulta de catálogos
 // realiza un llamado a su respectiva función para retornar el catalogo de host
 func ConsultCatalogHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Se requiere una solicitud Get", http.StatusMethodNotAllowed)
-		return
-	}
 
 	catalogo, err := utilities.ConsultCatalog()
 	if err != nil {

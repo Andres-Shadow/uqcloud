@@ -19,12 +19,6 @@ import (
   
 // Funcion que responde al endpoint encargado de crear una maquina virtual
 func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
 	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
@@ -49,11 +43,6 @@ func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de consultar el estado de las maquinas virtuales en tiempo real
 func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var persona models.Persona
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&persona); err != nil { //Solo llega el email
@@ -82,12 +71,6 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de modificar una maquina virtual (en caliente o apagada)
 func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodifica el JSON recibido en la solicitud en un mapa genérico.
 	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
@@ -167,12 +150,6 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de encender una maquina virtual
 func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var datos map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
@@ -222,12 +199,6 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de apagar una maquina virtual
 func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var datos map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
