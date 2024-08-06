@@ -15,13 +15,13 @@ import (
 
 /*
 Clase encargada de contener las funciones relacionadas con la gestion de maquinas virtuales
-
 */
 var privateKeyPath string
 
 func initPrivateKey(path string) {
 	privateKeyPath = path
 }
+
 /*
 Funciòn que verifica el tiempo de creaciòn de las màquinas de los usuarios invitados con el fin de determinar si se ha pasado o no del tiempo lìmite (2.5horas)
 En caso de que una màquina se haya pasado del tiempo, se procederà a eliminarla.
@@ -55,7 +55,7 @@ func CheckMachineTime(privateKey string) {
 				return
 			}
 			//Configura la conexiòn SSH con el host
-			config, err2 := ConfigurarSSH(host.Hostname, privateKeyPath)
+			config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
 			if err2 != nil {
 				log.Println("Error al configurar SSH:", err2)
 				return
@@ -68,21 +68,19 @@ func CheckMachineTime(privateKey string) {
 				return
 			}
 			if running {
-				ApagarMV(maquina.Nombre, "")
+				TurnOffVM(maquina.Nombre, "")
 			}
 			DeleteVM(maquina.Nombre)
 		}
 	}
 }
 
-
-
 /*
 Funciòn que se encarga de realizar la configuraciòn SSH con el host
 @user Paràmetro que contiene el nombre del usuario al cual se va a conectar
 @privateKeyPath Paràmetro que contiene la ruta de la llave privada SSH
 */
-func ConfigurarSSH(user string, privateKeyPath string) (*ssh.ClientConfig, error) {
+func ConfigureSSH(user string, privateKeyPath string) (*ssh.ClientConfig, error) {
 	authMethod, err := privateKeyFile(privateKeyPath)
 	if err != nil {
 		return nil, err
@@ -98,7 +96,6 @@ func ConfigurarSSH(user string, privateKeyPath string) (*ssh.ClientConfig, error
 	return config, nil
 }
 
-
 /*
 	Esta funciòn verifica si una màquina virtual està encendida
 
@@ -112,7 +109,7 @@ func IsRunning(nameVM string, hostIP string, config *ssh.ClientConfig) (bool, er
 	command := "VBoxManage showvminfo " + "\"" + nameVM + "\"" + " | findstr /C:\"State:\""
 	running := false
 
-	salida, err := EnviarComandoSSH(hostIP, command, config)
+	salida, err := SendSSHCommand(hostIP, command, config)
 	if err != nil {
 		log.Println("Error al ejecutar el comando para obtener el estado de la màquina:", err)
 		return running, err
@@ -131,7 +128,6 @@ func IsRunning(nameVM string, hostIP string, config *ssh.ClientConfig) (bool, er
 	}
 	return running, nil
 }
-
 
 /* Funciòn que permite enviar los comandos necesarios para eliminar una màquina virtual
 @nameVM Paràmetro que contiene el nombre de la màquina virtual a eliminar
@@ -152,7 +148,7 @@ func DeleteVM(nameVM string) string {
 		return "Error al obtener el host"
 	}
 	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigurarSSH(host.Hostname, privateKeyPath)
+	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"
@@ -176,13 +172,13 @@ func DeleteVM(nameVM string) string {
 
 	} else {
 		//Envìa el comando para desconectar el disco de la MV
-		_, err4 := EnviarComandoSSH(host.Ip, disconnectCommand, config)
+		_, err4 := SendSSHCommand(host.Ip, disconnectCommand, config)
 		if err4 != nil {
 			log.Println("Error al desconectar el disco de la MV:", err4)
 			return "Error al desconectar el disco de la MV"
 		}
 		//Envìa el comando para eliminar la MV del host
-		_, err5 := EnviarComandoSSH(host.Ip, deleteCommand, config)
+		_, err5 := SendSSHCommand(host.Ip, deleteCommand, config)
 		if err5 != nil {
 			log.Println("Error al eliminar la MV:", err5)
 			return "Error al eliminar la MV"
@@ -228,7 +224,7 @@ func ExistVM(nameVM string) (bool, error) {
 }
 
 // Función que imprime las especificaciones de una máquina virtual.
-func PrintMaquinaVirtual(specs models.Maquina_virtual, isCreateVM bool) {
+func PrintVirtualMachine(specs models.Maquina_virtual, isCreateVM bool) {
 
 	// Imprime las especificaciones recibidas.
 	fmt.Printf("-------------------------\n")

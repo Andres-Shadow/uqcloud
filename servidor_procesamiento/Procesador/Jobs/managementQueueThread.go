@@ -12,7 +12,7 @@ import (
 
 //Funciòn que se encarga de gestionar la cola de solicitudes para la gestiòn de màquinas virtuales
 
- func CheckManagementQueueChanges() {
+func CheckManagementQueueChanges() {
 	for {
 		config.GetMu().Lock()
 		currentQueueSize := config.GetManagementQueue().Queue.Len()
@@ -70,7 +70,7 @@ import (
 			case "stop":
 				nameVM, _ := data["nombreVM"].(string)
 				clientIP, _ := data["clientIP"].(string)
-				go utilities.ApagarMV(nameVM, clientIP)
+				go utilities.TurnOffVM(nameVM, clientIP)
 
 			default:
 				fmt.Println("Tipo de solicitud no válido:", tipoSolicitud)

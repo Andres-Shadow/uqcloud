@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// Funciòn que se encarga de gestionar la cola de solicitudes para la gestiòn de Contenedores Docker  
+// Funciòn que se encarga de gestionar la cola de solicitudes para la gestiòn de Contenedores Docker
 
 func CheckContainerQueueChanges() {
 	for {
@@ -39,34 +39,34 @@ func CheckContainerQueueChanges() {
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
 
-				go utilities.CorrerContenedor(contenedor, ip, hostname)
+				go utilities.RunContainer(contenedor, ip, hostname)
 
 			case "pausar":
 
 				contenedor := data["contenedor"].(string)
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
-				go utilities.DetenerContenedor(contenedor, ip, hostname)
+				go utilities.StopContainer(contenedor, ip, hostname)
 
 			case "reiniciar":
 
 				contenedor := data["contenedor"].(string)
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
-				go utilities.ReiniciarContenedor(contenedor, ip, hostname)
+				go utilities.RestartContainer(contenedor, ip, hostname)
 
 			case "borrar":
 
 				contenedor := data["contenedor"].(string)
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
-				go utilities.EliminarContenedor(contenedor, ip, hostname)
+				go utilities.DeleteContainer(contenedor, ip, hostname)
 
 			case "eliminar":
 
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
-				go utilities.EliminarTodosContenedores(ip, hostname)
+				go utilities.DeleteAllContainers(ip, hostname)
 
 			default:
 				fmt.Println("Tipo de solicitud no válido:", tipoSolicitud)
