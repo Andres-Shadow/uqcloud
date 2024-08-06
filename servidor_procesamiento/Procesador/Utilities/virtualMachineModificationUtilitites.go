@@ -32,7 +32,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 	}
 
 	//Configura la conexiòn SSH con el host
-	config, err := ConfigurarSSH(host.Hostname, config.GetPrivateKeyPath())
+	config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar SSH"
@@ -64,7 +64,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 			cpu_host_usada = host.Cpu_usada - (maquinaVirtual.Cpu - specs.Cpu)
 		} else {
 			cpu_host_usada = host.Cpu_usada + (specs.Cpu - maquinaVirtual.Cpu)
-			recDisponibles := ValidarDisponibilidadRecursosHost((specs.Cpu - maquinaVirtual.Cpu), 0, host) //Valida si el host tiene recursos disponibles
+			recDisponibles := ValidateHostResourceAvailability((specs.Cpu - maquinaVirtual.Cpu), 0, host) //Valida si el host tiene recursos disponibles
 			if !recDisponibles {
 				fmt.Println("No se pudo aumentar la cpu, no hay recursos disponibles en el host")
 				flagCpu = false
@@ -77,7 +77,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 				log.Println("Error al actualizar la cpu_usada del host en la base de datos: ", er)
 				return "Error al actualizar el host en la base de datos"
 			}
-			_, err11 := EnviarComandoSSH(host.Ip, cpuCommand, config)
+			_, err11 := SendSSHCommand(host.Ip, cpuCommand, config)
 			if err11 != nil {
 				log.Println("Error al realizar la actualizaciòn de la cpu", err11)
 				return "Error al realizar la actualizaciòn de la cpu"
@@ -100,7 +100,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 			ram_host_usada = host.Ram_usada - (maquinaVirtual.Ram - specs.Ram)
 		} else {
 			ram_host_usada = host.Ram_usada + (specs.Ram - maquinaVirtual.Ram)
-			recDisponibles := ValidarDisponibilidadRecursosHost(0, (specs.Ram - maquinaVirtual.Ram), host) //Valida si el host tiene RAM disponible para realizar el aumento de recursos
+			recDisponibles := ValidateHostResourceAvailability(0, (specs.Ram - maquinaVirtual.Ram), host) //Valida si el host tiene RAM disponible para realizar el aumento de recursos
 			if !recDisponibles {
 				fmt.Println("No se modificò la ram porque el host no tiene recursos disponibles")
 				flagRam = false
@@ -113,7 +113,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 				log.Println("Error al actualizar la ram_usada del host en la base de datos: ", er)
 				return "Error al actualizar el host en la base de datos"
 			}
-			_, err22 := EnviarComandoSSH(host.Ip, memoryCommand, config)
+			_, err22 := SendSSHCommand(host.Ip, memoryCommand, config)
 			if err22 != nil {
 				log.Println("Error al realizar la actualizaciòn de la memoria", err22)
 				return "Error al realizar la actualizaciòn de la memoria"

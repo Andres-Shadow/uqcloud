@@ -46,7 +46,7 @@ func main() {
 	// Configura un manejador de solicitud para la ruta "/json".
 	manageServer()
 	// Función que verifica la cola de especificaciones constantemente.
-	go jobs.CheckMaquinasVirtualesQueueChanges()
+	go jobs.CheckVirtualMachinesQueueChanges()
 	//Funciòn que verifica el tiempo de creaciòn de una MV
 	//go checkTime(privateKeyPath)
 	// Función que verifica la cola de cuentas constantemente.

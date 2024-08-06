@@ -9,7 +9,7 @@ Funciòn que permite validar si un host tiene los recursos (CPU y RAM) que se es
 @host Paràmetro que representa el host en el cual se quiere realizar la validaciòn
 @Return Retorna true en caso de que el host tenga libre los recursos solicitados, o false, en caso contrario
 */
-func ValidarDisponibilidadRecursosHost(cpuRequerida int, ramRequerida int, host models.Host) bool {
+func ValidateHostResourceAvailability(cpuRequerida int, ramRequerida int, host models.Host) bool {
 
 	recursosDisponibles := false
 
