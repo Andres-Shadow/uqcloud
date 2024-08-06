@@ -18,12 +18,7 @@ atienden las consultas sobre estos
 */
 
 // Funcion que responde al endpoint encargado de consultar las maquinas virtuales
-func ConsultMachineHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
+func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
 	hosts, err := database.ConsultHosts()
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
@@ -115,11 +110,6 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de consultar los host registrados en la base de datos
 func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var persona models.Persona
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&persona); err != nil { //Solo llega el email
@@ -148,11 +138,6 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de agregar un host a la base de datos
 func AddHostHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var host models.Host
 
 	decoder := json.NewDecoder(r.Body)

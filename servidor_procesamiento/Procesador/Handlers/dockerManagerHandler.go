@@ -14,14 +14,7 @@ Clase encargada de contener los manejadores que responden a las imagenes de dock
 */
 
 // Funcion que responde al endpoint de crear un contenedor a partir de una imagen de dockerhub
-func CreateImageDockerHubHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Decodificar el cuerpo JSON de la solicitud
+func CreateImageDockerHubHandler(w http.ResponseWriter, r *http.Request) {	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -49,14 +42,7 @@ func CreateImageDockerHubHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // Funcion que responde al endpoint de crear un contenedor a partir de un archivo .tar
-func CreateImageDockerTarHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
-	// Decodificar el cuerpo JSON de la solicitud
+func CreateImageDockerTarHandler(w http.ResponseWriter, r *http.Request) {	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -82,12 +68,6 @@ func CreateImageDockerTarHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de crear imagenes docker a partir de un archivo Dockerfiel
 func CreateImageDockerfileHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -115,12 +95,6 @@ func CreateImageDockerfileHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de eliminar una imagen de docker
 func DeleteDockerImageHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -141,12 +115,6 @@ func DeleteDockerImageHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de eliminar un contenedor de docker
 func CheckVirtualMachineDockerImagesHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -174,12 +142,6 @@ func CheckVirtualMachineDockerImagesHandler(w http.ResponseWriter, r *http.Reque
 
 // Funcion que responde al endpoint encargado de crear una maquina virtual que contenga contenedores
 func CreateDockerHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -205,12 +167,6 @@ func CreateDockerHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargada de administrar las imagenes de docker en el sistema
 func ManageDockerImagesHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)
@@ -232,12 +188,6 @@ func ManageDockerImagesHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de verificar los contenedores de una maquina virtual
 func CheckContainersHandler(w http.ResponseWriter, r *http.Request) {
-	// Verificar que el método HTTP sea POST
-	if r.Method != http.MethodPost {
-		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
-		return
-	}
-
 	// Decodificar el cuerpo JSON de la solicitud
 	var payload map[string]interface{}
 	err := json.NewDecoder(r.Body).Decode(&payload)

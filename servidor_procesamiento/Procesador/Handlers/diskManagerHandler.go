@@ -17,11 +17,6 @@ Clase encargada de contener los handlers que responden a las acciones sobre los 
 // realiza un llamado a su respectiva función en la base de datos
 // para registrar en la base de datos un nuevo disco para maquina virtual 
 func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var disco models.Disco
 
 	decoder := json.NewDecoder(r.Body)
