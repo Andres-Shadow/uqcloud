@@ -77,9 +77,9 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(response)
 	case id > 0:
-		
+
 		mihost, _ := database.GetHost(int(mv["Host_id"].(float64)))
-		estadossh := utilities.Marcapasos(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
+		estadossh := utilities.Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
 		if estadossh {
 			//Se encola la maquina virtual a crear
 			config.GetMu().Lock()

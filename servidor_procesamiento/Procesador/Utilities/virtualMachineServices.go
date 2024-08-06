@@ -35,7 +35,7 @@ func StartVM(nameVM string, clientIP string) string {
 		return "Error al obtener el host"
 	}
 	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigurarSSH(host.Hostname, privateKeyPath) //RERVISAR QUE SI LE LLEGUE
+	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath) //RERVISAR QUE SI LE LLEGUE
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"
@@ -49,7 +49,7 @@ func StartVM(nameVM string, clientIP string) string {
 	}
 
 	if running {
-		ApagarMV(nameVM, clientIP) //En caso de que la MV ya estè encendida, entonces se invoca el mètodo para apagar la MV
+		TurnOffVM(nameVM, clientIP) //En caso de que la MV ya estè encendida, entonces se invoca el mètodo para apagar la MV
 		return ""
 	} else {
 		fmt.Println("Encendiendo la màquina " + nameVM + "...")
@@ -63,14 +63,14 @@ func StartVM(nameVM string, clientIP string) string {
 		_, er := IsAHostIp(clientIP) //Verifica si la solicitud se està realizando desde un host registrado en la BD
 		if er == nil {
 			//Envìa el comando para encender la MV con GUI
-			_, err4 := EnviarComandoSSH(host.Ip, startVMGUICommand, config)
+			_, err4 := SendSSHCommand(host.Ip, startVMGUICommand, config)
 			if err4 != nil {
 				log.Println("Error al enviar el comando para encender la MV:", err4)
 				return "Error al enviar el comando para encender la MV"
 			}
 		} else {
 			//Envìa el comando para encender la MV en segundo plano
-			_, err4 := EnviarComandoSSH(host.Ip, startVMHeadlessCommand, config)
+			_, err4 := SendSSHCommand(host.Ip, startVMHeadlessCommand, config)
 			if err4 != nil {
 				log.Println("Error al enviar el comando para encender la MV:", err4)
 				return "Error al enviar el comando para encender la MV"
@@ -105,7 +105,7 @@ func StartVM(nameVM string, clientIP string) string {
 					fmt.Println("Obteniendo dirección IP de la màquina " + nameVM + "...")
 				}
 				//Envìa el comando para obtener la IP
-				ipAddress, _ = EnviarComandoSSH(host.Ip, getIpCommand, config)
+				ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, config)
 
 				ipAddress = strings.TrimSpace(ipAddress) //Elimina espacios en blanco al final de la cadena
 				ipParts := strings.Split(ipAddress, ":")
@@ -130,7 +130,7 @@ func StartVM(nameVM string, clientIP string) string {
 					return "No se logrò obtener la direcciòn IP, por favor contacte al administrador"
 				}
 				//Envìa el comando para reiniciar la MV
-				reboot, error := EnviarComandoSSH(host.Ip, rebootCommand, config)
+				reboot, error := SendSSHCommand(host.Ip, rebootCommand, config)
 				if error != nil {
 					log.Println("Error al reinciar la MV:", reboot)
 					return "Error al reinciar la MV"
@@ -161,13 +161,12 @@ func StartVM(nameVM string, clientIP string) string {
 	}
 }
 
-
 /* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual
 @nameVM Paràmetro que contiene el nombre de la màquina virtual a apagar
 @clientIP Paràmetro que contiene la direcciòn IP del cliente desde el cual se realiza la solicitud
 */
 
-func ApagarMV(nameVM string, clientIP string) string {
+func TurnOffVM(nameVM string, clientIP string) string {
 
 	//Obtiene la màquina vitual a apagar
 	maquinaVirtual, err := database.GetVM(nameVM)
@@ -182,7 +181,7 @@ func ApagarMV(nameVM string, clientIP string) string {
 		return "Error al obtener el host"
 	}
 	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigurarSSH(host.Hostname, privateKeyPath)
+	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"
@@ -209,7 +208,7 @@ func ApagarMV(nameVM string, clientIP string) string {
 			return "Error al realizar la actualizaciòn del estado"
 		}
 		//Envìa el comando para apagar la MV a travès de un ACPI
-		_, err5 := EnviarComandoSSH(host.Ip, powerOffCommand, config)
+		_, err5 := SendSSHCommand(host.Ip, powerOffCommand, config)
 		if err5 != nil {
 			log.Println("Error al enviar el comando para apagar la MV:", err5)
 			return "Error al enviar el comando para apagar la MV"
@@ -238,7 +237,7 @@ func ApagarMV(nameVM string, clientIP string) string {
 			return "Error al obtener el estado de la MV"
 		}
 		if status {
-			_, err8 := EnviarComandoSSH(host.Ip, powerOffCommand, config) //Envìa el comando para apagar la MV a travès de un Power Off
+			_, err8 := SendSSHCommand(host.Ip, powerOffCommand, config) //Envìa el comando para apagar la MV a travès de un Power Off
 			if err8 != nil {
 				log.Println("Error al enviar el comando para apagar la MV:", err8)
 				return "Error al enviar el comando para apagar la MV"
@@ -255,5 +254,3 @@ func ApagarMV(nameVM string, clientIP string) string {
 	}
 	return ""
 }
-
-

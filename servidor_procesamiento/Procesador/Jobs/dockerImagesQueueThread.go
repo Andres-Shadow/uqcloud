@@ -42,12 +42,12 @@ func CheckImagesQueueChanges() {
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
 
-				go utilities.EliminarImagen(imagen, ip, hostname)
+				go utilities.DeleteImage(imagen, ip, hostname)
 
 			case "eliminar":
 				ip := data["ip"].(string)
 				hostname := data["hostname"].(string)
-				go utilities.EliminarTodasImagenes(ip, hostname)
+				go utilities.DeleteAllImages(ip, hostname)
 
 			default:
 				fmt.Println("Tipo de solicitud no válido:", tipoSolicitud)

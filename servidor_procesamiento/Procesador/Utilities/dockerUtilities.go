@@ -10,20 +10,20 @@ import (
 // Función que crea una imagen docker desde dockerhub dentro de una maquina virtual
 // params: imagen, version, ip, hostname
 // returns: string (mensaje de confirmación)
-func CrearImagenDockerHub(imagen, version, ip, hostname string) string {
+func CreateImageDockerHub(imagen, version, ip, hostname string) string {
 
 	sctlCommand := "docker pull " + imagen + ":" + version
 
 	fmt.Println(hostname)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	respuesta, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	respuesta, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -37,22 +37,21 @@ func CrearImagenDockerHub(imagen, version, ip, hostname string) string {
 //Desde aqui empieza el codigo para el funcionamiento de Docker UQ
 //-------------------------------------------------------------------
 
-
 // Función que crea una imagen docker desde un archivo tar dentro de una maquina virtual
 // params: nombreArchivo, ip, hostname
 // returns: string (mensaje de confirmación)
-func CrearImagenArchivoTar(nombreArchivo, ip, hostname string) string {
+func CreateImageTarFile(nombreArchivo, ip, hostname string) string {
 
 	sctlCommand := "docker load < " + nombreArchivo
 
-	config, err := ConfigurarSSHContrasenia(hostname)	
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -62,24 +61,23 @@ func CrearImagenArchivoTar(nombreArchivo, ip, hostname string) string {
 	return "Comando Envidado con exito"
 }
 
-
 // Función que crea una imagen docker desde un archivo Dockerfile dentro de una maquina virtual
 // params: nombreArchivo, nombreImagen, ip, hostname
 // returns: string (mensaje de confirmación)
-func CrearImagenDockerFile(nombreArchivo, nombreImagen, ip, hostname string) string {
+func CreateImageDockerFile(nombreArchivo, nombreImagen, ip, hostname string) string {
 
 	sctlCommand := "mkdir /home/" + hostname + "/" + nombreImagen + "&&" + " unzip " + nombreArchivo + " -d /home/" + hostname + "/" + nombreImagen
 
 	fmt.Println(hostname)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -99,7 +97,7 @@ func CrearImagenDockerFile(nombreArchivo, nombreImagen, ip, hostname string) str
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	respuesta, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	respuesta, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -112,13 +110,13 @@ func CrearImagenDockerFile(nombreArchivo, nombreImagen, ip, hostname string) str
 // Función que lista las imagenes docker dentro de una maquina virtual
 // params: ip, hostname
 // returns: lista de imagenes encontradas
-func RevisarImagenes(ip, hostname string) ([]models.Imagen, error) {
+func ListImages(ip, hostname string) ([]models.Imagen, error) {
 
 	fmt.Println("Revisar Imagenes:", ip, hostname)
 
 	sctlCommand := "docker images --format " + "{{.Repository}},{{.Tag}},{{.ID}},{{.CreatedAt}},{{.Size}}"
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	fmt.Println("hostname:", hostname)
 
@@ -127,7 +125,7 @@ func RevisarImagenes(ip, hostname string) ([]models.Imagen, error) {
 		return nil, err
 	}
 
-	lista, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	lista, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	fmt.Println("Ip:", ip)
 
@@ -146,7 +144,7 @@ func RevisarImagenes(ip, hostname string) ([]models.Imagen, error) {
 	for i := 0; i < len(res); i++ {
 		if tabla == 4 {
 			datos[tabla] = res[i]
-			imagenes = append(imagenes, IngresarDatosImagen(datos, maquinaVM))
+			imagenes = append(imagenes, RegisterImageData(datos, maquinaVM))
 			tabla = 0
 			datos = make([]string, 5)
 		} else {
@@ -160,24 +158,23 @@ func RevisarImagenes(ip, hostname string) ([]models.Imagen, error) {
 
 }
 
-
 // Función que crea un contenedor dentro de una maquina virtual
 // params: imagen, comando, ip, hostname
 // returns: string (mensaje de confirmación)
-func CrearContenedor(imagen, comando, ip, hostname string) string {
+func CreateContainer(imagen, comando, ip, hostname string) string {
 
 	sctlCommand := comando + " " + imagen
 
 	fmt.Println("\n" + sctlCommand)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -188,24 +185,23 @@ func CrearContenedor(imagen, comando, ip, hostname string) string {
 
 }
 
-
 // Función que lista los contenedores dentro de una maquina virtual
 // params: ip, hostname
 // returns: lista de contenedores encontrados
-func RevisarContenedores(ip, hostname string) ([]models.Conetendor, error) {
+func ListContainers(ip, hostname string) ([]models.Conetendor, error) {
 
 	fmt.Println("Revisar Contenedores")
 
 	sctlCommand := "docker ps -a --format  '{{.ID}},{{.Image}},{{.Command}},{{.CreatedAt}},{{.Status}},{{if .Ports}}{{.Ports}}{{else}}No ports exposed{{end}},{{.Names}}'"
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return nil, err
 	}
 
-	lista, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	lista, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -223,7 +219,7 @@ func RevisarContenedores(ip, hostname string) ([]models.Conetendor, error) {
 	for i := 0; i < len(res); i++ {
 		if tabla == 6 {
 			datos[tabla] = res[i]
-			contenedores = append(contenedores, ingresarDatosContenedor(datos, maquinaVM))
+			contenedores = append(contenedores, RegisterContainerData(datos, maquinaVM))
 			tabla = 0
 			conetendor++
 			datos = make([]string, 7)
@@ -237,11 +233,10 @@ func RevisarContenedores(ip, hostname string) ([]models.Conetendor, error) {
 
 }
 
-
 // Función que corre un contenedor dentro de una maquina virtual
 // params: contenedor, ip, hostname
 // returns: string (mensaje de confirmación)
-func CorrerContenedor(contenedor, ip, hostname string) string {
+func RunContainer(contenedor, ip, hostname string) string {
 
 	fmt.Println("Correr Contenedor")
 
@@ -249,14 +244,14 @@ func CorrerContenedor(contenedor, ip, hostname string) string {
 
 	fmt.Println("\n" + sctlCommand)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -269,7 +264,7 @@ func CorrerContenedor(contenedor, ip, hostname string) string {
 // Función que detiene un contenedor dentro de una maquina virtual
 // params: contenedor, ip, hostname
 // returns: string (mensaje de confirmación)
-func DetenerContenedor(contenedor, ip, hostname string) string {
+func StopContainer(contenedor, ip, hostname string) string {
 
 	fmt.Println("Detener Contenedor")
 
@@ -277,14 +272,14 @@ func DetenerContenedor(contenedor, ip, hostname string) string {
 
 	fmt.Println("\n" + sctlCommand)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -297,7 +292,7 @@ func DetenerContenedor(contenedor, ip, hostname string) string {
 // Función que reinicia un contenedor dentro de una maquina virtual
 // params: contenedor, ip, hostname
 // returns: string (mensaje de confirmación)
-func ReiniciarContenedor(contenedor, ip, hostname string) string {
+func RestartContainer(contenedor, ip, hostname string) string {
 
 	fmt.Println("Reiniciar Contenedor")
 
@@ -305,14 +300,14 @@ func ReiniciarContenedor(contenedor, ip, hostname string) string {
 
 	fmt.Println("\n" + sctlCommand)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -325,7 +320,7 @@ func ReiniciarContenedor(contenedor, ip, hostname string) string {
 // Función que elimina un contenedor dentro de una maquina virtual
 // params: contenedor, ip, hostname
 // returns: string (mensaje de confirmación)
-func EliminarContenedor(contenedor, ip, hostname string) string {
+func DeleteContainer(contenedor, ip, hostname string) string {
 
 	fmt.Println("Eliminar Contenedor")
 
@@ -333,14 +328,14 @@ func EliminarContenedor(contenedor, ip, hostname string) string {
 
 	fmt.Println("\n" + sctlCommand)
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -353,18 +348,18 @@ func EliminarContenedor(contenedor, ip, hostname string) string {
 // Función que elimina todos los contenedores dentro de una maquina virtual
 // params: ip, hostname
 // returns: string (mensaje de confirmación)
-func EliminarTodosContenedores(ip, hostname string) string {
+func DeleteAllContainers(ip, hostname string) string {
 
 	sctlCommand := "docker rm $(docker ps -a -q)"
 
-	config, err := ConfigurarSSHContrasenia(hostname)
+	config, err := ConfigureSSHPassword(hostname)
 
 	if err != nil {
 		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar la conexiòn SSH"
 	}
 
-	_, err3 := EnviarComandoSSH(ip, sctlCommand, config)
+	_, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {
 		log.Println("Error al configurar SSH:", err)
@@ -383,11 +378,11 @@ func SplitWord(word string) []string {
 	return array
 }
 
-// Función que divide una cadena de texto en un arreglo de strings para la creación de un nuevo registro 
+// Función que divide una cadena de texto en un arreglo de strings para la creación de un nuevo registro
 // de una imagen docker en la base de datos
 // params: datos, maquinaVM
 // returns: modelo de imagen
-func IngresarDatosImagen(datos []string, maquinaVM string) models.Imagen {
+func RegisterImageData(datos []string, maquinaVM string) models.Imagen {
 
 	nuevaImagen := models.Imagen{
 		Repositorio: datos[0],
@@ -406,7 +401,7 @@ func IngresarDatosImagen(datos []string, maquinaVM string) models.Imagen {
 // de un contenedor docker en la base de datos
 // params: datos, maquinaVM
 // returns: modelo de contenedor
-func ingresarDatosContenedor(datos []string, maquinaVM string) models.Conetendor {
+func RegisterContainerData(datos []string, maquinaVM string) models.Conetendor {
 
 	nuevaContenedor := models.Conetendor{
 		ConetendorId: datos[0],
