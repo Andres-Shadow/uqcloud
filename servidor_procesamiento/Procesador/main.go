@@ -30,7 +30,7 @@ func main() {
 	}
 
 	// Carga las variables de entorno del archivo .env
-    err := godotenv.Load( "Enviroment/.env" )
+    err := godotenv.Load( "Environment/.env" )
     if err != nil {
         log.Fatalf("Error loading .env file: %v", err)
     }

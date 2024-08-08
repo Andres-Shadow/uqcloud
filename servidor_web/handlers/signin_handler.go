@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -50,7 +51,7 @@ func Signin(c *gin.Context) {
 }
 
 func sendRegisterJSONToServer(jsonData []byte) bool {
-	serverURL := "http://servidor_procesamiento:8081/json/signin" // Cambia esto por la URL de tu servidor en el puerto 8081
+	serverURL := fmt.Sprintf("http://%s:8081/json/signin", ServidorProcesamientoRoute)
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
