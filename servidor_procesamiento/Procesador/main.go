@@ -88,10 +88,10 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc("/json/createVirtualMachine", handlers.CreateVirtualMachineHandler).Methods("POST")
 
 	//Endpoint para consultar los Host
-	r.HandleFunc("/json/consultHosts", handlers.ConsultHostsHandler).Methods("POST")
+	r.HandleFunc("/json/consultHosts", handlers.ConsultHostsHandler).Methods("GET")
 
 	//Endpoint para checkear el Host seleccionado por el usuario caso de uso asignacioon de recursos
-	r.HandleFunc("/json/checkhost", handlers.CheckHostHandler).Methods("POST")
+	r.HandleFunc("/json/checkhost", handlers.CheckHostHandler).Methods("GET")
 
 	//Endpoint para peticiones de inicio de sesiòn
 	// r.HandleFunc("/json/login", handlers.UserLoginHandler)
@@ -100,25 +100,25 @@ func manageServer(r *mux.Router) {
 	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)
 
 	//Endpoint para consultar las màquinas virtuales de un usuario
-	r.HandleFunc("/json/consultMachine", handlers.ConsultVirtualMachineHandler).Methods("POST")
+	r.HandleFunc("/json/consultMachine", handlers.ConsultVirtualMachineHandler).Methods("GET")
 
 	//Endpoint para consultar los Host
-	r.HandleFunc("/json/consultHost", handlers.ConsultHostHandler).Methods("POST")
+	r.HandleFunc("/json/consultHost", handlers.ConsultHostHandler).Methods("GET")
 
 	//Endpoint para consultar el catàlogo
 	r.HandleFunc("/json/consultCatalog", handlers.ConsultCatalogHandler).Methods("GET")
 
 	//End point para modificar màquinas virtuales
-	r.HandleFunc("/json/modifyVM", handlers.ModifyVirtualMachineHandler).Methods("POST")
+	r.HandleFunc("/json/modifyVM", handlers.ModifyVirtualMachineHandler).Methods("PUT")
 
 	//End point para eliminar màquinas virtuales
-	r.HandleFunc("/json/deleteVM", handlers.DeleteVirtualMachineHandler).Methods("POST")
+	r.HandleFunc("/json/deleteVM", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
 	//End point para encender màquinas virtuales
-	r.HandleFunc("/json/startVM", handlers.StartVirtualMachineHandler).Methods("POST")
+	r.HandleFunc("/json/startVM", handlers.StartVirtualMachineHandler).Methods("POST") 
 
 	//End point para apagar màquinas virtuales
-	r.HandleFunc("/json/stopVM", handlers.StopVirtualMachineHandler).Methods("POST")
+	r.HandleFunc("/json/stopVM", handlers.StopVirtualMachineHandler).Methods("POST") 
 
 	//End point para crear maquinas virtuales para invitados
 	r.HandleFunc("/json/createGuestMachine", handlers.CreateGuestVirtualMachineHandler).Methods("POST")
@@ -142,17 +142,17 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc("/json/imagenDockerFile", handlers.CreateImageDockerfileHandler).Methods("POST")
 
 	//Endpoint para eliminar imagen docker
-	r.HandleFunc("/json/eliminarImagen", handlers.DeleteDockerImageHandler).Methods("POST")
+	r.HandleFunc("/json/eliminarImagen", handlers.DeleteDockerImageHandler).Methods("DELETE")
 
 	//Endpoint para consultar las imagenes de docker en una maquina virtual
-	r.HandleFunc("/json/imagenesVM", handlers.CheckVirtualMachineDockerImagesHandler).Methods("POST")
+	r.HandleFunc("/json/imagenesVM", handlers.CheckVirtualMachineDockerImagesHandler).Methods("GET")
 
 	//Endpoint para crear contenedor
 	r.HandleFunc("/json/crearContenedor", handlers.CreateDockerHandler).Methods("POST")
 
 	//Endpoint para administrar el listado de contenedores en una maquina virtual
-	r.HandleFunc("/json/gestionContenedor", handlers.ManageDockerImagesHandler).Methods("POST")
+	r.HandleFunc("/json/gestionContenedor", handlers.ManageDockerImagesHandler).Methods("PUT")
 
 	//Endpoint para consultar los contenedores de una maquina virtual
-	r.HandleFunc("/json/ContenedoresVM", handlers.CheckContainersHandler).Methods("POST")
+	r.HandleFunc("/json/ContenedoresVM", handlers.CheckContainersHandler).Methods("GET")
 }
