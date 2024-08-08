@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -26,7 +27,7 @@ func CreateHostPage(c *gin.Context) {
 
 func CreateHost(c *gin.Context) {
 	// Definir la URL del servidor
-	serverURL := "http://servidor_procesamiento:8081/json/addHost"
+	serverURL := fmt.Sprintf("http://%s:8081/json/addHost", ServidorProcesamientoRoute)
 
 	// Obtener los datos del formulario
 	nombreHost := c.PostForm("nameHost")
