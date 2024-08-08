@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -45,8 +46,9 @@ func DashboardHandler(c *gin.Context) {
 
 func consultarMetricas() (DatosDashboard, error) {
 	var metricas DatosDashboard
-
-	resp, err := http.Get("http://servidor_procesamiento:8081/json/consultMetrics")
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMetrics", ServidorProcesamientoRoute)
+	
+	resp, err := http.Get(serverURL)
 	if err != nil {
 		return metricas, err
 	}

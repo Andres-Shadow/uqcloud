@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -34,7 +35,7 @@ func CreateDiskPage(c *gin.Context) {
 
 func CreateDisk(c *gin.Context) {
 	// Definir la URL del servidor
-	serverURL := "http://servidor_procesamiento:8081/json/addDisk"
+	serverURL := fmt.Sprintf("http://%s:8081/json/addDisk", ServidorProcesamientoRoute)
 
 	// Obtener los datos del formulario
 	nameDisk := c.PostForm("nameDisk")
@@ -98,7 +99,7 @@ func CreateDisk(c *gin.Context) {
 }
 
 func consultarHosts(email string) ([]Host, error) {
-	serverURL := "http://servidor_procesamiento:8081/json/consultHost" // Cambia esto por la URL de tu servidor en el puerto 8081
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultHost", ServidorProcesamientoRoute)
 
 	persona := Persona{Email: email}
 	jsonData, err := json.Marshal(persona)
