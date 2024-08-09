@@ -1,16 +1,29 @@
 # Usa una imagen base de Go
-FROM golang:1.19
+FROM golang:1.21 AS builder
 
 # Establece el directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-# Copia la carpeta desktopcloud al directorio de trabajo
-COPY  Codigo .
+# Copia los archivos de dependencias
+COPY go.mod go.sum ./
 
-# Compila el archivo main.go (ajusta según tus necesidades)
-WORKDIR /app/servidor_procesamiento_uqcloud/Procesador
-RUN go build -o server servidor.go
+# Descarga las dependencias con ayuda de la imagen de golang
+RUN go mod download
 
-# docker build -t servidor-procesamiento-compilado .  -- para crear la imagen con el codigo actual.
-# docker run --name s_proc -it servidor-procesamiento-compilado  --  crea el contenedor y se deja ejecutando para que se puedan extraer los ejecutables.
-# docker cp s_proc:/app/servidor_procesamiento_uqcloud/Procesador D:\  --  se ejecuta en otra terminal para extraer la carpeta con el comprimido.
+# Copia el código fuente
+COPY ./Procesador/. ./Procesador
+
+# Compila el binario
+RUN cd /app/Procesador && set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o /binario .
+
+# Crea una imagen mínima para ejecutar el binario
+FROM debian:sid-slim
+
+# Copia el binario compilado desde la fase de construcción
+COPY --from=builder ./binario ./binario
+
+# Asegúrate de que el binario tiene permisos de ejecución
+RUN chmod +x ./binario
+
+# Ejecuta el binario
+CMD ["./binario", "-key=/home/uqcloud/.ssh/id_rsa"] 
