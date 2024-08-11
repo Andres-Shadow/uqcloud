@@ -1,0 +1,36 @@
+version: "2.8"
+services:
+  #servicio del servidor de procesamiento
+  procesamiento:
+    build: ./servidor_procesamiento
+    ports:
+      - "8081:8081"
+    expose:
+      - "8081"
+    environment:
+      - DATABASE=database 
+    depends_on:
+      - database
+
+  #servicio del servidor web
+  web:
+    build: ./servidor_web
+    ports:
+      - "8080:8080"
+    expose:
+      - "8080"
+    environment:
+      - servidor_procesamiento = procesamiento
+    depends_on:
+      - procesamiento
+
+  #servicio de la base de datos
+  database:
+    image: mysql:latest
+    ports:
+      - "3307:3306"
+    expose:
+      - "3307"
+    environment:
+      MYSQL_DATABASE: applications
+      MYSQL_ROOT_PASSWORD: andres_1

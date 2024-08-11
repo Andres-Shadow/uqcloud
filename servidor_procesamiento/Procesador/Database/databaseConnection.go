@@ -23,14 +23,27 @@ var DB *sql.DB
 func ManageSqlConecction() {
 	fmt.Println("Conectando a la base de datos...")
 	var err error
+
+	// Obtén las credenciales de la base de datos desde las variables de entorno
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbUser := os.Getenv("DB_USER")
-	DB, err = sql.Open("mysql", dbUser+":" + dbPassword + "@tcp(uqcloud)/uqcloud")
+
+	// Obtén la dirección de la base de datos desde la variable de entorno `DATABASE`
+	dbHost := os.Getenv("DATABASE")
+	if dbHost == "" {
+		dbHost = "localhost"
+	}
+
+	// Construye la cadena de conexión
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/uqcloud", dbUser, dbPassword, dbHost)
+
+	// Abre la conexión a la base de datos
+	DB, err = sql.Open("mysql", dsn)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
+
 
 var DATABASE *gorm.DB
 
