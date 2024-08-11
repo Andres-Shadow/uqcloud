@@ -20,10 +20,16 @@ RUN set GOOS=linux && set GOARCH=amd64 && set CGO_ENABLED=0 && go build -o /bina
 FROM debian:sid-slim
 
 # Copia el binario compilado desde la fase de construcción
-COPY --from=builder ./binario ./binario
+COPY --from=builder /binario /binario
+
+# Copia las plantillas HTML
+COPY --from=builder /app/templates /templates
+
+# Copia los elementos de estilo
+COPY --from=builder /app/static /static
 
 # Asegúrate de que el binario tiene permisos de ejecución
-RUN chmod +x ./binario
+RUN chmod +x /binario
 
 # Ejecuta el binario
-CMD ["./binario", "-key=/home/uqcloud/.ssh/id_rsa"] 
+CMD ["/binario", "8080"]

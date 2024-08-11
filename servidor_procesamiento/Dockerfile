@@ -22,6 +22,9 @@ FROM debian:sid-slim
 # Copia el binario compilado desde la fase de construcción
 COPY --from=builder ./binario ./binario
 
+# Copia el archivo de configuracion
+COPY --from=builder /app/Procesador/Enviroment/.env /Enviroment/.env
+
 # Asegúrate de que el binario tiene permisos de ejecución
 RUN chmod +x ./binario
 
