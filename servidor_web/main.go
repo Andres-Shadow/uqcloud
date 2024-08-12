@@ -50,30 +50,49 @@ func main() {
 	r.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
-	r.POST("/api/checkhost", handlers.Checkhost)
-	r.GET("/login", handlers.LoginPage)
-	r.GET("/signin", handlers.SigninPage)
-	r.GET("/mainPage", handlers.MainPage)
-	r.GET("/profile", handlers.ProfilePage)
-	r.GET("/imagenes", handlers.GestionImagenes)
-	r.GET("/contenedores", handlers.GestionContenedores)
-	r.GET("/welcome", handlers.WelcomePage)
-	r.GET("/dashboard", handlers.DashboardHandler)
-	r.GET("/createHost", handlers.CreateHostPage)
-	r.GET("/createDisk", handlers.CreateDiskPage)
-	r.GET("/helpCenter", handlers.HelpCenterPage)
-	r.GET("/aboutUs", handlers.AboutUsPage)
 
+	//TODO: Moverlo a una clase aparte
 	r.GET("/index", handlers.Index)
 
+	//TODO: Revisar
+	r.POST("/api/checkhost", handlers.Checkhost)
+
+	//TODO: Cambiar ruta por /admin
+	r.GET("/login", handlers.LoginPage)
+
+	//TODO: Revisar para que siver o eliminar si se puede
+	r.GET("/signin", handlers.SigninPage)
+
+	//TODO: Adaptar a los usuarios temporales
+	r.GET("/mainPage", handlers.MainPage)
+
+	//TODO: RUTAS NO DEBERIA SER RUTAS Y VAN EN EL /mainpage
+	r.GET("/profile", handlers.ProfilePage)
+	//TODO: No debe ser una ruta
 	r.GET("/scrollmenu", handlers.Scrollmenu)
+	r.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
+	r.GET("/imagenes", handlers.GestionImagenes)
+	r.GET("/contenedores", handlers.GestionContenedores)
+	r.GET("/aboutUs", handlers.AboutUsPage)
+	r.GET("/helpCenter", handlers.HelpCenterPage)
+
+	//TODO: ELIMINAR ¿?
+	r.GET("/welcome", handlers.WelcomePage)
+
+	//TODO: DEJAR QUIETO HASTA TENER ACCESO AL ADMINISTRADOR
+	r.GET("/dashboard", handlers.DashboardHandler)
+
+	//TODO: Deberia ser un formulario dentro de dashboard y no una ruta
+	r.GET("/createHost", handlers.CreateHostPage)
+	r.GET("/createDisk", handlers.CreateDiskPage)
+
 	r.GET("/api/machines", handlers.GetMachines)
 	r.GET("/controlMachine", handlers.ControlMachine)
-	r.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 
 	r.POST("/login", handlers.Login)
 	r.POST("/signin", handlers.Signin)
 
+	//TODO: Mirar después
 	r.POST("/api/createMachine", handlers.MainSend)
 	r.POST("/powerMachine", handlers.PowerMachine)
 	r.POST("/deleteMachine", handlers.DeleteMachine)

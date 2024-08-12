@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: Esto se hace con un nav en html no debe ser una ruta
 func Scrollmenu(c *gin.Context) {
 
 	// Acceder a la sesión
@@ -24,6 +25,8 @@ func Scrollmenu(c *gin.Context) {
 	})
 }
 
+// TODO: Cambiar nombre de la funcion a ingles
+// TODO: Moverlo la función a otra clase
 func ActualizacionesMaquinas(c *gin.Context) {
 
 	// Acceder a la sesión

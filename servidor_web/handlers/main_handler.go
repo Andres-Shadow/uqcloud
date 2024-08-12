@@ -12,6 +12,7 @@ func MainPage(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
+	//TODO: Si no existe el usuario temporal se le deberia crearle uno
 	if email == nil {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")

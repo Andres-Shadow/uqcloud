@@ -47,7 +47,7 @@ func DashboardHandler(c *gin.Context) {
 func consultarMetricas() (DatosDashboard, error) {
 	var metricas DatosDashboard
 	serverURL := fmt.Sprintf("http://%s:8081/json/consultMetrics", ServidorProcesamientoRoute)
-	
+
 	resp, err := http.Get(serverURL)
 	if err != nil {
 		return metricas, err

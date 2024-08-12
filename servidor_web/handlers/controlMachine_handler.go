@@ -156,6 +156,7 @@ func sendJSONMachineToServer(jsonData []byte) bool {
 	}
 }
 
+// TODO: REVISAR
 func consultarMaquinas(email string) ([]Maquina_virtual, error) {
 	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", ServidorProcesamientoRoute)
 
@@ -422,6 +423,7 @@ func EnviarContenido(c *gin.Context) {
 }
 
 // SEGUNDA ITERACION DEKTOP CLOUD
+// TODO: Revisar metodo
 func Checkhost(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
