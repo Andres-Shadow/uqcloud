@@ -3,3 +3,4 @@ servidor_procesamiento/Procesador/Environment/.env
 *endpoints.txt
 *JSONS.txt
 *id_rsa
+.idea/

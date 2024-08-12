@@ -139,6 +139,7 @@ func LoginTemp(c *gin.Context) {
 
 }
 
+// TODO: Moverlo a una clase solo para el index
 func Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", nil)
 }
@@ -195,6 +196,7 @@ func sendJSONToServer(jsonData []byte) (Persona, error) {
 	return usuario, nil
 }
 
+// TODO: Funcion no se utiliza revisar si se puede eliminar o simplemente comentar
 func GuestLoginSend(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)

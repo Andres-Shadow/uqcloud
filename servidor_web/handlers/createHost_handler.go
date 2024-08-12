@@ -16,6 +16,7 @@ func CreateHostPage(c *gin.Context) {
 	session := sessions.Default(c)
 	rol := session.Get("rol")
 
+	//TODO: Revisar si los roles pueden ser enum en vez de string (Revisar BASE DE DATOS)
 	if rol != "Administrador" {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
@@ -44,6 +45,7 @@ func CreateHost(c *gin.Context) {
 	almaceHost, _ := strconv.Atoi(almaceHostStr)
 	sshHost := c.PostForm("sshHost")
 
+	// TODO: hacer este codigo en un packer model
 	// Crear un objeto Host con los datos del formulario
 	host := Host{
 		Nombre:               nombreHost,

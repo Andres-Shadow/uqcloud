@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: Modificarlo para solo usuarios admin
 func SigninPage(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -24,6 +25,7 @@ func SigninPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
 
+// TODO: Eliminar la opción de registro
 func Signin(c *gin.Context) {
 	// Obtener los datos del formulario
 	nombre := c.PostForm("nombre")
