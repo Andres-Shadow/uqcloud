@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AppWeb/Config"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -53,7 +54,7 @@ func Signin(c *gin.Context) {
 }
 
 func sendRegisterJSONToServer(jsonData []byte) bool {
-	serverURL := fmt.Sprintf("http://%s:8081/json/signin", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/signin", Config.ServidorProcesamientoRoute)
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))

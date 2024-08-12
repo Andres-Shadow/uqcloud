@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"html/template"
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/gin-contrib/sessions"
@@ -37,7 +36,7 @@ func main() {
 	})
 
 	// Carga las plantillas
-	r.LoadHTMLGlob("templates/*.html")
+	//r.LoadHTMLGlob("templates/*.html")
 
 	// Configurar la tienda de cookies para las sesiones
 	store := cookie.NewStore([]byte("tu_clave_secreta"))
@@ -47,11 +46,6 @@ func main() {
 	r.LoadHTMLGlob("templates/*.html")
 	r.Static("/static", "./static")
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
-	})
-
-	//TODO: Moverlo a una clase aparte
 	r.GET("/index", handlers.Index)
 
 	//TODO: Revisar

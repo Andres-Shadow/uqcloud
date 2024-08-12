@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AppWeb/Config"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -35,7 +36,7 @@ func CreateDiskPage(c *gin.Context) {
 
 func CreateDisk(c *gin.Context) {
 	// Definir la URL del servidor
-	serverURL := fmt.Sprintf("http://%s:8081/json/addDisk", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/addDisk", Config.ServidorProcesamientoRoute)
 
 	// Obtener los datos del formulario
 	nameDisk := c.PostForm("nameDisk")
@@ -47,6 +48,7 @@ func CreateDisk(c *gin.Context) {
 	idHostDiskStr := c.PostForm("idHostDisk")
 	idHostDisk, _ := strconv.Atoi(idHostDiskStr)
 
+	//ToDo: Se debe volver una estructura
 	// Crear un objeto Host con los datos del formulario
 	disco := Disco{
 		Nombre:                         nameDisk,
@@ -99,7 +101,7 @@ func CreateDisk(c *gin.Context) {
 }
 
 func consultarHosts(email string) ([]Host, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultHost", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultHost", Config.ServidorProcesamientoRoute)
 
 	persona := Persona{Email: email}
 	jsonData, err := json.Marshal(persona)

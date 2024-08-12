@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AppWeb/Config"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -67,7 +68,7 @@ func ErrorMessage() string {
 
 func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
-	serverURL := fmt.Sprintf("http://%s:8081/json/createGuestMachine", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/createGuestMachine", Config.ServidorProcesamientoRoute)
 
 	clientIP := c.ClientIP()
 	distribucion := c.PostForm("osCreate")
@@ -139,13 +140,8 @@ func LoginTemp(c *gin.Context) {
 
 }
 
-// TODO: Moverlo a una clase solo para el index
-func Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", nil)
-}
-
 func sendJSONToServer(jsonData []byte) (Persona, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/login", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/login", Config.ServidorProcesamientoRoute)
 	var usuario Persona
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo

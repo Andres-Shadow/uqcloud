@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AppWeb/Config"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -18,6 +19,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+// ToDo: Revisar con cuidado
 func GestionContenedores(c *gin.Context) {
 	// Renderiza la plantilla HTML
 
@@ -42,7 +44,7 @@ func GestionContenedores(c *gin.Context) {
 
 func CrearContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/crearContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/crearContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -222,7 +224,7 @@ func CrearContenedor(c *gin.Context) {
 
 func CorrerContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -298,7 +300,7 @@ func CorrerContenedor(c *gin.Context) {
 
 func PausarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -374,7 +376,7 @@ func PausarContenedor(c *gin.Context) {
 
 func ReiniciarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -450,7 +452,7 @@ func ReiniciarContenedor(c *gin.Context) {
 
 func EliminarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -525,7 +527,7 @@ func EliminarContenedor(c *gin.Context) {
 }
 
 func EliminarContenedores(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -624,7 +626,7 @@ func GetContendores(c *gin.Context) {
 }
 
 func obtenerContenedores(maquinaVirtual string) ([]Conetendor, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/ContenedoresVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/ContenedoresVM", Config.ServidorProcesamientoRoute)
 
 	partes := strings.Split(maquinaVirtual, " - ")
 
@@ -685,7 +687,7 @@ func ObtenerImagenesC(maquinaVirtual string) ([]Imagen, error) {
 
 	partes := strings.Split(maquinaVirtual, " - ")
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", Config.ServidorProcesamientoRoute)
 
 	ip := partes[0]
 	hostname := partes[1]
@@ -743,7 +745,7 @@ func ObtenerImagenesC(maquinaVirtual string) ([]Imagen, error) {
 }
 
 func MaquinasActualesC(email string) ([]Maquina_virtual, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
 
 	persona := Persona{Email: email}
 	jsonData, err := json.Marshal(persona)
