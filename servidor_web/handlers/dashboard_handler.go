@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"AppWeb/Config"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -9,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ToDo: Mover a movel
 // DatosCatalogo representa los datos para el catálogo de máquinas virtuales
 type DatosDashboard struct {
 	Total_maquinas_creadas    int
@@ -46,7 +48,7 @@ func DashboardHandler(c *gin.Context) {
 
 func consultarMetricas() (DatosDashboard, error) {
 	var metricas DatosDashboard
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMetrics", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMetrics", Config.ServidorProcesamientoRoute)
 
 	resp, err := http.Get(serverURL)
 	if err != nil {

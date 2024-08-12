@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"AppWeb/Config"
+	"AppWeb/Models"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -14,11 +16,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var vmtemp Models.VirtualMachineTemp
+
 func ControlMachine(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
 	email := session.Get("email")
 
+	//TODO: Se debe adaptar para las sesiones de usuarios temporales
 	if email == nil {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
@@ -129,7 +134,7 @@ func MainSend(c *gin.Context) {
 }
 
 func sendJSONMachineToServer(jsonData []byte) bool {
-	serverURL := fmt.Sprintf("http://%s:8081/json/createVirtualMachine", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/createVirtualMachine", Config.ServidorProcesamientoRoute)
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
@@ -158,7 +163,7 @@ func sendJSONMachineToServer(jsonData []byte) bool {
 
 // TODO: REVISAR
 func consultarMaquinas(email string) ([]Maquina_virtual, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
 
 	persona := Persona{Email: email}
 	jsonData, err := json.Marshal(persona)
@@ -205,7 +210,7 @@ func consultarMaquinas(email string) ([]Maquina_virtual, error) {
 }
 
 func PowerMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/startVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/startVM", Config.ServidorProcesamientoRoute)
 
 	nombre := c.PostForm("nombreMaquina")
 	fmt.Println(nombre)
@@ -265,7 +270,7 @@ func PowerMachine(c *gin.Context) {
 }
 
 func DeleteMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/deleteVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/deleteVM", Config.ServidorProcesamientoRoute)
 	nombre := c.PostForm("vmnameDelete")
 
 	payload := map[string]interface{}{
@@ -309,7 +314,7 @@ func DeleteMachine(c *gin.Context) {
 }
 
 func ConfigMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/modifyVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/modifyVM", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -471,7 +476,7 @@ func Checkhost(c *gin.Context) {
 		return
 	}
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/checkhost", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/checkhost", Config.ServidorProcesamientoRoute)
 
 	// Realizar una solicitud POST al servidor remoto con los datos en formato JSON
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
@@ -499,7 +504,7 @@ func Checkhost(c *gin.Context) {
 }
 
 func consultarHostDisponibles() ([]Host, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultHosts", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultHosts", Config.ServidorProcesamientoRoute)
 
 	persona := Persona{Email: "123"}
 	jsonData, err := json.Marshal(persona)
@@ -544,15 +549,6 @@ func consultarHostDisponibles() ([]Host, error) {
 
 	return hosts, nil
 }
-
-type Maquina_virtualtemp struct {
-	VMName string `json:"vmname"` // Etiquetas JSON deben coincidir
-	OS     string `json:"os"`
-	CPU    string `json:"cpu"` // Asegúrate de usar el tipo correcto
-	Memory string `json:"memory"`
-}
-
-var vmtemp Maquina_virtualtemp
 
 func Mvtemp(c *gin.Context) {
 

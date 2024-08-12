@@ -1,6 +1,8 @@
 package handlers
 
 // TODO: Mover al package model y poner cada struct en una clase
+
+// Las estructuras fuero movidas al package model
 type Persona struct {
 	Nombre      string
 	Apellido    string
