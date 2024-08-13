@@ -7,10 +7,11 @@ import (
 	"log"
 
 	"fmt"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
-	"net/http"
 )
 
 func CreateHostPage(c *gin.Context) {
