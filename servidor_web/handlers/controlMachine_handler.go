@@ -409,7 +409,7 @@ func Logout(c *gin.Context) {
 	session.Save()
 
 	// Redirigir al usuario a la página de inicio de sesión u otra página
-	c.Redirect(http.StatusFound, "/login")
+	c.Redirect(http.StatusFound, "/")
 }
 
 func EnviarContenido(c *gin.Context) {

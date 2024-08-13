@@ -35,32 +35,32 @@ document.addEventListener('DOMContentLoaded', function () {
                             <input type="hidden" id="selectedMachineContenedor" name="selectedMachineContenedor" value="${contenedor.MaquinaVM}">
                             <input type="hidden" name="IdContenedor" value="${contenedor.ConetendorId}">
                             <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                <img style="width: 35px;" src="/static/images/icons/power.png" alt="Botón 1">
+                                <img style="width: 35px;" src="/web/static/images/icons/power.png" alt="Botón 1">
                             </button>
                             </form>
                             <form method="post" action="/PausarContenedor" style="display: inline-block; padding: 0; margin: 0; border: none;">
                             <input type="hidden" id="selectedMachineContenedor" name="selectedMachineContenedor" value="${contenedor.MaquinaVM}">
                             <input type="hidden" name="IdContenedor" value="${contenedor.ConetendorId}">
                             <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                <img style="width: 35px;" src="/static/images/icons/stop.png" alt="Botón 1">
+                                <img style="width: 35px;" src="/web/static/images/icons/stop.png" alt="Botón 1">
                             </button>
                             </form>
                             <form method="post" action="/ReiniciarContenedor" style="display: inline-block; padding: 0; margin: 0; border: none;">
                             <input type="hidden" id="selectedMachineContenedor" name="selectedMachineContenedor" value="${contenedor.MaquinaVM}">
                             <input type="hidden" name="IdContenedor" value="${contenedor.ConetendorId}">
                             <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                <img style="width: 35px;" src="/static/images/icons/restart.png" alt="Botón 1">
+                                <img style="width: 35px;" src="/web/static/images/icons/restart.png" alt="Botón 1">
                             </button>
                             </form>
                             <form method="post" action="/EliminarContenedor" style="display: inline-block; padding: 0; margin: 0; border: none;">
                             <input type="hidden" id="selectedMachineContenedor" name="selectedMachineContenedor" value="${contenedor.MaquinaVM}">
                             <input type="hidden" name="IdContenedor" value="${contenedor.ConetendorId}">
                             <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                <img style="width: 35px;" src="/static/images/icons/delete.png" alt="Botón 1">
+                                <img style="width: 35px;" src="/web/static/images/icons/delete.png" alt="Botón 1">
                             </button>
                             </form>
                             <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacionC('${contenedor.ConetendorId}','${contenedor.Imagen}','${contenedor.Creado}','${contenedor.Status}','${contenedor.Puerto}','${contenedor.Nombre}','${contenedor.MaquinaVM}')">
-                                        <img style="width: 35px;" src="/static/images/icons/info.png" alt="Botón 4">
+                                        <img style="width: 35px;" src="/web/static/images/icons/info.png" alt="Botón 4">
                             </button>
                             </td>
                         </tr>`
