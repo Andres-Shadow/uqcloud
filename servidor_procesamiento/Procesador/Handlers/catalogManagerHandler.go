@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	database "servidor_procesamiento/Procesador/Database"
 )
 
 /*
@@ -15,10 +15,10 @@ Clase encargada de contener los handlers que responden a los eventos de la gesti
 // realiza un llamado a su respectiva función para retornar el catalogo de host
 func ConsultCatalogHandler(w http.ResponseWriter, r *http.Request) {
 
-	catalogo, err := utilities.ConsultCatalog()
+	catalogo, err := database.ConsultCatalog()
 	if err != nil {
-		log.Printf("Error al consultar el catálogo: %v", err)
-		http.Error(w, "Error interno del servidor", http.StatusInternalServerError)
+		log.Println("Error al consultar el catálogo: ", err.Error())
+		http.Error(w, "Error al consultar el catálogo: "+ err.Error(), http.StatusInternalServerError)
 		return
 	}
 

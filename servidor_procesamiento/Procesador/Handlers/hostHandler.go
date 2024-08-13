@@ -10,6 +10,8 @@ import (
 	models "servidor_procesamiento/Procesador/Models"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
+
+	"github.com/gorilla/mux"
 )
 
 /*
@@ -22,7 +24,8 @@ func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
 	hosts, err := database.ConsultHosts()
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
-		log.Println("Error al consultar los Host")
+		log.Println("Error al consultar los host, no se encontraron máquinas host registradas en la base de datos")
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -105,15 +108,18 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de consultar los host registrados en la base de datos
 func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
-	var persona models.Persona
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&persona); err != nil { //Solo llega el email
-		http.Error(w, "Error al decodificar JSON de inicio de sesión", http.StatusBadRequest)
+	// Obtener la variable "name" de la ruta
+    vars := mux.Vars(r)
+    email := vars["email"]
+
+	if email == "" {
+		http.Error(w, "Error al obtener el email del usuario", http.StatusBadRequest)
 		return
 	}
 
-	persona, error := database.GetUser(persona.Email)
+	_, error := database.GetUser(email)
 	if error != nil {
+		http.Error(w, "Usuario no encontrado en la base de datos", http.StatusBadRequest)
 		return
 	}
 
@@ -121,6 +127,7 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
 		log.Println("Error al consultar los Host")
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -141,15 +148,12 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query := "insert into host (nombre, mac, ip, hostname, ram_total, cpu_total, almacenamiento_total, adaptador_red, estado, ruta_llave_ssh_pub, sistema_operativo, distribucion_sistema_operativo) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	err := database.AddHost(host)
 
-	//Registra el usuario en la base de datos
-	_, err := database.DB.Exec(query, host.Nombre, host.Mac, host.Ip, host.Hostname, host.Ram_total, host.Cpu_total, host.Almacenamiento_total, host.Adaptador_red, "Activo", host.Ruta_llave_ssh_pub, host.Sistema_operativo, host.Distribucion_sistema_operativo)
 	if err != nil {
-		fmt.Println("Error al registrar el host.")
-
-	} else if err != nil {
-		panic(err.Error())
+		fmt.Println(err)
+		log.Println("Error al registrar el host en la base de datos")
+		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
 	fmt.Println("Registro del host exitoso")
