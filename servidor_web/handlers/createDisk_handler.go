@@ -38,7 +38,6 @@ func CreateDisk(c *gin.Context) {
 	// Definir la URL del servidor
 	serverURL := fmt.Sprintf("http://%s:8081/json/addDisk", Config.ServidorProcesamientoRoute)
 
-	//ToDo: En la clase Disk Hacer el método que pueda crear el disco
 	// Obtener los datos del formulario
 	nameDisk := c.PostForm("nameDisk")
 	rutaDisk := c.PostForm("rutaDisk")
