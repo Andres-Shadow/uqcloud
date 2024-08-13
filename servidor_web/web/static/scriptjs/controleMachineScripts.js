@@ -133,17 +133,17 @@ var ventanaConfiguracionAbierta = false;
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
                                     <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
                                     <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                        <img style="width: 35px;" src="/static/images/icons/power.png" alt="Botón 1">
+                                        <img style="width: 35px;" src="/web/static/images/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Distribucion_sistema_operativo}','${machine.Ram}','${machine.Cpu}')">
-                                        <img style="width: 30px;" src="/static/images/icons/config.png" alt="Botón 2">
+                                        <img style="width: 30px;" src="/web/static/images/icons/config.png" alt="Botón 2">
                                     </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}')">
-                                        <img style="width: 35px;" src="/static/images/icons/info.png" alt="Botón 4">
+                                        <img style="width: 35px;" src="/web/static/images/icons/info.png" alt="Botón 4">
                                     </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteEliminacion('${machine.Nombre}')">
-                                        <img style="width: 30px;" src="/static/images/icons/delete.png" alt="Botón 3">
+                                        <img style="width: 30px;" src="/web/static/images/icons/delete.png" alt="Botón 3">
                                     </button>
                                 </td>
                                 </td>
@@ -161,7 +161,7 @@ var ventanaConfiguracionAbierta = false;
                                     <!-- Muestra el botón solo si la IP está asignada -->
                                     ${machine.Ip !== "" ? `
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="copiarText('${machine.Ip}')">
-                                        <img style="width: 30px;" src="/static/images/icons/copy.png" alt="Botón 5">
+                                        <img style="width: 30px;" src="/web/static/images/icons/copy.png" alt="Botón 5">
                                     </button>
                                     ` : ''}
                                 </td>
@@ -173,19 +173,19 @@ var ventanaConfiguracionAbierta = false;
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
                                     <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
                                     <button type="submit" class="btn btn-link"" style="padding: 0; margin: 0;">
-                                        <img style="width: 35px;" src="/static/images/icons/power.png" alt="Botón 1">
+                                        <img style="width: 35px;" src="/web/static/images/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Distribucion_sistema_operativo}','${machine.Ram}','${machine.Cpu}')" disabled>
-                                        <img style="width: 30px;" src="/static/images/icons/config.png" alt="Botón 2">
+                                        <img style="width: 30px;" src="/web/static/images/icons/config.png" alt="Botón 2">
                                     </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}', '${machine.Hostname}')">
-                                        <img style="width: 35px;" src="/static/images/icons/info.png" alt="Botón 3">
+                                        <img style="width: 35px;" src="/web/static/images/icons/info.png" alt="Botón 3">
                                     </button>
                                     <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
                                         <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
                                         <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
-                                            <img style="width: 30px;" src="/static/images/icons/delete.png" alt="Botón 4">
+                                            <img style="width: 30px;" src="/web/static/images/icons/delete.png" alt="Botón 4">
                                         </button>
                                     </form>
                                 </td>
@@ -205,19 +205,19 @@ var ventanaConfiguracionAbierta = false;
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
                                     <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
                                     <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
-                                        <img style="width: 35px;" src="/static/images/icons/power.png" alt="Botón 1">
+                                        <img style="width: 35px;" src="/web/static/images/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Memoria}','${machine.Cpu}')" disabled>
-                                        <img style="width: 30px;" src="/static/images/icons/config.png" alt="Botón 2">
+                                        <img style="width: 30px;" src="/web/static/images/icons/config.png" alt="Botón 2">
                                     </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}')">
-                                        <img style="width: 35px;" src="/static/images/icons/info.png" alt="Botón 4">
+                                        <img style="width: 35px;" src="/web/static/images/icons/info.png" alt="Botón 4">
                                     </button>
                                     <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
                                         <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
                                         <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
-                                            <img style="width: 30px;" src="/static/images/icons/delete.png" alt="Botón 3">
+                                            <img style="width: 30px;" src="/web/static/images/icons/delete.png" alt="Botón 3">
                                         </button>
                                     </form>
                                 </td>

@@ -27,11 +27,11 @@ document.addEventListener('DOMContentLoaded', function () {
                             <input type="hidden" id="selectedMachineImagen" name="selectedMachineImagen" value="${imagen.MaquinaVM}">
                             <input type="hidden" name="imagenRepositorio" value="${imagen.Repositorio}">
                             <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
-                                <img style="width: 35px;" src="/static/images/icons/delete.png" alt="Botón 1">
+                                <img style="width: 35px;" src="/web/static/images/icons/delete.png" alt="Botón 1">
                             </button>
                             </form>
                             <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${imagen.Repositorio}','${imagen.Tag}','${imagen.ImagenId}', '${imagen.Creacion}','${imagen.Tamanio}','${imagen.MaquinaVM}')">
-                                        <img style="width: 35px;" src="/static/images/icons/info.png" alt="Botón 4">
+                                        <img style="width: 35px;" src="/web/static/images/icons/info.png" alt="Botón 4">
                             </button>
                             </td>
 
