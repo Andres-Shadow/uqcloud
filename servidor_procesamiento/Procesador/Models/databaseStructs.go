@@ -25,7 +25,7 @@ type Persona struct {
 	Apellido    string
 	Email       string
 	Contrasenia string
-	Rol         string
+	Rol         byte
 }
 
 /*

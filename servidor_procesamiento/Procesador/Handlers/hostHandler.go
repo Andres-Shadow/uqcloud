@@ -35,11 +35,6 @@ func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de verificar los diferentes host registrados en la base de datos
 func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
-	// Verifica que la solicitud sea del método POST.
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
 
 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
 	var payload map[string]interface{}
