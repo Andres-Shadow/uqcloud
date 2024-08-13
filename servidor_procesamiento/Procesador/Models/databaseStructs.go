@@ -185,3 +185,7 @@ type Conetendor struct {
 	MaquinaVM    string
 }
 
+type CatalogoDisco struct{
+	CatalogoID int
+	DiscoID int
+}

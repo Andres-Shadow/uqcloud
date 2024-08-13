@@ -80,7 +80,8 @@ func setDatabase(){
 		&models.Catalogo{},
 		&models.Disco{},
 		&models.Imagen{},
-		&models.Conetendor{},)
+		&models.Conetendor{},
+		&models.CatalogoDisco{},)
 	
 	if !database.CountAdminsRegistered(){
 		persona := models.Persona{
@@ -149,7 +150,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"check_host", handlers.CheckHostHandler).Methods("GET")
 
 	//Endpoint para consultar los Host
-	r.HandleFunc(apiPrefix+"host", handlers.ConsultHostHandler).Methods("GET")
+	r.HandleFunc(apiPrefix+"host/{email}", handlers.ConsultHostHandler).Methods("GET")
 
 	//Endpoint para agregar un host
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")

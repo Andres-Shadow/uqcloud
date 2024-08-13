@@ -46,3 +46,13 @@ func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id
 	}
 	return disco, nil
 }
+
+
+func CreateDisck(disco models.Disco) error {
+	err := DATABASE.Create(&disco).Error
+	if err != nil {
+		log.Println("Hubo un error al crear el disco: " + err.Error())
+		return err
+	}
+	return nil
+}

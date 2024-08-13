@@ -1,7 +1,7 @@
 package database
 
 import (
-	_"database/sql"
+	_ "database/sql"
 	"errors"
 	"log"
 	"math/rand"
@@ -54,7 +54,6 @@ relacionados con la tabla Host de la base de datos
 // 	return hosts, nil
 // }
 
-
 /*
 Funciòn que contiene el algoritmo de asignaciòn tipo aleatorio. Se encarga de escoger un host de la base de datos al azar
 Return host seleccionado por el algoritmo
@@ -89,21 +88,38 @@ Return host seleccionado por el algoritmo
 // }
 
 
-func ConsultHosts() ([]models.Host, error) {
+func ConsultHosts() ([]map[string]interface{}, error) {
+	//mapa que almacena el id y el nombre de las máquinas
+	//id: x
+	//nombre: y
+	//para posteriormente ser utliizado en la respuesta
+	var results []map[string]interface{}
 
-	var hosts []models.Host
-	err := DATABASE.Select("id, nombre").Find(&hosts).Error
+    // Realiza la consulta y guarda los resultados directamente en una lista de mapas
+    err := DATABASE.Model(&models.Host{}).Select("id, nombre").Find(&results).Error
 
+    if err != nil {
+        log.Println("Error al realizar la consulta de máquinas en la BD:", err)
+        return nil, err
+    }
+
+    if len(results) == 0 {
+        return nil, errors.New("no Machines Found")
+    }
+
+    return results, nil
+}
+
+// funcion que registra los host en la base de datos
+func AddHost(host models.Host) error {
+	err := DATABASE.Create(&host).Error
 	if err != nil {
-		log.Println("Error al realizar la consulta de máquinas en la BD", err)
-		return hosts, err
+		log.Println("Error al registrar el host.")
+		return err
+	}else{
+		log.Println("Registro del host exitoso")
 	}
-
-	if len(hosts) == 0 {
-		// No se encontraron máquinas virtuales para el usuario
-		return hosts, errors.New("no Machines Found")
-	}
-	return hosts, nil
+	return nil
 }
 
 func SelectHost() (models.Host, error) {
