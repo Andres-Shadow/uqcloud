@@ -36,7 +36,7 @@ func main() {
 	})
 
 	// Carga las plantillas
-	//r.LoadHTMLGlob("templates/*.html")
+	r.LoadHTMLGlob("templates/*.html")
 
 	// Configurar la tienda de cookies para las sesiones
 	store := cookie.NewStore([]byte("tu_clave_secreta"))
@@ -92,7 +92,8 @@ func main() {
 	r.POST("/deleteMachine", handlers.DeleteMachine)
 	r.POST("/configMachine", handlers.ConfigMachine)
 	r.POST("/api/loginTemp", handlers.LoginTemp)
-	r.POST("/createHost", handlers.CreateHost)
+	//ToDo: Revisar la ruta
+	r.POST("/createHost", handlers.CreateNewHost) //Cambio en el metodo, pero hay que revisar la ruta ToDo: Probar el nuevo método
 	r.POST("/createDisk", handlers.CreateDisk)
 	r.POST("/DockerHub", handlers.CrearImagen)
 	r.POST("/CrearImagenTar", handlers.CrearImagenArchivoTar)
