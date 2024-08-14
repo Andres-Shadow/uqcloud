@@ -187,23 +187,23 @@ func ConfigMachine(c *gin.Context) {
 	if err := c.BindJSON(&specifications); err != nil {
 		// Manejar el error si el JSON no es válido o no coincide con la estructura
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-	}
 
-	fmt.Printf("Nombre: %s, RAM: %d, CPU: %d, Email: %s\n", specifications.VMName, specifications.Ram, specifications.CPU, specifications.Email)
+		fmt.Printf("Nombre: %s, RAM: %d, CPU: %d, Email: %s\n", specifications.VMName, specifications.Ram, specifications.CPU, specifications.Email)
 
-	confirmacion, err := Utilities.ConfigMachienFromServer(specifications)
+		confirmacion, err := Utilities.ConfigMachienFromServer(specifications)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
-	}
-	if confirmacion {
-		// Registro exitoso, muestra un mensaje de éxito en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "Solicitud para modificar la màquina virtual enviada con èxito"})
-	} else {
-		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
-			"ErrorMessage": "La solicitud para modificar la màquina virtual no tuvo èxito. Intente de nuevo"})
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
+		}
+		if confirmacion {
+			// Registro exitoso, muestra un mensaje de éxito en el HTML
+			c.HTML(http.StatusOK, "controlMachine.html", gin.H{
+				"SuccessMessage": "Solicitud para modificar la màquina virtual enviada con èxito"})
+		} else {
+			// Registro erróneo, muestra un mensaje de error en el HTML
+			c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+				"ErrorMessage": "La solicitud para modificar la màquina virtual no tuvo èxito. Intente de nuevo"})
+		}
 	}
 }
 
@@ -231,7 +231,7 @@ func GetMachines(c *gin.Context) {
 	c.JSON(http.StatusOK, machines)
 }
 
-// ToDo: Mover no se en donde
+// TODO: Mover no se en donde
 func Logout(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)

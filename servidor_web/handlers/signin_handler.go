@@ -32,7 +32,7 @@ func Signin(c *gin.Context) {
 	password := c.PostForm("password")
 
 	// Crear una estructura Account y convertirla a JSON
-	persona := Persona{Nombre: nombre, Apellido: apellido, Email: email, Contrasenia: password}
+	persona := Models.Person{Name: nombre, LastName: apellido, Email: email, Password: password}
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
