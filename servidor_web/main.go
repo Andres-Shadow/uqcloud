@@ -75,7 +75,7 @@ func main() {
 	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 	// router.GET("/imagenes", handlers.GestionImagenes)
 	// router.GET("/contenedores", handlers.GestionContenedores)
-	// router.GET("/aboutUs", handlers.AboutUsPage)
+	router.GET("/aboutUs", handlers.AboutUsPage)
 	// router.GET("/helpCenter", handlers.HelpCenterPage)
 
 	//TODO: ELIMINAR ¿?

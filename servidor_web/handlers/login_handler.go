@@ -6,10 +6,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
 func LoginPage(c *gin.Context) {
@@ -174,7 +175,7 @@ func GuestLoginSend(c *gin.Context) {
 	os := "Linux"
 
 	// Crear una estructura Account y convertirla a JSON
-	maquina_virtual := Maquina_virtual{Nombre: vmname, Sistema_operativo: os, Distribucion_sistema_operativo: ditOs, Ram: memory, Cpu: cpu, Persona_email: userEmail}
+	maquina_virtual := Models.VirtualMachine{Name: vmname, Sistema_operativo: os, Distrubucion_SO: ditOs, Ram: memory, Cpu: cpu, Person_Email: userEmail}
 	clientIP := c.ClientIP()
 
 	payload := map[string]interface{}{
