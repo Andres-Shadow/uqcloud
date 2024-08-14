@@ -6,10 +6,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Consultat maquinas virtuales asociadas a un email
