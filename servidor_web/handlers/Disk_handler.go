@@ -23,7 +23,7 @@ func CreateDiskPage(c *gin.Context) {
 		return
 	}
 
-	hosts, err := Utilities.ConsulHostsFromServer(email)
+	hosts, err := Utilities.ConsultHostsFromServer(email)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar los host: " + err.Error()})
@@ -61,7 +61,7 @@ func CreateNewDisk(c *gin.Context) {
 func CreateDiskFromRequest(c *gin.Context) (Models.Disk, error) {
 	var newDisk Models.Disk
 
-	//Decodificar JSON DESDE EL CURPO DE LA SOLICITUD
+	//Decodificar JSON DESDE EL CUERPO DE LA SOLICITUD
 	if err := json.NewDecoder(c.Request.Body).Decode(&newDisk); err != nil {
 		return Models.Disk{}, err
 	}

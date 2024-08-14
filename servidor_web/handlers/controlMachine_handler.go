@@ -3,12 +3,11 @@ package handlers
 import (
 	"AppWeb/Config"
 	"AppWeb/Models"
+	"AppWeb/Utilities"
 	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -24,6 +23,9 @@ func ControlMachine(c *gin.Context) {
 	email := session.Get("email")
 
 	//TODO: Se debe adaptar para las sesiones de usuarios temporales
+	/*ToDo: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
+	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
+	 */
 	if email == nil {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
@@ -31,15 +33,15 @@ func ControlMachine(c *gin.Context) {
 	}
 
 	// Recuperar o inicializar un arreglo de máquinas virtuales en la sesión del usuario
-	machines, _ := consultarMaquinas(email.(string))
+	machines, _ := Utilities.ConsultMachineFromServer(email.(string))
 
-	hosts, _ := consultarHostDisponibles()
+	hosts, _ := Utilities.CheckAvaibleHost()
 
-	if sessionMachines, ok := session.Get("machines").([]Maquina_virtual); ok {
+	if sessionMachines, ok := session.Get("machines").([]Models.VirtualMachine); ok {
 		machines = sessionMachines
 	} else {
 		// Inicializa un nuevo arreglo de máquinas si no existe en la sesión
-		machines = []Maquina_virtual{}
+		machines = []Models.VirtualMachine{}
 	}
 
 	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
@@ -66,6 +68,7 @@ func ControlMachine(c *gin.Context) {
 	})
 }
 
+// Metodo que se encarga de crear y enviar la maquina virtual para su creación en el servidor
 func MainSend(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -77,36 +80,12 @@ func MainSend(c *gin.Context) {
 		return
 	}
 
-	userEmail := email.(string)
+	maquina_virtual, err := createVirualMachine(c)
 
-	// Obtener los datos del formulario
-	vmname := c.PostForm("vmnameCreate")
-	if vmname == "" {
-		// Si el nombre de la máquina virtual está vacío, mostrar un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "El nombre de la máquina virtual no puede estar vacío.",
-		})
-		return
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquinva virutal" + err.Error()})
 	}
-	ditOs := c.PostForm("osCreate")
-	memoryStr := c.PostForm("memoryCreate")
-	memory, err := strconv.Atoi(memoryStr)
-	cpuStr := c.PostForm("cpuCreate")
-	cpu, _ := strconv.Atoi(cpuStr)
-	os := "Linux"
 
-	host := c.PostForm("host")
-	hostStr, _ := strconv.Atoi(host) //Variables creadas en la segunda iteracion desktop cloud , Caso de uso : Asignacion de Recursos
-
-	// Crear una estructura Account y convertirla a JSON
-	// En la declaracion de esta variable se adiciono el host seleccionado
-	maquina_virtual := Maquina_virtual{Nombre: vmname, 
-		Sistema_operativo: os, 
-		Distribucion_sistema_operativo: ditOs, 
-		Ram: memory, 
-		Cpu: cpu, 
-		Persona_email: userEmail, 
-		Host_id: hostStr}
 	clientIP := c.ClientIP()
 
 	payload := map[string]interface{}{
@@ -120,7 +99,7 @@ func MainSend(c *gin.Context) {
 		return
 	}
 
-	if sendJSONMachineToServer(jsonData) {
+	if Utilities.SendJSONMachineToServer(jsonData) {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
 			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito.",
@@ -133,142 +112,58 @@ func MainSend(c *gin.Context) {
 	}
 }
 
-func sendJSONMachineToServer(jsonData []byte) bool {
-	serverURL := fmt.Sprintf("http://%s:8081/json/createVirtualMachine", Config.ServidorProcesamientoRoute)
+// Función para crear máquina virtual decodificando sus atributos desde un json
+func createVirualMachine(c *gin.Context) (Models.VirtualMachine, error) {
+	var newVM Models.VirtualMachine
 
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return false
+	// Decodificar JSON desde el cuerpo de la solicitud
+	if err := json.NewDecoder(c.Request.Body).Decode(&newVM); err != nil {
+		return Models.VirtualMachine{}, err
 	}
 
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return false
+	// Validar campos necesarios
+	if newVM.Name == "" || newVM.Person_Email == "" || newVM.Ram == 0 || newVM.Cpu == 0 || newVM.Host_id == 0 {
+		return Models.VirtualMachine{}, errors.New("missing required fields")
 	}
-	defer resp.Body.Close()
 
-	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
-	if resp.StatusCode != http.StatusOK {
-		return false
-	} else {
-		return true
+	// Asignar valores predeterminados si es necesario
+	if newVM.Sistema_operativo == "" {
+		newVM.Sistema_operativo = "Linux"
 	}
+
+	return newVM, nil
 }
 
-// TODO: REVISAR
-func consultarMaquinas(email string) ([]Maquina_virtual, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
-
-	persona := Persona{Email: email}
-	jsonData, err := json.Marshal(persona)
-	if err != nil {
-		return nil, err
-	}
-
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return nil, err
-	}
-
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("La solicitud al servidor no fue exitosa")
-	}
-
-	// Lee la respuesta del cuerpo de la respuesta HTTP
-	responseBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var machines []Maquina_virtual
-
-	// Decodifica los datos de respuesta en la variable machines.
-	if err := json.Unmarshal(responseBody, &machines); err != nil {
-		// Maneja el error de decodificación aquí
-	}
-
-	return machines, nil
-}
-
+// Funcion encargada de encender la maquinavirtual dado su nombre
 func PowerMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/startVM", Config.ServidorProcesamientoRoute)
 
 	nombre := c.PostForm("nombreMaquina")
-	fmt.Println(nombre)
 	clientIP := c.ClientIP()
 
-	payload := map[string]interface{}{
-		"tipo_solicitud": "start",
-		"nombreVM":       nombre,
-		"clientIP":       clientIP,
-	}
+	fmt.Println(nombre)
 
-	jsonData, err := json.Marshal(payload)
+	err, respuesta, num := Utilities.PowerMachineServer(nombre, clientIP)
+
 	if err != nil {
-		return
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al enceder la maquina" + err.Error()})
 	}
-
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return
-	}
-
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	var respuesta map[string]string
-
-	err = json.NewDecoder(resp.Body).Decode(&respuesta)
-	if err != nil {
-		log.Println("Error al decodificar el body de la respuesta")
-		return
-	}
-
-	mensaje := respuesta["mensaje"]
-
-	if resp.StatusCode == http.StatusOK {
-
-		textMessege := "¡" + mensaje + nombre + ". Por favor espere."
+	if num == 1 {
+		textMessege := "¡" + respuesta + nombre + ". Por favor espere."
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
 			"SuccessMessage": textMessege,
 		})
-	} else {
+	}
+	if num == 2 {
 		// Registro erróneo, muestra un mensaje de error en el HTML
 		textMessege := " Error al Encender " + nombre + ". Intente de nuevo."
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
 			"ErrorMessage": textMessege,
 		})
 	}
+
 }
 
+// ToDo: Aqui voy jajajaa
 func DeleteMachine(c *gin.Context) {
 	serverURL := fmt.Sprintf("http://%s:8081/json/deleteVM", Config.ServidorProcesamientoRoute)
 	nombre := c.PostForm("vmnameDelete")
@@ -501,53 +396,6 @@ func Checkhost(c *gin.Context) {
 	} else {
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"ErrorMessage": "Esta maquina virtual tiene problemas :(  selecciona otra por favor "})
 	}
-}
-
-func consultarHostDisponibles() ([]Host, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultHosts", Config.ServidorProcesamientoRoute)
-
-	persona := Persona{Email: "123"}
-	jsonData, err := json.Marshal(persona)
-	if err != nil {
-		return nil, err
-	}
-
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return nil, err
-	}
-
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
-	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("La solicitud al servidor no fue exitosa")
-	}
-
-	// Lee la respuesta del cuerpo de la respuesta HTTP
-	responseBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var hosts []Host
-
-	// Decodifica los datos de respuesta en la variable machines.
-	if err := json.Unmarshal(responseBody, &hosts); err != nil {
-		// Maneja el error de decodificación aquí
-	}
-
-	return hosts, nil
 }
 
 func Mvtemp(c *gin.Context) {
