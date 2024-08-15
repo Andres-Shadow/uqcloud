@@ -18,7 +18,7 @@ func ConsultCatalogHandler(w http.ResponseWriter, r *http.Request) {
 	catalogo, err := database.ConsultCatalog()
 	if err != nil {
 		log.Println("Error al consultar el catálogo: ", err.Error())
-		http.Error(w, "Error al consultar el catálogo: "+ err.Error(), http.StatusInternalServerError)
+		http.Error(w, "Error al consultar el catálogo: "+err.Error(), http.StatusInternalServerError)
 		return
 	}
 
