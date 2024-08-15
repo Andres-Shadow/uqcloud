@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"AppWeb/Config"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var vmtemp Models.VirtualMachineTemp
+//var vmtemp Models.VirtualMachineTemp
 
 func ControlMachine(c *gin.Context) {
 	// Acceder a la sesión
@@ -74,6 +72,7 @@ func MainSend(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
+	//Se podría hacer una función solo para verificar lo del Email, pero antes se debería definir como manejar los usuarios temporales
 	if email == nil {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
@@ -81,34 +80,29 @@ func MainSend(c *gin.Context) {
 	}
 
 	maquina_virtual, err := createVirualMachine(c)
-
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquinva virutal" + err.Error()})
-	}
-
 	clientIP := c.ClientIP()
 
-	payload := map[string]interface{}{
-		"specifications": maquina_virtual,
-		"clientIP":       clientIP,
-	}
-
-	jsonData, err := json.Marshal(payload)
+	//Se podría hacer una función para manjejar este tipo de errores ¿?
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquinva virutal" + err.Error()})
 		return
 	}
 
-	if Utilities.SendJSONMachineToServer(jsonData) {
+	confirmacion, err := Utilities.CreateMachineFromServer(maquina_virtual, clientIP)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquina " + err.Error()})
+		return
+	}
+
+	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito.",
-		})
+			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito."})
 	} else {
 		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo",
-		})
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+			"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo"})
 	}
 }
 
@@ -139,140 +133,81 @@ func PowerMachine(c *gin.Context) {
 
 	nombre := c.PostForm("nombreMaquina")
 	clientIP := c.ClientIP()
-
 	fmt.Println(nombre)
 
-	err, respuesta, num := Utilities.PowerMachineServer(nombre, clientIP)
+	confirmacion, err := Utilities.PowerMachineFromServer(nombre, clientIP)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al enceder la maquina" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al enceder la maquina" + err.Error()})
+		return
 	}
-	if num == 1 {
-		textMessege := "¡" + respuesta + nombre + ". Por favor espere."
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": textMessege,
-		})
-	}
-	if num == 2 {
-		// Registro erróneo, muestra un mensaje de error en el HTML
-		textMessege := " Error al Encender " + nombre + ". Intente de nuevo."
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": textMessege,
-		})
+	if confirmacion {
+		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "La máquina " + nombre + "Se esta encendiendo. Por favor espere"})
+	} else { // Registro erróneo, muestra un mensaje de error en el HTML
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+			"ErrorMessage": "Error al encender la maquina " + nombre + "intente de nuevo"})
 	}
 
 }
 
-// ToDo: Aqui voy jajajaa
+// Metodo para eliminar una máquina virutal
 func DeleteMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/deleteVM", Config.ServidorProcesamientoRoute)
 	nombre := c.PostForm("vmnameDelete")
+	confirmacion, err := Utilities.DeleteMachineFromServer(nombre)
 
-	payload := map[string]interface{}{
-		"tipo_solicitud": "delete",
-		"nombreVM":       nombre,
-	}
-
-	jsonData, err := json.Marshal(payload)
 	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al eliminar la maquina" + err.Error()})
 		return
 	}
-
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return
-	}
-
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusOK {
+	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "Solicitud para eliminar la màquina enviada con èxito.",
-		})
+			"SuccessMessage": "Solicitud para eliminar la màquina enviada con exito."})
 	} else {
 		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "La solicitud para eliminar la màquina no fue exitosa. Intente de nuevo",
-		})
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+			"ErrorMessage": "La solicitud para eliminar la màquina no fue exitosa. Intente de nuevo"})
 	}
 }
 
+// Metodo para configuarar una maqquina virtual
 func ConfigMachine(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/modifyVM", Config.ServidorProcesamientoRoute)
-
 	// Acceder a la sesión
 	session := sessions.Default(c)
-	email := session.Get("email")
+	email := session.Get("email").(string)
 
-	if email == nil {
+	if email == " " {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
 		return
 	}
-
-	userEmail := email.(string)
+	var specifications Models.VirtualMachineTemp
 
 	// Obtener los datos del formulario
-	vmname := c.PostForm("vmnameConfig")
-	memory, _ := strconv.Atoi(c.PostForm("memoryConfig"))
-	cpu, _ := strconv.Atoi(c.PostForm("cpuConfig"))
-
-	// Crear una estructura Maquina_virtual y convertirla a JSON
-	Specifications := Maquina_virtual{Nombre: vmname, Ram: memory, Cpu: cpu, Persona_email: userEmail}
-
-	fmt.Println(Specifications)
-
-	payload := map[string]interface{}{
-		"tipo_solicitud": "modify",
-		"specifications": Specifications,
+	if err := c.BindJSON(&specifications); err != nil {
+		// Manejar el error si el JSON no es válido o no coincide con la estructura
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	jsonData, err := json.Marshal(payload)
+	fmt.Printf("Nombre: %s, RAM: %d, CPU: %d, Email: %s\n", specifications.VMName, specifications.Ram, specifications.CPU, specifications.Email)
+
+	confirmacion, err := Utilities.ConfigMachienFromServer(specifications)
+
 	if err != nil {
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
 	}
-
-	// Crear una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return
-	}
-
-	// Establecer el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realizar la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusOK {
+	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "Solicitud para modificar la màquina virtual enviada con èxito",
-		})
+			"SuccessMessage": "Solicitud para modificar la màquina virtual enviada con èxito"})
 	} else {
 		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "La solicitud para modificar la màquina virtual no tuvo èxito. Intente de nuevo",
-		})
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+			"ErrorMessage": "La solicitud para modificar la màquina virtual no tuvo èxito. Intente de nuevo"})
 	}
 }
 
+// No se utiliza jajaja
 func GetMachines(c *gin.Context) {
 	// Acceder a la sesión para obtener el email del usuario
 	session := sessions.Default(c)
@@ -286,7 +221,7 @@ func GetMachines(c *gin.Context) {
 	userEmail := email.(string)
 
 	// Obtener los datos de las máquinas utilizando el email del usuario
-	machines, err := consultarMaquinas(userEmail)
+	machines, err := Utilities.ConsultMachineFromServer(userEmail)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -296,6 +231,7 @@ func GetMachines(c *gin.Context) {
 	c.JSON(http.StatusOK, machines)
 }
 
+// ToDo: Mover no se en donde
 func Logout(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -307,97 +243,58 @@ func Logout(c *gin.Context) {
 	c.Redirect(http.StatusFound, "/")
 }
 
-func EnviarContenido(c *gin.Context) {
-	var data struct {
-		Contenido string `json:"contenido"`
-	}
-
-	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"url": data.Contenido, // Modifica esto según tus necesidades.
-	})
-}
-
 // SEGUNDA ITERACION DEKTOP CLOUD
-// TODO: Revisar metodo
 func Checkhost(c *gin.Context) {
 	session := sessions.Default(c)
-	email := session.Get("email")
+	email := session.Get("email").(string)
 
-	if email == nil {
+	if email == " " {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
 		return
 	}
 
-	userEmail := email.(string)
 	idHostStr := c.PostForm("host")
-	idHost, err := strconv.Atoi(idHostStr)
+	_, err := strconv.Atoi(idHostStr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid host ID"})
 		return
 	}
 
-	fmt.Print(vmtemp)
-	fmt.Print(idHost)
+	var specifications Models.VirtualMachine
 
-	// Obtener el idHost del formulario
-	memoryint, _ := strconv.Atoi(vmtemp.Memory)
-	cpuint, _ := strconv.Atoi(vmtemp.CPU)
+	// Obtener los datos del formulario
+	if err := c.BindJSON(&specifications); err != nil {
+		// Manejar el error si el JSON no es válido o no coincide con la estructura
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato inadecuado" + err.Error()})
+	}
+
+	fmt.Printf("Nombre: %s, RAM: %d, CPU: %d, Email: %s\n",
+		specifications.Name,
+		specifications.Sistema_operativo,
+		specifications.Distrubucion_SO,
+		specifications.Ram,
+		specifications.Cpu,
+		specifications.Person_Email,
+		specifications.Host_id)
+
 	// Obtener la dirección IP del cliente
-	clientIP := c.ClientIP()
-	maquina_virtual := Maquina_virtual{
+	clienteIP := c.ClientIP()
+	confirmacion, err := Utilities.CheckStatusMachineFromServer(specifications, clienteIP)
 
-		Nombre:                         vmtemp.VMName,
-		Sistema_operativo:              "linux",
-		Distribucion_sistema_operativo: vmtemp.OS,
-		Ram:                            memoryint,
-		Cpu:                            cpuint,
-		Persona_email:                  userEmail,
-		Host_id:                        idHost}
-
-	// Crear el objeto JSON con los datos del cliente
-	payload := map[string]interface{}{
-		"clientIP":       clientIP,
-		"ubicacion":      idHost,
-		"specifications": maquina_virtual,
-	}
-	jsonData, err := json.Marshal(payload)
 	if err != nil {
-		return
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
 	}
-
-	serverURL := fmt.Sprintf("http://%s:8081/json/checkhost", Config.ServidorProcesamientoRoute)
-
-	// Realizar una solicitud POST al servidor remoto con los datos en formato JSON
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return
-	}
-
-	// Establecer el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realizar la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return
-	}
-	defer resp.Body.Close()
 
 	// Verificar el código de estado de la respuesta
-	if resp.StatusCode == http.StatusOK {
+	if confirmacion {
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "Solicitud para chequear maquina virtual enviada con éxito."})
 	} else {
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"ErrorMessage": "Esta maquina virtual tiene problemas :(  selecciona otra por favor "})
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{"ErrorMessage": "Esta maquina virtual tiene problemas :(  selecciona otra por favor " + err.Error()})
 	}
 }
 
+/* ToDo: Mira para que se utiliza esta función
 func Mvtemp(c *gin.Context) {
 
 	// Deserializa el JSON recibido
@@ -408,4 +305,4 @@ func Mvtemp(c *gin.Context) {
 		})
 		return
 	}
-}
+}*/

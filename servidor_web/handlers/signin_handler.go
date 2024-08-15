@@ -1,10 +1,6 @@
 package handlers
 
 import (
-	"AppWeb/Config"
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -26,6 +22,7 @@ func SigninPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
 
+/*
 // TODO: Eliminar la opción de registro
 func Signin(c *gin.Context) {
 	// Obtener los datos del formulario
@@ -79,4 +76,4 @@ func sendRegisterJSONToServer(jsonData []byte) bool {
 	} else {
 		return true
 	}
-}
+}*/
