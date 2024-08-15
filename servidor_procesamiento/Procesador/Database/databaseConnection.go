@@ -9,6 +9,7 @@ import (
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 /*
@@ -61,7 +62,11 @@ func DBConnection() {
 
 	for {
 		var err error
-		DATABASE, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
+		DATABASE, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				SingularTable: true,
+			},
+		})
 		if err != nil {
 			log.Println("Failed to connect to database. Retrying in 5 seconds...")
 			time.Sleep(5 * time.Second) // Wait for 5 seconds before retrying
@@ -70,4 +75,6 @@ func DBConnection() {
 			break // Exit the loop once the connection is successful
 		}
 	}
+
+	
 }
