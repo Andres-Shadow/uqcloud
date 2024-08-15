@@ -30,10 +30,10 @@ func main() {
 	}
 
 	// Carga las variables de entorno del archivo .env
-    err := godotenv.Load( "Environment/.env" )
-    if err != nil {
-        log.Fatalf("Error loading .env file: %v", err)
-    }
+	err := godotenv.Load("Environment/.env")
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
 
 	r := mux.NewRouter()
 
@@ -67,7 +67,7 @@ func main() {
 Funcion que se encarga de realizar la conexión a la base de datos, cargar los modelos a la base de datos y
 precargar el usuario administrador
 */
-func setDatabase(){
+func setDatabase() {
 	// Conexión a SQL
 	//database.ManageSqlConecction()
 
@@ -80,23 +80,22 @@ func setDatabase(){
 		&models.Catalogo{},
 		&models.Disco{},
 		&models.Imagen{},
-		&models.Conetendor{},
-		&models.CatalogoDisco{},)
-	
-	if !database.CountAdminsRegistered(){
+		&models.Contenedor{},
+		&models.CatalogoDisco{})
+
+	if !database.CountAdminsRegistered() {
 		persona := models.Persona{
-			Nombre: "admin",
-			Apellido: "admin",
-			Email: "admin@uqcloud.co",
+			Nombre:      "admin",
+			Apellido:    "admin",
+			Email:       "admin@uqcloud.co",
 			Contrasenia: "admin",
-			Rol: 1,
+			Rol:         1,
 		}
-	
+
 		database.DATABASE.Create(&persona)
 		fmt.Print("Usuario administrador creado\n")
 	}
 }
-
 
 /*
 Funciòn que se encarga de configurar los endpoints, realizar las validaciones correspondientes a los JSON que llegan
@@ -110,9 +109,9 @@ func manageServer(r *mux.Router) {
 	var apiPrefix string = "/api/v1/"
 
 	/*
-	--------------------------------
-	| VIRTUAL MACHINE ENDPOINTS    |
-	-------------------------------
+		--------------------------------
+		| VIRTUAL MACHINE ENDPOINTS    |
+		-------------------------------
 	*/
 
 	//Endpoint para las peticiones de creaciòn de màquinas virtuales
@@ -128,19 +127,18 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"virtual_machine", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
 	//End point para encender màquinas virtuales
-	r.HandleFunc(apiPrefix+"start_virtual_machine", handlers.StartVirtualMachineHandler).Methods("POST") 
+	r.HandleFunc(apiPrefix+"start_virtual_machine", handlers.StartVirtualMachineHandler).Methods("POST")
 
 	//End point para apagar màquinas virtuales
-	r.HandleFunc(apiPrefix+"stop_virtual_machine", handlers.StopVirtualMachineHandler).Methods("POST") 
+	r.HandleFunc(apiPrefix+"stop_virtual_machine", handlers.StopVirtualMachineHandler).Methods("POST")
 
 	//End point para crear maquinas virtuales para invitados
 	r.HandleFunc(apiPrefix+"guest_virtual_machine", handlers.CreateGuestVirtualMachineHandler).Methods("POST")
 
-
 	/*
-	--------------------
-	| HOST ENDPOINTS   |
-	-------------------
+		--------------------
+		| HOST ENDPOINTS   |
+		-------------------
 	*/
 
 	//Endpoint para consultar los Host
@@ -155,11 +153,10 @@ func manageServer(r *mux.Router) {
 	//Endpoint para agregar un host
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")
 
-
 	/*
-	------------------
-	| USER ENDPOINTS |
-	-----------------
+		------------------
+		| USER ENDPOINTS |
+		-----------------
 	*/
 
 	//Endpoint para peticiones de inicio de sesiòn
@@ -168,42 +165,37 @@ func manageServer(r *mux.Router) {
 	//Endpoint para peticiones de inicio de sesiòn
 	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)
 
-	
 	/*
-	-----------------------
-	|  CATALOG ENDPOINTS  |
-	----------------------
+		-----------------------
+		|  CATALOG ENDPOINTS  |
+		----------------------
 	*/
-	
 
 	//Endpoint para consultar el catàlogo
 	r.HandleFunc(apiPrefix+"catalog", handlers.ConsultCatalogHandler).Methods("GET")
 
-	
 	/*
-	--------------------
-	| DISK ENDPOINTS   |
-	-------------------
+		--------------------
+		| DISK ENDPOINTS   |
+		-------------------
 	*/
-	
+
 	//Endpoint para agregar un disco
 	r.HandleFunc(apiPrefix+"disk", handlers.AddDiskHandler).Methods("POST")
 
-
 	/*
-	-----------------------
-	| METRICS ENDPOINTS   |
-	----------------------
+		-----------------------
+		| METRICS ENDPOINTS   |
+		----------------------
 	*/
 
 	//Endpoint para consultar las metricas
 	r.HandleFunc(apiPrefix+"metrics", handlers.ConsultMetricsHandler).Methods("GET")
 
-
 	/*
-	--------------------
-	| DOCKER ENDPOINTS |
-	-------------------
+		--------------------
+		| DOCKER ENDPOINTS |
+		-------------------
 	*/
 
 	//Endpoint para crear imagen docker desde dockerhub

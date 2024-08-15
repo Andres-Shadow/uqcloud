@@ -1,2 +1,4 @@
 servidor_procesamiento/Procesador/Environment/.env
 *.env
+*endpoints.txt
+*JSONS.txt
