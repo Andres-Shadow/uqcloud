@@ -56,7 +56,7 @@ func CreateDisk(c *gin.Context) {
 		arquitectura:                   arquiDisk,
 		Host_id:                        idHostDisk,
 	}
-
+	
 	// Serializar el objeto host como JSON
 	jsonData, err := json.Marshal(disco)
 	if err != nil {

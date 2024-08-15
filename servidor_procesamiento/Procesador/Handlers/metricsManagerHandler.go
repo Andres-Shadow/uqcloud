@@ -3,7 +3,8 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	database "servidor_procesamiento/Procesador/Database"
+
 )
 
 /*
@@ -13,7 +14,7 @@ las metricas del sistema
 
 // Funcion que responde al endpoint encargado de consultar las metricas del sistema
 func ConsultMetricsHandler(w http.ResponseWriter, r *http.Request) {
-	metricas, err := utilities.GetMetrics()
+	metricas, err := database.GetMetrics()
 
 	if err != nil {
 		return

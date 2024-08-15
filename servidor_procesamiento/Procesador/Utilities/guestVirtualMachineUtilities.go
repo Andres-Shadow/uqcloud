@@ -30,7 +30,7 @@ func CreateTempAccount(clientIP string, distribucion_SO string) string {
 	persona.Apellido = "Invitado"
 	persona.Email = generateRandomEmail()
 	persona.Contrasenia = "GuestUqcloud"
-	persona.Rol = "Invitado"
+	persona.Rol = 0
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(persona.Contrasenia), bcrypt.DefaultCost)
 	if err != nil {

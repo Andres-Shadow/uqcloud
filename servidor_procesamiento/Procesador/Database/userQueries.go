@@ -1,9 +1,11 @@
 package database
 
 import (
-	"database/sql"
+	_ "database/sql"
 	"log"
 	models "servidor_procesamiento/Procesador/Models"
+
+	"gorm.io/gorm"
 )
 
 /*
@@ -15,21 +17,30 @@ Funciòn que permite obtener un usuario dado su identificador ùnico, es decir, 
 @email Paràmetro que representa el email del usuario a buscar
 @Return Retorna el usuario (Persona) en caso de que exista un usuario con ese email
 */
-func GetUser(email string) (models.Persona, error) {
+// func GetUser(email string) (models.Persona, error) {
 
-	var persona models.Persona
-	err := DB.QueryRow("SELECT * FROM persona WHERE email = ?", email).Scan(&persona.Email, &persona.Nombre, &persona.Apellido, &persona.Contrasenia, &persona.Rol)
+// 	var persona models.Persona
+// 	err := DB.QueryRow("SELECT * FROM persona WHERE email = ?", email).Scan(&persona.Email, &persona.Nombre, &persona.Apellido, &persona.Contrasenia, &persona.Rol)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			log.Println("No se encontrò un usuario con el email especificado")
+// 		} else {
+// 			log.Println("Hubo un error al realizar la consulta: " + err.Error())
+// 		}
+// 		return persona, err
+// 	}
+// 	return persona, nil
+// }
+
+func CountAdminsRegistered() bool {
+	var count int64
+	err := DATABASE.Model(&models.Persona{}).Where("rol = ?", 1).Count(&count).Error
 	if err != nil {
-		if err == sql.ErrNoRows {
-			log.Println("No se encontrò un usuario con el email especificado")
-		} else {
-			log.Println("Hubo un error al realizar la consulta: " + err.Error())
-		}
-		return persona, err
+		log.Println("Error al contar los administradores que hay en la base de datos: " + err.Error())
+		return false
 	}
-	return persona, nil
+	return count > 0
 }
-
 /*
 Funciòn que permite eliminar una cuenta de un usuario de la base de datos
 @email Paràmetro que contiene el email del usuario a eliminar
@@ -65,19 +76,19 @@ Funciòn que permite conocer el total de màquianas virtuales que tiene creadas 
 
 
 
-// func GetUser(email string) (models.Persona, error) {
-// 	var persona models.Persona
-// 	err := GormDB.Where("email = ?", email).First(&persona).Error
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			log.Println("No se encontró un usuario con el email especificado")
-// 		} else {
-// 			log.Println("Hubo un error al realizar la consulta: " + err.Error())
-// 		}
-// 		return persona, err
-// 	}
-// 	return persona, nil
-// }
+func GetUser(email string) (models.Persona, error) {
+	var persona models.Persona
+	err := DATABASE.Where("email = ?", email).First(&persona).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Println("No se encontró un usuario con el email especificado")
+		} else {
+			log.Println("Hubo un error al realizar la consulta: " + err.Error())
+		}
+		return persona, err
+	}
+	return persona, nil
+}
 
 // func deleteAccount(email string) {
 // 	err := GormDB.Where("email = ?", email).Delete(&models.Persona{}).Error
@@ -88,7 +99,7 @@ Funciòn que permite conocer el total de màquianas virtuales que tiene creadas 
 
 // func countUserMachinesCreated(email string) (int64, error) {
 // 	var count int64
-// 	err := GormDB.Model(&models.MaquinaVirtual{}).Where("persona_email = ?", email).Count(&count).Error
+// 	err := DATABASE.Model(&models.Maquina_virtual{}).Where("persona_email = ?", email).Count(&count).Error
 // 	if err != nil {
 // 		log.Println("Error al contar las máquinas del usuario que hay en la base de datos: " + err.Error())
 // 		return 0, err

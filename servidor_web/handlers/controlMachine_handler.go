@@ -95,7 +95,13 @@ func MainSend(c *gin.Context) {
 
 	// Crear una estructura Account y convertirla a JSON
 	// En la declaracion de esta variable se adiciono el host seleccionado
-	maquina_virtual := Maquina_virtual{Nombre: vmname, Sistema_operativo: os, Distribucion_sistema_operativo: ditOs, Ram: memory, Cpu: cpu, Persona_email: userEmail, Host_id: hostStr}
+	maquina_virtual := Maquina_virtual{Nombre: vmname, 
+		Sistema_operativo: os, 
+		Distribucion_sistema_operativo: ditOs, 
+		Ram: memory, 
+		Cpu: cpu, 
+		Persona_email: userEmail, 
+		Host_id: hostStr}
 	clientIP := c.ClientIP()
 
 	payload := map[string]interface{}{

@@ -66,6 +66,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 				return "Error al obtener el disco"
 			}
+			fmt.Println("llego aqui")
 			//Configura la conexiòn SSH con el host Obtenido
 			config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 			if err != nil {
@@ -178,7 +179,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return ""
 		}
 
-		if user.Rol == "Estudiante" {
+		if user.Rol == 0 {
 			/*if cantidad >= 5 {
 				fmt.Println("El usuario " + user.Nombre + " no puede crear màs de 5 màquinas virtuales.")
 				return "El usuario " + user.Nombre + " no puede crear màs de 5 màquinas virtuales."

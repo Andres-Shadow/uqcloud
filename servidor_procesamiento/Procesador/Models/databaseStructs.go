@@ -25,7 +25,7 @@ type Persona struct {
 	Apellido    string
 	Email       string
 	Contrasenia string
-	Rol         string
+	Rol         byte
 }
 
 /*
@@ -185,3 +185,7 @@ type Conetendor struct {
 	MaquinaVM    string
 }
 
+type CatalogoDisco struct{
+	CatalogoID int
+	DiscoID int
+}
