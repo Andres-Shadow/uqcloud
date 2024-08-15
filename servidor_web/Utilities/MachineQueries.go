@@ -11,6 +11,7 @@ import (
 	"net/http"
 )
 
+// Consultat maquinas virtuales asociadas a un email
 func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
 
@@ -59,36 +60,25 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 }
 
 // Enviar creación de la VM al servidor
-func SendJSONMachineToServer(jsonData []byte) bool {
+func CreateMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:8081/json/createVirtualMachine", Config.ServidorProcesamientoRoute)
 
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
+	payload := map[string]interface{}{
+		"specifications": VM,
+		"clientIP":       clienteIp,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
 	if err != nil {
-		return false
+		return false, err
 	}
 
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return false
-	}
-	defer resp.Body.Close()
-
-	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
-	if resp.StatusCode != http.StatusOK {
-		return false
-	} else {
-		return true
-	}
+	return confirmacion, nil
 }
 
 // Encender Maquina virtual
-func PowerMachineServer(nombre string, clientIP string) (error, string, int) {
+func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
 
 	serverURL := fmt.Sprintf("http://%s:8081/json/startVM", Config.ServidorProcesamientoRoute)
 
@@ -98,45 +88,70 @@ func PowerMachineServer(nombre string, clientIP string) (error, string, int) {
 		"clientIP":       clientIP,
 	}
 
-	jsonData, err := json.Marshal(payload)
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
 	if err != nil {
-		return err, "", 0
+		return false, err
 	}
 
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
+	return confirmacion, nil
+
+}
+
+// Eliminar una Maquina virtual
+func DeleteMachineFromServer(nombre string) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/deleteVM", Config.ServidorProcesamientoRoute)
+
+	payload := map[string]interface{}{
+		"tipo_solicitud": "delete",
+		"nombreVM":       nombre,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
 	if err != nil {
-		return err, "", 0
+		return false, err
 	}
 
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
+	return confirmacion, nil
+}
 
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
+// Modifica las maquinas virtuales
+func ConfigMachienFromServer(specifications Models.VirtualMachineTemp) (bool, error) {
+
+	serverURL := fmt.Sprintf("http://%s:8081/json/modifyVM", Config.ServidorProcesamientoRoute)
+
+	payload := map[string]interface{}{
+		"tipo_solicitud": "modify",
+		"specifications": specifications,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
 	if err != nil {
-		return err, "", 0
+		return false, err
 	}
-	defer resp.Body.Close()
 
-	var respuesta map[string]string
+	return confirmacion, nil
+}
 
-	err = json.NewDecoder(resp.Body).Decode(&respuesta)
+// Consultar estado de la maquina virtual
+func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/checkhost", Config.ServidorProcesamientoRoute)
+
+	// Crear el objeto JSON con los datos del cliente
+	payload := map[string]interface{}{
+		"clientIP":       clienteIp,
+		"ubicacion":      VM.Host_id,
+		"specifications": VM,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
 	if err != nil {
-		//log.Println("Error al decodificar el body de la respuesta")
-		return err, "", 0
+		return false, err
 	}
 
-	mensaje := respuesta["mensaje"]
-
-	if resp.StatusCode == http.StatusOK {
-
-		return nil, mensaje, 1
-
-	} else {
-		return nil, mensaje, 2
-
-	}
+	return confirmacion, nil
 
 }

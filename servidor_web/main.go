@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AppWeb/Utilities"
 	"AppWeb/handlers"
 	"encoding/json"
 	"html/template"
@@ -117,10 +118,10 @@ func main() {
 	router.POST("/api/contendores", handlers.GetContendores)
 	router.POST("/api/imagenes", handlers.GetImages)
 
-	router.POST("/cambiar-contenido", handlers.EnviarContenido)
+	router.POST("/cambiar-contenido", Utilities.SendContent)
 
-	router.POST("/uploadJSON", handlers.HandleUploadJSON)
-	router.POST("/api/mvtemp", handlers.Mvtemp)
+	router.POST("/uploadJSON", Utilities.UploadJSON)
+	//router.POST("/api/mvtemp", handlers.Mvtemp)
 	// Ruta para cerrar sesión
 	router.GET("/logout", handlers.Logout)
 

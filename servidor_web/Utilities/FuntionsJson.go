@@ -1,13 +1,28 @@
-package handlers
+package Utilities
 
 import (
-	"encoding/json"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/goccy/go-json"
+	"net/http"
 )
 
-func HandleUploadJSON(c *gin.Context) {
+// Enviar contendio
+func SendContent(c *gin.Context) {
+	var data struct {
+		Contenido string `json:"contenido"`
+	}
+
+	if err := c.ShouldBindJSON(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"url": data.Contenido, // Modifica esto según tus necesidades.
+	})
+}
+
+func UploadJSON(c *gin.Context) {
 	// Obtener el archivo JSON del formulario
 	file, err := c.FormFile("fileInput")
 	if err != nil {
