@@ -41,7 +41,7 @@ func CheckVirtualMachinesQueueChanges() {
 			specsMap, _ := data["specifications"].(map[string]interface{})
 			specsJSON, err := json.Marshal(specsMap)
 			if err != nil {
-				fmt.Println("Error al serializar las especificaciones:", err)
+				fmt.Println("Error al extraer las especificaciones:", err)
 				mu.Lock()
 				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
 				//maquina_virtualesQueue.Queue.Remove(firstElement)
@@ -61,6 +61,8 @@ func CheckVirtualMachinesQueueChanges() {
 			}
 
 			clientIP := data["clientIP"].(string)
+
+			fmt.Println(clientIP)
 
 			go utilities.CreateVM(specifications, clientIP)
 			config.GetMaquina_virtualQueue().Queue.Remove(firstElement)

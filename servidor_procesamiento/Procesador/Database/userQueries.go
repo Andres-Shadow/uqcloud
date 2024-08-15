@@ -32,9 +32,9 @@ Funciòn que permite obtener un usuario dado su identificador ùnico, es decir, 
 // 	return persona, nil
 // }
 
-func CountAdminsRegistered() bool{
-	var count int
-	err := DB.QueryRow("SELECT COUNT(*) FROM personas WHERE rol = 1").Scan(&count)
+func CountAdminsRegistered() bool {
+	var count int64
+	err := DATABASE.Model(&models.Persona{}).Where("rol = ?", 1).Count(&count).Error
 	if err != nil {
 		log.Println("Error al contar los administradores que hay en la base de datos: " + err.Error())
 		return false

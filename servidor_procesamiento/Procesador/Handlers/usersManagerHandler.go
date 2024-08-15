@@ -69,7 +69,7 @@ gestión de los usuarios
 // 	}
 // }
 
-// // Funcion que responde al endpoint encargado de registrar un usuario nuevo a la base de datos
+// Funcion que responde al endpoint encargado de registrar un usuario nuevo a la base de datos
 // func UserSignInHandler(w http.ResponseWriter, r *http.Request) {
 // 	if r.Method != http.MethodPost {
 // 		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
