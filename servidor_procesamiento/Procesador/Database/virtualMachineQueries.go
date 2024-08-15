@@ -1,7 +1,7 @@
 package database
 
 import (
-	_"database/sql"
+	_ "database/sql"
 	"errors"
 	"log"
 
@@ -117,9 +117,6 @@ Funciòn que permite obtener una màquina virtual dado su nombre
 // 	return maquinaVirtual, nil
 // }
 
-
-
-
 /*
 Funciòn que permite conocer las màquinas virtuales que tiene creadas un usuario ò todas las màquinas de la plataforma si es un administrador
 @persona Paràmetro que representa un usuario, al cual se le van a buscar las màquinas que le pertenece
@@ -231,9 +228,11 @@ func ConsultMachines(persona models.Persona) ([]models.Maquina_virtual, error) {
 	var err error
 
 	if persona.Rol == 1 {
-		err = DATABASE.Model(&models.Maquina_virtual{}).Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname").
-			Joins("INNER JOIN disco as d on m.disco_id = d.id").
-			Scan(&machines).Error
+		err = DATABASE.Table("maquina_virtual as m").
+		Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname").
+		Joins("INNER JOIN disco as d on m.disco_id = d.id").
+		Scan(&machines).Error
+
 	} else {
 		err = DATABASE.Model(&models.Maquina_virtual{}).Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname").
 			Joins("INNER JOIN disco as d on m.disco_id = d.id").

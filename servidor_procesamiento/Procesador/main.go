@@ -69,7 +69,7 @@ precargar el usuario administrador
 */
 func setDatabase(){
 	// Conexión a SQL
-	database.ManageSqlConecction()
+	//database.ManageSqlConecction()
 
 	// Migración de modelos para la creación de las tablas en la base de datos.
 	database.DBConnection()
@@ -119,7 +119,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"virtual_machine", handlers.CreateVirtualMachineHandler).Methods("POST")
 
 	//Endpoint para consultar las màquinas virtuales de un usuario
-	r.HandleFunc(apiPrefix+"virtual_machine", handlers.ConsultVirtualMachineHandler).Methods("GET")
+	r.HandleFunc(apiPrefix+"virtual_machine/{email}", handlers.ConsultVirtualMachineHandler).Methods("GET")
 
 	//End point para modificar màquinas virtuales
 	r.HandleFunc(apiPrefix+"virtual_machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
@@ -163,7 +163,7 @@ func manageServer(r *mux.Router) {
 	*/
 
 	//Endpoint para peticiones de inicio de sesiòn
-	// r.HandleFunc("/json/login", handlers.UserLoginHandler)
+	// r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
 
 	//Endpoint para peticiones de inicio de sesiòn
 	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)

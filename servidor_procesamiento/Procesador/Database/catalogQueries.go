@@ -15,10 +15,10 @@ func ConsultCatalog() ([]models.Catalogo, error) {
 	var listaCatalogo []models.Catalogo
 
     // Realiza la consulta con GORM usando Join
-    err := DATABASE.Table("catalogo_discos cd").
+    err := DATABASE.Table("catalogo_disco cd").
         Select("c.id, c.nombre, c.ram, c.cpu, d.sistema_operativo, d.distribucion_sistema_operativo, d.arquitectura").
-        Joins("JOIN catalogos c ON cd.catalogo_id = c.id").
-        Joins("JOIN discos d ON cd.disco_id = d.id").
+        Joins("JOIN catalogo c ON cd.catalogo_id = c.id").
+        Joins("JOIN disco d ON cd.disco_id = d.id").
         Scan(&listaCatalogo).Error
 
     if err != nil {

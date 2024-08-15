@@ -66,6 +66,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 				return "Error al obtener el disco"
 			}
+			fmt.Println("llego aqui")
 			//Configura la conexiòn SSH con el host Obtenido
 			config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 			if err != nil {
