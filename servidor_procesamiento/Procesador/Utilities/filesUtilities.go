@@ -20,6 +20,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 	buffer, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal("Error al leer la llave privada:", err)
+		return nil
 	}
 
 	key, err := ssh.ParsePrivateKey(buffer)
@@ -29,7 +30,6 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 
 	return ssh.PublicKeys(key)
 }
-
 
 /*
 Esta funciòn carga y devuelve la llave privada SSH desde la ruta especificada

@@ -188,7 +188,7 @@ func CreateContainer(imagen, comando, ip, hostname string) string {
 // Función que lista los contenedores dentro de una maquina virtual
 // params: ip, hostname
 // returns: lista de contenedores encontrados
-func ListContainers(ip, hostname string) ([]models.Conetendor, error) {
+func ListContainers(ip, hostname string) ([]models.Contenedor, error) {
 
 	fmt.Println("Revisar Contenedores")
 
@@ -212,7 +212,7 @@ func ListContainers(ip, hostname string) ([]models.Conetendor, error) {
 
 	tabla := 0
 	datos := make([]string, 7)
-	var contenedores []models.Conetendor
+	var contenedores []models.Contenedor
 	conetendor := 1
 	maquinaVM := ip + " - " + hostname
 
@@ -401,10 +401,10 @@ func RegisterImageData(datos []string, maquinaVM string) models.Imagen {
 // de un contenedor docker en la base de datos
 // params: datos, maquinaVM
 // returns: modelo de contenedor
-func RegisterContainerData(datos []string, maquinaVM string) models.Conetendor {
+func RegisterContainerData(datos []string, maquinaVM string) models.Contenedor {
 
-	nuevaContenedor := models.Conetendor{
-		ConetendorId: datos[0],
+	nuevaContenedor := models.Contenedor{
+		ContenedorId: datos[0],
 		Imagen:       datos[1],
 		Comando:      datos[2],
 		Creado:       datos[3],
