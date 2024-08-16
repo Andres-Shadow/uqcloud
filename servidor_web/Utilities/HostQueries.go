@@ -123,7 +123,7 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 
 // Consultar lo host disponibles
 func CheckAvaibleHost() ([]Models.Host, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultHosts", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/api/v1/hosts", Config.ServidorProcesamientoRoute)
 
 	persona := Models.Person{Email: "123"}
 	jsonData, err := json.Marshal(persona)

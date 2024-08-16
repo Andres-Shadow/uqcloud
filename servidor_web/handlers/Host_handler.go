@@ -39,7 +39,7 @@ func CreateNewHost(c *gin.Context) {
 	}
 
 	// Registrar el host
-	serverURL := fmt.Sprintf("http://%s:8081/json/addHost", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/api/v1/host", Config.ServidorProcesamientoRoute)
 	if err := Utilities.RegisterElements(serverURL, newHost); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registrar el host: " + err.Error()})
 		return
