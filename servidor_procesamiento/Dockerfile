@@ -25,8 +25,14 @@ COPY --from=builder ./binario ./binario
 # Copia el archivo de configuracion
 COPY --from=builder /app/Procesador/Environment/.env /Environment/.env
 
+# Copia la key del builder de la carpeta Keys
+COPY --from=builder /app/Procesador/Keys/id_rsa /Environment/id_rsa
+
 # Asegúrate de que el binario tiene permisos de ejecución
 RUN chmod +x ./binario
 
+# Instalar openssh para poder conectarse a los servidores
+RUN apt-get update && apt-get install -y openssh-client
+
 # Ejecuta el binario
-CMD ["./binario", "-key=/home/uqcloud/.ssh/id_rsa"] 
+CMD ["./binario", "-key=/Environment/id_rsa"] 
