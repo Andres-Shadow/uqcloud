@@ -6,6 +6,9 @@ services:
       - "8081:8081"
     expose:
       - "8081"
+    networks:
+      - general
+      - uqcloud
     environment:
       - DATABASE=database 
       - DB_PASSWORD=${DB_PASSWORD}
@@ -21,6 +24,8 @@ services:
       - "8080:8080"
     expose:
       - "8080"
+    networks:
+      - general
     environment:
       - servidor_procesamiento = procesamiento
     depends_on:
@@ -33,6 +38,8 @@ services:
       - "3307:3306"
     expose:
       - "3307"
+    networks:
+      - general
     volumes:
     - mysql-data:/var/lib/mysql
     environment:
@@ -41,4 +48,9 @@ services:
       MYSQL_TIME_ZONE: 'America/Bogota'
 
 volumes:
-  mysql-data:                                               
+  mysql-data:      
+
+networks:
+  uqcloud:
+    external: true  
+  general:                                       
