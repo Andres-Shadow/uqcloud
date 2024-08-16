@@ -1,8 +1,14 @@
 package Utilities
 
 import (
+	"AppWeb/Config"
+	"AppWeb/Models"
+	"bytes"
+	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
+	"io"
 	"net/http"
 )
 
@@ -48,4 +54,57 @@ func UploadJSON(c *gin.Context) {
 
 	// Enviar los datos JSON al cliente como respuesta
 	c.JSON(http.StatusOK, jsonData)
+}
+
+// Enviar información del usuario
+func SendInfoUserServer(jsonData []byte) (Models.Person, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/login", Config.ServidorProcesamientoRoute)
+	var usuario Models.Person
+
+	// Crea una solicitud HTTP POST con el JSON como cuerpo
+	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return usuario, err
+	}
+
+	// Establece el encabezado de tipo de contenido
+	req.Header.Set("Content-Type", "application/json")
+
+	// Realiza la solicitud HTTP
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return usuario, err
+	}
+	defer resp.Body.Close()
+
+	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
+	if resp.StatusCode != http.StatusOK {
+		return usuario, errors.New("Error en la respuesta del servidor")
+	}
+
+	responseBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return usuario, err
+	}
+	var resultado map[string]interface{}
+
+	if err := json.Unmarshal(responseBody, &resultado); err != nil {
+		fmt.Println("Error al deserializar")
+		return usuario, err
+	}
+	specsMap, _ := resultado["usuario"].(map[string]interface{})
+	specsJSON, err := json.Marshal(specsMap)
+	if err != nil {
+		fmt.Println("Error al serializar el usuario:", err)
+		return usuario, err
+	}
+
+	err = json.Unmarshal(specsJSON, &usuario)
+	if err != nil {
+		fmt.Println("Error al deserializar el usuario:", err)
+		return usuario, err
+	}
+
+	return usuario, nil
 }

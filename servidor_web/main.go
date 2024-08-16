@@ -70,7 +70,7 @@ func main() {
 	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
 	// deje acceder a estas rutas desde el navegador.
 
-	// router.GET("/profile", handlers.ProfilePage)
+	//router.GET("/profile", handlers.ProfilePage)
 	// router.GET("/scrollmenu", handlers.Scrollmenu)
 	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 	// router.GET("/imagenes", handlers.GestionImagenes)
@@ -93,7 +93,7 @@ func main() {
 	router.GET("/controlMachine", handlers.ControlMachine)
 
 	router.POST("/login", handlers.Login)
-	router.POST("/signin", handlers.Signin)
+	//router.POST("/signin", handlers.Signin)
 
 	//TODO: Mirar después
 	router.POST("/api/createMachine", handlers.MainSend)
