@@ -58,7 +58,8 @@ func UploadJSON(c *gin.Context) {
 
 // Enviar información del usuario
 func SendInfoUserServer(jsonData []byte) (Models.Person, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/login", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.LOGIN_URL)
+
 	var usuario Models.Person
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo

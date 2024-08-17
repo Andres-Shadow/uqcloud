@@ -11,7 +11,7 @@ import (
 // Funcion que consulta las metricas
 func CheckMetrics() (Models.DashboardData, error) {
 	var metricas Models.DashboardData
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/metrics", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.METRICS_URL)
 
 	resp, err := http.Get(serverURL)
 	if err != nil {
