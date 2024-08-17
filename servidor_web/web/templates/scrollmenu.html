@@ -1,7 +1,7 @@
 <head>
     <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
     <script src="/web/static/bootstrap/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/web/static/styleSidebar.css">
+    <link rel="stylesheet" type="text/css" href="/web/static/css/styleSidebar.css">
 </head>
 <body style="background-color: #1b212cff;">
     <div class="sidebar">
@@ -27,7 +27,6 @@
         </div>
         <div class="bottom-link">
             <h3><a href="#" id="ayuda" class="sidebar-link">Ayuda</a></h3>
-            <h3><a href="#" id="aboutUs" class="sidebar-link">Contacto</a></h3>
         </div>
     </div>
     
@@ -40,8 +39,6 @@
         const dashboardLink = document.getElementById("dashboard");
         const createHostLink = document.getElementById("createHost");
         const createDiskLink = document.getElementById("createDisk");
-        const aboutUsLink = document.getElementById("aboutUs");
-
 
 
         var userRole = "{{ .rol }}"; // Puedes obtener esto dinámicamente desde tu aplicación
@@ -122,11 +119,6 @@
             cambiarContenido('helpCenter');
         });
 
-        aboutUsLink.addEventListener("click", function (e) {
-            e.preventDefault();
-            bloquearConexiones();
-            cambiarContenido('aboutUs');
-        });
 
         function mostrarConexiones() {
             conexionesSection.style.display = "block";

@@ -49,6 +49,8 @@ func main() {
 	router.Static("web/static", "./web/static")
 
 	router.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
+	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutus.html", nil) })
+	router.GET("/docs", func(c *gin.Context) { c.HTML(http.StatusOK, "docs.html", nil) })
 
 	//TODO: Revisar
 	router.POST("/api/checkhost", handlers.Checkhost)
@@ -75,7 +77,6 @@ func main() {
 	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 	// router.GET("/imagenes", handlers.GestionImagenes)
 	// router.GET("/contenedores", handlers.GestionContenedores)
-	router.GET("/aboutUs", handlers.AboutUsPage)
 	// router.GET("/helpCenter", handlers.HelpCenterPage)
 
 	//TODO: ELIMINAR ¿?
