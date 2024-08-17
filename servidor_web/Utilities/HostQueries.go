@@ -14,14 +14,14 @@ import (
 
 // Funcion encargada de consultar la cantidad de host asociados al email de una persona
 func ConsultHostsFromServer(email string) ([]Models.Host, error) {
-	URL := fmt.Sprintf("http://%s:8081/api/v1/host", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
 	jsonData, err := json.Marshal(email)
 	if err != nil {
 		return nil, fmt.Errorf("error al convertir persona a JSON: %w", err)
 	}
 
 	// Crear una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("GET", URL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("error al crear solicitud HTTP: %w", err)
 	}
@@ -57,7 +57,7 @@ func ConsultHostsFromServer(email string) ([]Models.Host, error) {
 
 // Consultar lo host disponibles
 func CheckAvaibleHost() ([]Models.Host, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/hosts", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOSTS_URL)
 
 	persona := Models.Person{Email: "123"}
 	jsonData, err := json.Marshal(persona)

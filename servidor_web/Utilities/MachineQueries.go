@@ -13,7 +13,7 @@ import (
 
 // Consultat maquinas virtuales asociadas a un email
 func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/virtual_machine", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
 
 	persona := Models.Person{Email: email}
 	jsonData, err := json.Marshal(persona)
@@ -61,7 +61,7 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 
 // Enviar creación de la VM al servidor
 func CreateMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/virtual_machine", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
 
 	payload := map[string]interface{}{
 		"specifications": VM,
@@ -79,9 +79,7 @@ func CreateMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, 
 
 // Encender Maquina virtual
 func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
-
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/start_virtual_machine", Config.ServidorProcesamientoRoute)
-
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.START_VM_URL)
 	payload := map[string]interface{}{
 		"tipo_solicitud": "start",
 		"nombreVM":       nombre,
@@ -100,7 +98,7 @@ func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
 
 // Eliminar una Maquina virtual
 func DeleteMachineFromServer(nombre string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/virtual_machine", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
 
 	payload := map[string]interface{}{
 		"tipo_solicitud": "delete",
@@ -118,8 +116,7 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 
 // Modifica las maquinas virtuales
 func ConfigMachienFromServer(specifications Models.VirtualMachineTemp) (bool, error) {
-
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/virtual_machine", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
 
 	payload := map[string]interface{}{
 		"tipo_solicitud": "modify",
@@ -137,7 +134,7 @@ func ConfigMachienFromServer(specifications Models.VirtualMachineTemp) (bool, er
 
 // Consultar estado de la maquina virtual
 func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/check_host", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CHECK_HOST_URL)
 
 	// Crear el objeto JSON con los datos del cliente
 	payload := map[string]interface{}{

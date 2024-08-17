@@ -71,7 +71,7 @@ func ErrorMessage() string {
 // ToDo: Esta función puede cambiar en el futuro
 func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
-	serverURL := fmt.Sprintf("http://%s:8081/api/v1/guest_virtual_machine", Config.ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CREATE_GUEST_VM_URL)
 
 	clientIP := c.ClientIP()
 	distribucion := c.PostForm("osCreate")
