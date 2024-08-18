@@ -79,7 +79,7 @@ func StartVM(nameVM string, clientIP string) string {
 
 		fmt.Println("Obteniendo direcciòn IP de la màquina " + nameVM + "...")
 		//Actualiza el estado de la MV en la base de datos
-		_, err5 := database.DB.Exec("UPDATE maquina_virtual set estado = 'Procesando' WHERE NOMBRE = ?", nameVM)
+		err5 := database.UpdateVirtualMachineState(nameVM, "Procesando")
 		if err5 != nil {
 			log.Println("Error al realizar la actualizaciòn del estado", err5)
 			return "Error al realizar la actualizaciòn del estado"
@@ -122,7 +122,7 @@ func StartVM(nameVM string, clientIP string) string {
 				if restarted {
 					log.Println("No se logrò obtener la direcciòn IP de la màquina: " + nameVM)
 					//Actualiza el estado de la MV en la base de datos
-					_, err9 := database.DB.Exec("UPDATE maquina_virtual set estado = 'Apagado' WHERE NOMBRE = ?", nameVM)
+					err9 := database.UpdateVirtualMachineState(nameVM, "Apagado")
 					if err9 != nil {
 						log.Println("Error al realizar la actualizaciòn del estado", err9)
 						return "Error al realizar la actualizaciòn del estado"
@@ -141,17 +141,17 @@ func StartVM(nameVM string, clientIP string) string {
 			}
 		}
 
-		//Almacena solo el valor de la IP quitàndole el texto "Value:"
-		ipAddress = strings.TrimPrefix(ipAddress, "Value:")
-		ipAddress = strings.TrimSpace(ipAddress)
+		//Almacena la direccion ip de la maquina virtual
+		ipAddress = strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
+
 		//Actualiza el estado de la MV en la base de datos
-		_, err9 := database.DB.Exec("UPDATE maquina_virtual set estado = 'Encendido' WHERE NOMBRE = ?", nameVM)
+		err9 := database.UpdateVirtualMachineState(nameVM, "Encendido")
 		if err9 != nil {
 			log.Println("Error al realizar la actualizaciòn del estado", err9)
 			return "Error al realizar la actualizaciòn del estado"
 		}
 		//Actualiza la direcciòn IP de la MV en la base de datos
-		_, err10 := database.DB.Exec("UPDATE maquina_virtual set ip = ? WHERE NOMBRE = ?", ipAddress, nameVM)
+		err10 := database.UpdateVirtualMachineIP(nameVM, ipAddress)
 		if err10 != nil {
 			log.Println("Error al realizar la actualizaciòn de la IP", err10)
 			return "Error al realizar la actualizaciòn de la IP"
@@ -202,7 +202,8 @@ func TurnOffVM(nameVM string, clientIP string) string {
 
 		fmt.Println("Apagando màquina " + nameVM + "...")
 		//Actualza el estado de la MV en la base de datos
-		_, err4 := database.DB.Exec("UPDATE maquina_virtual set estado = 'Procesando' WHERE NOMBRE = ?", nameVM)
+
+		err4 := database.UpdateVirtualMachineState(nameVM, "Procesando")
 		if err4 != nil {
 			log.Println("Error al realizar la actualizaciòn del estado", err4)
 			return "Error al realizar la actualizaciòn del estado"
@@ -244,7 +245,7 @@ func TurnOffVM(nameVM string, clientIP string) string {
 			}
 		}
 		//Actualiza el estado de la MV en la base de datos
-		_, err9 := database.DB.Exec("UPDATE maquina_virtual set estado = 'Apagado', ip = '' WHERE NOMBRE = ?", nameVM)
+		err9 := database.UpdateVirtualMachineState(nameVM, "Apagado")
 		if err9 != nil {
 			log.Println("Error al realizar la actualizaciòn del estado", err9)
 			return "Error al realizar la actualizaciòn del estado"

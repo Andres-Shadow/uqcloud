@@ -142,11 +142,7 @@ Funciòn que dada una direcciòn IP permite conocer si pertenece o no a un host 
 */
 func IsAHostIp(ip string) (models.Host, error) {
 
-	var host models.Host
-	err := database.DB.QueryRow("SELECT * FROM host WHERE ip = ?", ip).Scan(&host.Id, &host.Nombre, &host.Mac, &host.Ip, &host.Hostname,
-		&host.Ram_total, &host.Cpu_total, &host.Almacenamiento_total, &host.Ram_usada, &host.Cpu_usada,
-		&host.Almacenamiento_usado, &host.Adaptador_red, &host.Estado, &host.Ruta_llave_ssh_pub, &host.Sistema_operativo,
-		&host.Distribucion_sistema_operativo)
+	host, err := database.GetHostByIp(ip)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return host, err

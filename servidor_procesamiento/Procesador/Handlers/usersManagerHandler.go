@@ -17,10 +17,7 @@ gestión de los usuarios
 
 // Funcion que responde al endpoint encargado de iniciar sesión a un usuario
 func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-		return
-	}
+
 	var persona models.Persona
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&persona); err != nil {
@@ -28,50 +25,46 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Si las credenciales son válidas, devuelve un JSON con "loginCorrecto" en true, de lo contrario, en false.
-	query := "SELECT contrasenia FROM persona WHERE email = ?"
-	var resultPassword string
+	resultPassword, err := database.GetUserPassword(persona.Email)
 
-	//Consulta en la base de datos si el usuario existe
-	err := database.DB.QueryRow(query, persona.Email).Scan(&resultPassword)
-
-	err2 := bcrypt.CompareHashAndPassword([]byte(resultPassword), []byte(persona.Contrasenia))
-	if err2 != nil {
-		fmt.Println("Contraseña incorrecta")
-	} else {
-		fmt.Println("Contraseña correcta")
+	if err != nil {
+		fmt.Println("Error al buscar la contraseña del usuario "+ persona.Email +" en la base de datos:", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusNotFound)
+		return
 	}
-	if err2 != nil {
+
+	verificacion := bcrypt.CompareHashAndPassword([]byte(resultPassword), []byte(persona.Contrasenia))
+
+	if verificacion != nil {
+		fmt.Println("Contraseña incorrecta, no se concuerda con el registro en la base de datos")
 		response := map[string]interface{}{
-			"loginCorrecto": false,
-			"usuario":       nil,
+			"status": 	 false,
+			"usuario":   nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(response)
-	} else if err != nil {
-		panic(err.Error())
 	} else {
+		fmt.Println("Contraseña correcta, se encontró el registro en la base de datos")
 		// Consulta en la base de datos para obtener los detalles del usuario
-		queryUsuario := "SELECT * FROM persona WHERE email = ?"
-		var usuario models.Persona
 
-		errUsuario := database.DB.QueryRow(queryUsuario, persona.Email).Scan(&usuario.Email, &usuario.Nombre, &usuario.Apellido, &usuario.Contrasenia, &usuario.Rol)
-		if errUsuario != nil {
-			fmt.Println("Error al obtener detalles del usuario:", errUsuario)
+		usuario, err := database.GetUserFromEmail(persona.Email)
+		if err != nil {
+			fmt.Println("Error al obtener detalles del usuario al intentar hacer login: ", err)
 			response := map[string]interface{}{
-				"loginCorrecto": false,
+				"status": false,
 				"usuario":       nil,
 			}
 			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusInternalServerError)
+			w.WriteHeader(http.StatusNotFound)
 			json.NewEncoder(w).Encode(response)
 			return
 		}
 
 		response := map[string]interface{}{
-			"loginCorrecto": true,
-			"usuario":       usuario,
+			"status": 	true,
+			"usuario":  usuario,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

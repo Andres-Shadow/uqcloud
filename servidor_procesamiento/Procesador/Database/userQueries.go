@@ -12,6 +12,68 @@ import (
 Clase encarga de contener los elementos relacionados a las consultas sobre la base de datos sobre la tabla de usuarios
 */
 
+func CountAdminsRegistered() bool {
+	var count int64
+	err := DATABASE.Model(&models.Persona{}).Where("rol = ?", 1).Count(&count).Error
+	if err != nil {
+		log.Println("Error al contar los administradores que hay en la base de datos: " + err.Error())
+		return false
+	}
+	return count > 0
+}
+
+func GetUser(email string) (models.Persona, error) {
+	var persona models.Persona
+	err := DATABASE.Where("email = ?", email).First(&persona).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Println("No se encontró un usuario con el email especificado")
+		} else {
+			log.Println("Hubo un error al realizar la consulta: " + err.Error())
+		}
+		return persona, err
+	}
+	return persona, nil
+}
+
+func GetUserPassword(email string) (string, error) {
+	var persona models.Persona
+	err := DATABASE.Where("email = ?", email).First(&persona).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Println("No se encontró un usuario con el email especificado")
+		} else {
+			log.Println("Hubo un error al realizar la consulta: " + err.Error())
+		}
+		return "", err
+	}
+	return persona.Contrasenia, nil
+
+}
+
+func GetUserFromEmail(email string) (models.Persona, error) {
+	var persona models.Persona
+	err := DATABASE.Where("email = ?", email).First(&persona).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Println("No se encontró un usuario con el email especificado")
+		} else {
+			log.Println("Hubo un error al realizar la consulta: " + err.Error())
+		}
+		return persona, err
+	}
+	return persona, nil
+}
+
+func CreateNewUser(persona models.Persona) bool {
+	err := DATABASE.Create(&persona).Error
+	if err != nil {
+		log.Println("Error al insertar el nuevo registro de persona en la base de datos: ", err)
+		return false
+	}
+	return true
+}
+
 /*
 Funciòn que permite obtener un usuario dado su identificador ùnico, es decir, su email
 @email Paràmetro que representa el email del usuario a buscar
@@ -32,15 +94,6 @@ Funciòn que permite obtener un usuario dado su identificador ùnico, es decir, 
 // 	return persona, nil
 // }
 
-func CountAdminsRegistered() bool {
-	var count int64
-	err := DATABASE.Model(&models.Persona{}).Where("rol = ?", 1).Count(&count).Error
-	if err != nil {
-		log.Println("Error al contar los administradores que hay en la base de datos: " + err.Error())
-		return false
-	}
-	return count > 0
-}
 /*
 Funciòn que permite eliminar una cuenta de un usuario de la base de datos
 @email Paràmetro que contiene el email del usuario a eliminar
@@ -73,22 +126,6 @@ Funciòn que permite conocer el total de màquianas virtuales que tiene creadas 
 
 // 	return count, nil
 // }
-
-
-
-func GetUser(email string) (models.Persona, error) {
-	var persona models.Persona
-	err := DATABASE.Where("email = ?", email).First(&persona).Error
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			log.Println("No se encontró un usuario con el email especificado")
-		} else {
-			log.Println("Hubo un error al realizar la consulta: " + err.Error())
-		}
-		return persona, err
-	}
-	return persona, nil
-}
 
 // func deleteAccount(email string) {
 // 	err := GormDB.Where("email = ?", email).Delete(&models.Persona{}).Error
