@@ -1,4 +1,3 @@
-version: "2.8"
 services:
   #servicio del servidor de procesamiento
   procesamiento:
@@ -7,8 +6,14 @@ services:
       - "8081:8081"
     expose:
       - "8081"
+    networks:
+      - general
+      - uqcloud
     environment:
       - DATABASE=database 
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_USER=root
+      - DB_NAME=uqcloud
     depends_on:
       - database
 
@@ -19,6 +24,8 @@ services:
       - "8080:8080"
     expose:
       - "8080"
+    networks:
+      - general
     environment:
       - servidor_procesamiento = procesamiento
     depends_on:
@@ -26,11 +33,24 @@ services:
 
   #servicio de la base de datos
   database:
-    image: mysql:latest
+    image: mysql:5.7
     ports:
       - "3307:3306"
     expose:
       - "3307"
+    networks:
+      - general
+    volumes:
+    - mysql-data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: applications
-      MYSQL_ROOT_PASSWORD: andres_1
+      MYSQL_DATABASE: uqcloud
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_TIME_ZONE: 'America/Bogota'
+
+volumes:
+  mysql-data:      
+
+networks:
+  uqcloud:
+    external: true  
+  general:                                       

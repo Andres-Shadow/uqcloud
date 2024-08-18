@@ -26,9 +26,10 @@ func DBConnection() {
 	if host == "" {
 		host = "localhost"
 	}
+
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbUser := os.Getenv("DB_USER")
-	var dsn = dbUser+":"+dbPassword+"@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
+	var dsn = dbUser + ":" + dbPassword + "@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
 
 	for {
 		var err error
@@ -38,13 +39,12 @@ func DBConnection() {
 			},
 		})
 		if err != nil {
-			log.Println("Failed to connect to database. Retrying in 5 seconds...")
-			time.Sleep(5 * time.Second) // Wait for 5 seconds before retrying
+			log.Println("Failed to connect to database. Retrying in 10 seconds...")
+			time.Sleep(10 * time.Second) // Wait for 5 seconds before retrying
 		} else {
 			log.Println("DB Connected")
 			break // Exit the loop once the connection is successful
 		}
 	}
 
-	
 }

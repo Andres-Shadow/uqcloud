@@ -169,7 +169,7 @@ Estructura de datos tipo JSON que representa la informaciòn de los contenedores
 @Nombre Representa el identificador ùnico del host en el cual està ubicado el disco
 */
 
-type Conetendor struct {
+type Contenedor struct {
 	gorm.Model
 	ConetendorId string
 	Imagen       string
