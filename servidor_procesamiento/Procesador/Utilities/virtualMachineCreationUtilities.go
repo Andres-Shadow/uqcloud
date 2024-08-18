@@ -144,12 +144,9 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			}
 
 			//Crea el registro de la nueva MV en la base de datos
-			_, err7 := database.DB.Exec("INSERT INTO maquina_virtual (uuid, nombre,  ram, cpu, ip, estado, hostname, persona_email, host_id, disco_id, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-				nuevaMaquinaVirtual.Uuid, nuevaMaquinaVirtual.Nombre, nuevaMaquinaVirtual.Ram, nuevaMaquinaVirtual.Cpu,
-				nuevaMaquinaVirtual.Ip, nuevaMaquinaVirtual.Estado, nuevaMaquinaVirtual.Hostname, nuevaMaquinaVirtual.Persona_email,
-				host.Id, disco.Id, nuevaMaquinaVirtual.Fecha_creacion)
-			if err7 != nil {
-				log.Println("Error al crear el registro en la base de datos:", err7)
+			creado := database.CreateVirtualMachine(nuevaMaquinaVirtual)
+			if creado != nil {
+				log.Println("Error al crear el registro en la base de datos:", creado)
 				return "Error al crear el registro en la base de datos"
 			}
 
@@ -158,7 +155,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			usedRam := host.Ram_usada + (specs.Ram)
 
 			//Actualiza la informaciòn de los recursos usados en el host
-			_, err8 := database.DB.Exec("UPDATE host SET ram_usada = ?, cpu_usada = ? where id = ?", usedRam, usedCpu, host.Id)
+			err8 := database.UpdateHostRamAndCPU(host.Id, usedRam, usedCpu)
 			if err8 != nil {
 				log.Println("Error al actualizar el host en la base de datos: ", err8)
 				return "Error al actualizar el host en la base de datos"
@@ -172,7 +169,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 	} else {
 		//Creacion de la Maquina con Algoritmo aleatorio
-		//Obtiene el usuario
+		//Obtiene el usuario aaaaaaaaaaaaa
 		user, error0 := database.GetUser(specs.Persona_email)
 		if error0 != nil {
 			log.Println("Error al obtener el usuario")
@@ -212,8 +209,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		fmt.Print("available", availableResources)
 
 		//Obtiene la cantidad total de hosts que hay en la base de datos
-		var count int
-		err := database.DB.QueryRow("SELECT COUNT(*) FROM host").Scan(&count)
+		count, err := database.CountRegisteredHosts()
 		if err != nil {
 			log.Println("Error al contar los host que hay en la base de datos: " + err.Error())
 			return "Error al contar los gost que hay en la base de datos"
@@ -324,10 +320,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		}
 
 		//Crea el registro de la nueva MV en la base de datos
-		_, err7 := database.DB.Exec("INSERT INTO maquina_virtual (uuid, nombre,  ram, cpu, ip, estado, hostname, persona_email, host_id, disco_id, fecha_creacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			nuevaMaquinaVirtual.Uuid, nuevaMaquinaVirtual.Nombre, nuevaMaquinaVirtual.Ram, nuevaMaquinaVirtual.Cpu,
-			nuevaMaquinaVirtual.Ip, nuevaMaquinaVirtual.Estado, nuevaMaquinaVirtual.Hostname, nuevaMaquinaVirtual.Persona_email,
-			host.Id, disco.Id, nuevaMaquinaVirtual.Fecha_creacion)
+		err7 := database.CreateVirtualMachine(nuevaMaquinaVirtual)
 		if err7 != nil {
 			log.Println("Error al crear el registro en la base de datos:", err7)
 			return "Error al crear el registro en la base de datos"
@@ -338,7 +331,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		usedRam := host.Ram_usada + (specs.Ram)
 
 		//Actualiza la informaciòn de los recursos usados en el host
-		_, err8 := database.DB.Exec("UPDATE host SET ram_usada = ?, cpu_usada = ? where id = ?", usedRam, usedCpu, host.Id)
+		err8 := database.UpdateHostRamAndCPU(host.Id, usedRam, usedCpu)
 		if err8 != nil {
 			log.Println("Error al actualizar el host en la base de datos: ", err8)
 			return "Error al actualizar el host en la base de datos"

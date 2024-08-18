@@ -21,11 +21,11 @@ Estrucutura de datos tipo JSON que contiene los campos necesarios para la gesti�
 */
 type Persona struct {
 	gorm.Model
-	Nombre      string 
-	Apellido    string
-	Email       string
-	Contrasenia string
-	Rol         byte
+	Nombre      string `json:"nombre"`
+	Apellido    string `json:"apellido"`
+	Email       string `json:"email"`
+	Contrasenia string `json:"contrasenia"`
+	Rol         byte   `json:"rol"`
 }
 
 /*
@@ -59,7 +59,6 @@ type Maquina_virtual struct {
 	Distribucion_sistema_operativo string
 	Fecha_creacion                 time.Time
 }
-
 
 /*
 Estructura de datos tipo JSON que contiene los campos de un host
@@ -120,7 +119,6 @@ type Catalogo struct {
 	Arquitectura                   int
 }
 
-
 /*
 Estructura de datos tipo JSON que representa la informaciòn de los discos que tiene la plataforma Desktop Cloud
 @Id Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
@@ -141,7 +139,6 @@ type Disco struct {
 	Arquitectura                   int
 	Host_id                        int
 }
-
 
 /*
 Estructura de datos tipo JSON que representa la informaciòn de las imagenes que tiene la plataforma Desktop Cloud
@@ -185,7 +182,7 @@ type Contenedor struct {
 	MaquinaVM    string
 }
 
-type CatalogoDisco struct{
+type CatalogoDisco struct {
 	CatalogoID int
-	DiscoID int
+	DiscoID    int
 }

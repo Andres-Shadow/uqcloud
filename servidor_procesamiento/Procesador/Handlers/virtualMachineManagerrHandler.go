@@ -43,10 +43,10 @@ func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de consultar el estado de las maquinas virtuales en tiempo real
 func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	// extrae el path param con el correo
 	vars := mux.Vars(r)
-    email := vars["email"]
+	email := vars["email"]
 
 	persona, error := database.GetUser(email)
 	if error != nil {
@@ -59,7 +59,7 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Error al consultar las màquinas del usuario")
 		http.Error(w, "Error al consultar las màquinas del usuario", http.StatusBadRequest)
 		return
-	}else if err != nil{
+	} else if err != nil {
 		fmt.Println(err)
 		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusBadRequest)
 		return
@@ -81,7 +81,6 @@ func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
 		return
 	}
-
 
 	// Extrae el objeto "specifications" del JSON.
 	specificationsData, isPresent := payload["specifications"].(map[string]interface{})
@@ -107,7 +106,7 @@ func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de eliminar una maquina virtual
 func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	var datos map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
@@ -118,9 +117,8 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Verificar si el nombre de la máquina virtual, la IP del host y el tipo de solicitud están presentes y no son nulos
 	nombre, nombrePresente := datos["nombreVM"].(string)
-	
 
-	if !nombrePresente || nombre == ""  {
+	if !nombrePresente || nombre == "" {
 		http.Error(w, "El tipo de solicitud y el nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
 		return
 	}
@@ -153,23 +151,23 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Verificar si el nombre de la máquina virtual, la IP del host y el tipo de solicitud están presentes y no son nulos
 	nombreVM, nombrePresente := datos["nombreVM"].(string)
 
-
-	if !nombrePresente ||  nombreVM == ""  {
+	if !nombrePresente || nombreVM == "" {
 		http.Error(w, "El tipo de solicitud y nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
 		return
 	}
 
-	datos["tipo_solicitud"]="start"
+	datos["tipo_solicitud"] = "start"
 	// Encola las peticiones.
 	config.GetMu().Lock()
 	config.GetManagementQueue().Queue.PushBack(datos)
 	config.GetMu().Unlock()
 
-	query := "select estado from maquina_virtual where nombre = ?"
-	var estado string
+	estado, err := database.GetStateFromVirtualMachineName(nombreVM)
 
-	//Registra el usuario en la base de datos
-	database.DB.QueryRow(query, nombreVM).Scan(&estado)
+	if err != nil {
+		http.Error(w, "Error al obtener el estado de la máquina virtual", http.StatusBadRequest)
+		return
+	}
 
 	mensaje := "Apagando "
 	if estado == "Apagado" {
@@ -197,8 +195,7 @@ func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Verificar si el nombre de la máquina virtual, la IP del host y el tipo de solicitud están presentes y no son nulos
 	nombreVM, nombrePresente := datos["nombreVM"].(string)
 
-
-	if !nombrePresente ||  nombreVM == "" {
+	if !nombrePresente || nombreVM == "" {
 		http.Error(w, "El tipo de solicitud y nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
 		return
 	}
