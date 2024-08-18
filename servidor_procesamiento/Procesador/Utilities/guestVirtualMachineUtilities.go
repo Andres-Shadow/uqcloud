@@ -23,30 +23,29 @@ Cuando se crea la cuenta e ingresa a la base de datos, se encarga de invocar la 
 @clientIP Paràmetro que contiene la direcciòn IP desde la cual se està realizando la solicitud de crear la cuenta temporal
 */
 
-func CreateTempAccount(clientIP string, distribucion_SO string) string {
-	var persona models.Persona
+func CreateTempAccount(clientIP string, distribucionSO string) string {
+	
+	persona := models.Persona{
+		Nombre:   "Usuario",
+		Apellido: "Invitado",
+		Email:    generateRandomEmail(),
+		Rol:      0,
+	}
 
-	persona.Nombre = "Usuario"
-	persona.Apellido = "Invitado"
-	persona.Email = generateRandomEmail()
-	persona.Contrasenia = "GuestUqcloud"
-	persona.Rol = 0
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(persona.Contrasenia), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("guestuqcloud"), bcrypt.DefaultCost)
 	if err != nil {
-		log.Println("Error al encriptar la contraseña:", err)
+		log.Printf("Error al encriptar la contraseña: %v\n", err)
 		return ""
 	}
 
-	query := "INSERT INTO persona (nombre, apellido, email, contrasenia, rol) VALUES ( ?, ?, ?, ?, ?);"
+	persona.Contrasenia = string(hashedPassword)
 
-	//Consulta en la base de datos si el usuario existe
-	_, err1 := database.DB.Exec(query, persona.Nombre, persona.Apellido, persona.Email, hashedPassword, persona.Rol)
-	if err1 != nil {
-		log.Println("Hubo un error al registrar el usuario en la base de datos", err1)
+	if !database.CreateNewUser(persona) {
+		log.Printf("Error al crear la cuenta temporal para el usuario invitado: %s - %s\n", persona.Email, persona.Nombre)
+		return ""
 	}
 
-	CreateTempVM(persona.Email, clientIP, distribucion_SO)
+	CreateTempVM(persona.Email, clientIP, distribucionSO)
 
 	return persona.Email
 }
@@ -60,8 +59,6 @@ func generateRandomEmail() string {
 	email := GenerateRandomString(5) + "@temp.com"
 	return email
 }
-
-
 
 /*
 Funciòn que genera una cadena alfanumèrica aleatoria
@@ -80,8 +77,6 @@ func GenerateRandomString(length int) string {
 	}
 	return string(b)
 }
-
-
 
 /*
 Funciòn que permite crear màquina virtuales temporales para los usuarios con rol "invitado"

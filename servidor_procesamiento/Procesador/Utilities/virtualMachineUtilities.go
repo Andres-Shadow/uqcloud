@@ -1,7 +1,6 @@
 package utilities
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"regexp"
@@ -133,10 +132,10 @@ func IsRunning(nameVM string, hostIP string, config *ssh.ClientConfig) (bool, er
 @nameVM Paràmetro que contiene el nombre de la màquina virtual a eliminar
 */
 
-func DeleteVM(nameVM string) string {
+func DeleteVM(virtualMachineName string) string {
 
 	//Obtiene el objeto "maquina_virtual"
-	maquinaVirtual, err := database.GetVM(nameVM)
+	maquinaVirtual, err := database.GetVM(virtualMachineName)
 	if err != nil {
 		log.Println("Error al obtener la MV:", err)
 		return "Error al obtener  la MV"
@@ -155,13 +154,13 @@ func DeleteVM(nameVM string) string {
 	}
 
 	//Comando para desconectar el disco de la MV
-	disconnectCommand := "VBoxManage storageattach " + "\"" + nameVM + "\"" + " --storagectl hardisk --port 0 --device 0 --medium none"
+	disconnectCommand := "VBoxManage storageattach " + "\"" + virtualMachineName + "\"" + " --storagectl hardisk --port 0 --device 0 --medium none"
 
 	//Comando para eliminar la MV
-	deleteCommand := "VBoxManage unregistervm " + "\"" + nameVM + "\"" + " --delete"
+	deleteCommand := "VBoxManage unregistervm " + "\"" + virtualMachineName + "\"" + " --delete"
 
 	//Variable que contiene el estado de la MV (Encendida o apagada)
-	running, err3 := IsRunning(nameVM, host.Ip, config)
+	running, err3 := IsRunning(virtualMachineName, host.Ip, config)
 	if err3 != nil {
 		log.Println("Error al obtener el estado de la MV:", err3)
 		return "Error al obtener el estado de la MV"
@@ -184,7 +183,8 @@ func DeleteVM(nameVM string) string {
 			return "Error al eliminar la MV"
 		}
 		//Elimina la màquina virtual de la base de datos
-		err6 := database.DB.QueryRow("DELETE FROM maquina_virtual WHERE NOMBRE = ?", nameVM)
+		// err6 := database.DB.QueryRow("DELETE FROM maquina_virtual WHERE NOMBRE = ?", nameVM)
+		err6 := database.DeleteVirtualMachine(virtualMachineName)
 		if err6 == nil {
 			log.Println("Error al eliminar el registro de la base de datos: ", err6)
 			return "Error al eliminar el registro de la base de datos"
@@ -193,7 +193,7 @@ func DeleteVM(nameVM string) string {
 		ram_host_usada := host.Ram_usada - maquinaVirtual.Ram
 		cpu_host_usada := host.Cpu_usada - maquinaVirtual.Cpu
 		//Actualiza los recursos usados del host en la base de datos
-		err7 := database.DB.QueryRow("UPDATE host set ram_usada = ?, cpu_usada = ? WHERE id = ?", ram_host_usada, cpu_host_usada, host.Id)
+		err7 := database.UpdateHostRamAndCPU(host.Id, ram_host_usada, cpu_host_usada)
 		if err7 == nil {
 			log.Println("Error al actualizar los recursos usados del host en la base de datos: ", err7)
 			return "Error al actualizar los recursos usados del host en la base de datos"
@@ -208,17 +208,13 @@ Funciòn que permite conocer si ya existe o no una màquina virtual en la base d
 @nameVM Paràmetro que representa el nombre de la màquina virtual a buscar
 @Return Retorna true si ya existe una MV con ese nombre, o false en caso contrario
 */
-func ExistVM(nameVM string) (bool, error) {
+func ExistVM(virtualMachineName string) (bool, error) {
 
-	var existe bool
-	err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
+	//err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
+	existe, err := database.ExistVirtualMachine(virtualMachineName)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			existe = false
-		} else {
-			log.Println("Error al realizar la consulta: ", err)
-			return existe, err
-		}
+		log.Println("Error al realizar la consulta: ", err)
+		return existe, err
 	}
 	return existe, err
 }

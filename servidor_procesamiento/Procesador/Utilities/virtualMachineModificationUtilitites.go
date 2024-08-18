@@ -72,7 +72,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 		}
 		if flagCpu {
 			//ACtualiza la CPU usada en el host
-			_, er := database.DB.Exec("UPDATE host SET cpu_usada = ? where id = ?", cpu_host_usada, host.Id)
+			er := database.UpdateHostUsedCpu(host.Id, cpu_host_usada)
 			if er != nil {
 				log.Println("Error al actualizar la cpu_usada del host en la base de datos: ", er)
 				return "Error al actualizar el host en la base de datos"
@@ -83,7 +83,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 				return "Error al realizar la actualizaciòn de la cpu"
 			}
 			//Actualiza la CPU que tiene la MV
-			_, err1 := database.DB.Exec("UPDATE maquina_virtual set cpu = ? WHERE NOMBRE = ?", strconv.Itoa(specs.Cpu), specs.Nombre)
+			err1 := database.UpdateVirtualMachineCPU(specs.Cpu, specs.Nombre)
 			if err1 != nil {
 				log.Println("Error al realizar la actualizaciòn de la CPU", err1)
 				return "Error al realizar la actualizaciòn de la CPU"
@@ -108,7 +108,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 		}
 		if flagRam {
 			//Actualiza la RAM usada en el host
-			_, er := database.DB.Exec("UPDATE host SET ram_usada = ? where id = ?", ram_host_usada, host.Id)
+			er := database.UpdateHostUsedRam(host.Id, ram_host_usada)
 			if er != nil {
 				log.Println("Error al actualizar la ram_usada del host en la base de datos: ", er)
 				return "Error al actualizar el host en la base de datos"
@@ -119,7 +119,7 @@ func ModifyVirtualMachine(specs models.Maquina_virtual) string {
 				return "Error al realizar la actualizaciòn de la memoria"
 			}
 			//Actualiza la RAM de la MV
-			_, err2 := database.DB.Exec("UPDATE maquina_virtual set ram = ? WHERE NOMBRE = ?", strconv.Itoa(specs.Ram), specs.Nombre)
+			err2 := database.UpdateVirtualMachineRam(specs.Ram, specs.Nombre)
 			if err2 != nil {
 				log.Println("Error al realizar la actualizaciòn de la memoria en la base de datos", err2)
 				return "Error al realizar la actualizaciòn de la memoria en la base de datos"
