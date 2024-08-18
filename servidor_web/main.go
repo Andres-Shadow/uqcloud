@@ -49,7 +49,7 @@ func main() {
 	router.Static("web/static", "./web/static")
 
 	router.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
-	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutus.html", nil) })
+	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutUs.html", nil) })
 	router.GET("/docs", func(c *gin.Context) { c.HTML(http.StatusOK, "docs.html", nil) })
 
 	//TODO: Revisar
