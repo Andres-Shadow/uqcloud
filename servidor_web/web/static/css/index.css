@@ -1,3 +1,25 @@
+/* Fonts */
+:root {
+  --default-font: "Open Sans",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Montserrat",  sans-serif;
+  --nav-font: "Poppins",  sans-serif;
+}
+
+/* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #32353a; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #3755be; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+}
+
+/* Smooth scroll */
+:root {
+  scroll-behavior: smooth;
+}
+
 /*--------------------------------------------------------------
 # Global Sections
 --------------------------------------------------------------*/
@@ -23,7 +45,7 @@ section,
 --------------------------------------------------------------*/
 .section-title {
   text-align: center;
-  padding-bottom: 60px;
+  padding-bottom: 40px;
   position: relative;
 }
 
@@ -119,42 +141,6 @@ section,
   font-size: 20px;
 }
 
-.hero .sign-up-form {
-  margin-top: 20px;
-  margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 7px;
-  background: color-mix(in srgb, var(--default-color) 5%, white 90%);
-  box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.1);
-  display: flex;
-}
-
-.hero .sign-up-form input[type=email] {
-  background-color: transparent;
-  border: 0;
-  padding: 4px 10px;
-  width: 100%;
-}
-
-.hero .sign-up-form input[type=email]:focus-visible {
-  outline: none;
-}
-
-.hero .sign-up-form input[type=submit] {
-  border: 0;
-  box-shadow: none;
-  background-color: var(--accent-color);
-  border-color: var(--accent-color);
-  padding: 8px 20px 10px 20px;
-  border-radius: 7px;
-  color: var(--contrast-color);
-  transition: 0.3s;
-}
-
-.hero .sign-up-form input[type=submit]:hover {
-  background-color: color-mix(in srgb, var(--accent-color), transparent 10%);
-}
-
 @media (max-width: 768px) {
   .hero h2 {
     font-size: 32px;
@@ -166,110 +152,219 @@ section,
 }
 
 
-
-
-
-
-/* STYLES MADE BY LAST GROUP ITERATION #2 */
-
-.modal-centered {
-  display: flex !important;
-  align-items: center;
-  justify-content: center;
-  padding-top: 10%;
+/*--------------------------------------------------------------
+# Clients Section
+--------------------------------------------------------------*/
+.clients {
+  padding: 20px 0;
 }
 
-.modal-dialog {
-  margin-top: 15vh;
-}
-
-.owl-carousel .item {
+.clients .client-logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 25px;
+  overflow: hidden;
 }
 
-.owl-carousel .item .col-lg-4 {
+.clients .client-logo img {
+  padding: 20px 40px;
+  max-width: 100%;
+  transition: 0.3s;
+  opacity: 0.5;
+  filter: grayscale(100);
+}
+
+.clients .client-logo img:hover {
+  filter: none;
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .clients .client-logo img {
+    padding: 20px;
+  }
+}
+
+
+/*--------------------------------------------------------------
+# Services Section
+--------------------------------------------------------------*/
+.services .service-item {
+  position: relative;
+  padding-top: 30px;
+}
+
+.services row img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.services .service-item:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.services .service-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--accent-color);
+  border-right: 5px solid var(--background-color);
+}
+
+.services .service-item .title {
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.services .service-item .description {
+  line-height: 24px;
+  font-size: 18px;
+}
+
+
+/*--------------------------------------------------------------
+# Instances Section
+--------------------------------------------------------------*/
+.instances {
+  padding: 50px 0 120px 0;
+}
+
+.instances .section-title {
+  margin-bottom: 40px;
+}
+
+.instances .instances-item {
+  background-color: var(--surface-color);
+  box-shadow: 0 3px 20px -2px rgba(0, 0, 0, 0.3);
+  padding: 60px 40px;
+  height: 100%;
+  position: relative;
+  border-radius: 15px;
+}
+
+.instances h3 {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.instances .icon {
+  margin: 30px auto 20px auto;
+  width: 70px;
+  height: 70px;
+  background: var(--accent-color);
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  transform-style: preserve-3d;
 }
 
-.owl-carousel .owl-nav {
-  margin-top: 10px;
+.instances .icon i {
+  color: var(--background-color);
+  font-size: 28px;
+  transition: ease-in-out 0.3s;
+  line-height: 0;
 }
 
-.owl-carousel .owl-nav button.owl-prev,
-.owl-carousel .owl-nav button.owl-next {
-  background: transparent;
-  border: none;
-  font-size: 2rem;
-  color: #000;
+.instances .icon::before {
+  position: absolute;
+  content: "";
+  height: 86px;
+  width: 86px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  transition: all 0.3s ease-out 0s;
+  transform: translateZ(-1px);
 }
 
-/**/
-.feature-card {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  padding: 30px;
-  margin: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.instances .icon::after {
+  position: absolute;
+  content: "";
+  height: 102px;
+  width: 102px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  transition: all 0.3s ease-out 0s;
+  transform: translateZ(-2px);
+}
+
+.instances ul {
+  padding: 20px 0;
+  list-style: none;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
   text-align: left;
-  width: 600px;
-  height: 350px;
-  margin-top: 20px;
+  line-height: 20px;
 }
 
-.feature-card .feature {
-  margin-bottom: 15px;
-}
-
-.feature-card h2 {
-  margin-bottom: 10px;
-}
-
-.feature-card p {
-  margin-bottom: 15px;
-}
-
-.owl-carousel .item {
+.instances ul li {
+  padding: 10px 0;
   display: flex;
-  justify-content: left;
   align-items: center;
 }
 
-.owl-carousel .owl-nav {
-  margin-top: 10px;
+.instances ul i {
+  color: #059652;
+  font-size: 24px;
+  padding-right: 3px;
 }
 
-.owl-carousel .owl-nav button.owl-prev,
-.owl-carousel .owl-nav button.owl-next {
-  background: transparent;
-  border: none;
-  font-size: 2rem;
-  color: #000;
+.instances ul .na {
+  color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
-#características .text-center.mb-5 {
-  margin-bottom: 5px;
-  /* Separación entre el título y las cards */
+.instances ul .na i {
+  color: color-mix(in srgb, var(--default-color), transparent 70%);
 }
 
-.owl-carousel .feature-card {
-  margin-top: 0px;
-  /* Separación superior de las cards */
-  margin-bottom: 10px;
-  /* Separación inferior de las cards */
+.instances ul .na span {
+  text-decoration: line-through;
 }
 
-.owl-carousel .owl-nav {
-  margin-bottom: 1px;
-  /* Separación entre las flechas y la siguiente sección */
+.instances .instance-btn {
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  display: inline-block;
+  padding: 8px 40px 10px 40px;
+  border-radius: 50px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  transition: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--heading-font);
+  transition: 0.3s;
 }
 
-.owl-carousel .owl-dots {
-  margin-bottom: 20px; /* Separación superior de los puntos */
-  text-align: center; /* Centrar los puntos */
+.instances .instance-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+/* featured : Clase para señalar la mejor opción | como resaltar- */
+.instances .featured {
+  z-index: 10;
+  border: 3px solid var(--accent-color);
+}
+
+@media (min-width: 992px) {
+  .instances .featured {
+    transform: scale(1.15);
+  }
 }

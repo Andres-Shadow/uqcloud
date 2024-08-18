@@ -72,8 +72,8 @@ func main() {
 	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
 	// deje acceder a estas rutas desde el navegador.
 
-	//router.GET("/profile", handlers.ProfilePage)
-	// router.GET("/scrollmenu", handlers.Scrollmenu)
+	router.GET("/profile", handlers.ProfilePage)
+	router.GET("/scrollmenu", handlers.Scrollmenu)
 	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 	// router.GET("/imagenes", handlers.GestionImagenes)
 	// router.GET("/contenedores", handlers.GestionContenedores)

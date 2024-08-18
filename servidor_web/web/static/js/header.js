@@ -67,54 +67,34 @@ document.addEventListener('DOMContentLoaded', function() { (
       });
     }
 
-    /**
-     * Scroll top button
-     */
-    let scrollTop = document.querySelector(".scroll-top");
-
-    function toggleScrollTop() {
-      if (scrollTop) {
-        window.scrollY > 100
-          ? scrollTop.classList.add("active")
-          : scrollTop.classList.remove("active");
-      }
-    }
-    scrollTop.addEventListener("click", (e) => {
-      e.preventDefault();
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
-    });
-
-    window.addEventListener("load", toggleScrollTop);
-    document.addEventListener("scroll", toggleScrollTop);
-
+    // TODO: Utilizar animaciones AOS??? yo creo que mejor eliminar y 
+    //       Eliminar todos los data-aos que hay en los HTML
     /**
      * Animation on scroll function and init
      */
-    function aosInit() {
-      AOS.init({
-        duration: 600,
-        easing: "ease-in-out",
-        once: true,
-        mirror: false,
-      });
-    }
-    window.addEventListener("load", aosInit);
+    // function aosInit() {
+    //   AOS.init({
+    //     duration: 600,
+    //     easing: "ease-in-out",
+    //     once: true,
+    //     mirror: false,
+    //   });
+    // }
+    // window.addEventListener("load", aosInit);
 
     /**
      * Initiate glightbox
      */
-    const glightbox = GLightbox({
-      selector: ".glightbox",
-    });
+    // const glightbox = GLightbox({
+    //   selector: ".glightbox",
+    // });
 
     /**
      * Initiate Pure Counter
      */
-    new PureCounter();
+    // new PureCounter();
 
+    // TODO: Investigar para que es esto JASJASJSJ
     /**
      * Init isotope layout and filters
      */
@@ -232,5 +212,6 @@ document.addEventListener('DOMContentLoaded', function() { (
     }
     window.addEventListener("load", navmenuScrollspy);
     document.addEventListener("scroll", navmenuScrollspy);
+    
   })()
 });
