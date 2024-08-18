@@ -15,7 +15,6 @@ Clase encargada de contener los elementos relacioados con la conexion a la base 
 y posteriormente la creacion de las tablas necesarias para el funcionamiento del sistema
 */
 
-
 var DATABASE *gorm.DB
 
 // Funciòn que se encarga de realizar la conexiòn a la base de datos
