@@ -9,7 +9,7 @@
     <title>DesktopCloud - Iniciar sesión</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon"
-        href="/web/static/images/favicon.ico" />
+        href="/web/static/img/favicon.ico" />
     <!-- Bootstrap icons-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet" />
     <!-- Core theme CSS (includes Bootstrap)-->
@@ -148,7 +148,7 @@
         <div class="container px-5;">
             <a href="/index">
                 <img class="icon-image" style="width: 250px;margin-left: 26px;margin-top: -30px;"
-                    src="/web/static/images/Imagen3.png">
+                    src="/web/static/img/Imagen3.png">
             </a>
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -256,15 +256,15 @@
 
     <script>
         /*Imagenes contenedor*/
-        const images = ['/web/static/images/Font1.jpg',
-            '/web/static/images/Font2.jpg',
-            '/web/static/images/Font3.jpg',
-            '/web/static/images/Font4.jpg']; // Add your image URLs here
+        const img = ['/web/static/img/Font1.jpg',
+            '/web/static/img/Font2.jpg',
+            '/web/static/img/Font3.jpg',
+            '/web/static/img/Font4.jpg']; // Add your image URLs here
         let index = 0;
 
         function rotateImages() {
-            document.getElementById('displayedImage').src = images[index];
-            index = (index + 1) % images.length;
+            document.getElementById('displayedImage').src = img[index];
+            index = (index + 1) % img.length;
             setTimeout(rotateImages, 10000); // Change image every 5 seconds
         }
 

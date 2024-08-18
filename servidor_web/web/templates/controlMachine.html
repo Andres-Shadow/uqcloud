@@ -28,7 +28,7 @@
             <div class="centrar-botones">
                 <button onclick="abrirVentanaEmergente()" type="button" class="btn btn-primary" style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
                     Crear Máquina Virtual
-                    <img src="/web/static/images/icons/add.png" alt="Icono" style="width: 16px; height: 16px; margin-left: 5px;">
+                    <img src="/web/static/img/icons/add.png" alt="Icono" style="width: 16px; height: 16px; margin-left: 5px;">
                 </button>
             </div>
         </div>
@@ -111,7 +111,7 @@
                       una seleccion aleatoria automaticamente</label>
                   {{end}}
                     <button type="submit" name="host" value="0" class="btn btn-warning btn-sm" fill="rgb(255, 255, 255)">
-                        <img src="web/static/images/icons/pc.png" alt="{{.Nombre}}" class="icon-img" width="40" height="40"/>  <!-- Icono del botón -->
+                        <img src="static/img/icons/pc.png" alt="{{.Nombre}}" class="icon-img" width="40" height="40"/>  <!-- Icono del botón -->
                         Aleatorio  <!-- Texto del botón -->
                     </button>
                   
@@ -123,7 +123,7 @@
                     <div>
                         {{range $index, $element := .hosts}}
                         <button type="submit" name="host" value="{{$element.Id}}" class="btn btn-info btn-sm {{if eq $element.Ip $.clientIP}}highlight{{end}}">
-                            <img src="web/static/images/icons/pc.png" alt="{{$element.Nombre}}" class="icon-img" width="30" height="30"/>
+                            <img src="static/img/icons/pc.png" alt="{{$element.Nombre}}" class="icon-img" width="30" height="30"/>
                             {{$element.Nombre}}
                         </button>
                         
@@ -224,7 +224,7 @@
                 <div style="position: relative;">
                     <input type="text" class="form-control" id="vmnameConfig" name="vmnameConfig" required readonly style="background-color: #f2f2f2; cursor: not-allowed;">
                     <div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);">
-                        <img src="/web/static/images/icons/candado.png" alt="Candado" style="width: 16px; height: 16px;">
+                        <img src="/web/static/img/icons/candado.png" alt="Candado" style="width: 16px; height: 16px;">
                     </div>
                 </div>
             </div>
@@ -233,7 +233,7 @@
                 <div style="position: relative;">
                     <input type="text" class="form-control" id="osConfig" name="osConfig" required disabled style="background-color: #f2f2f2; cursor: not-allowed;">
                     <div style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%);">
-                        <img src="/web/static/images/icons/candado.png" alt="Candado" style="width: 16px; height: 16px;">
+                        <img src="/web/static/img/icons/candado.png" alt="Candado" style="width: 16px; height: 16px;">
                     </div>
                 </div>
             </div>
