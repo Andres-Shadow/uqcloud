@@ -1,8 +1,11 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
@@ -19,6 +22,14 @@ gestión de los usuarios
 func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	var persona models.Persona
+
+	// Log para ver el contenido del cuerpo
+	body, _ := ioutil.ReadAll(r.Body)
+	fmt.Println("Cuerpo de la solicitud:", string(body))
+
+	// Restaurar el cuerpo para que json.NewDecoder pueda procesarlo
+	r.Body = io.NopCloser(bytes.NewBuffer(body))
+
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&persona); err != nil {
 		http.Error(w, "Error al decodificar JSON de inicio de sesión", http.StatusBadRequest)
@@ -28,7 +39,7 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 	resultPassword, err := database.GetUserPassword(persona.Email)
 
 	if err != nil {
-		fmt.Println("Error al buscar la contraseña del usuario "+ persona.Email +" en la base de datos:", err)
+		fmt.Println("Error al buscar la contraseña del usuario "+persona.Email+" en la base de datos:", err)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -39,8 +50,8 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 	if verificacion != nil {
 		fmt.Println("Contraseña incorrecta, no se concuerda con el registro en la base de datos")
 		response := map[string]interface{}{
-			"status": 	 false,
-			"usuario":   nil,
+			"status":  false,
+			"usuario": nil,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
@@ -53,8 +64,8 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			fmt.Println("Error al obtener detalles del usuario al intentar hacer login: ", err)
 			response := map[string]interface{}{
-				"status": false,
-				"usuario":       nil,
+				"status":  false,
+				"usuario": nil,
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusNotFound)
@@ -63,8 +74,8 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		response := map[string]interface{}{
-			"status": 	true,
-			"usuario":  usuario,
+			"status":  true,
+			"usuario": usuario,
 		}
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

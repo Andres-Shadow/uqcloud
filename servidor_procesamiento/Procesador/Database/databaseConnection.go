@@ -28,6 +28,9 @@ func DBConnection() {
 
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		dbUser = "root"
+	}
 	var dsn = dbUser + ":" + dbPassword + "@tcp(" + host + ":3306)/uqcloud?charset=utf8mb4&parseTime=True&loc=Local"
 
 	for {
