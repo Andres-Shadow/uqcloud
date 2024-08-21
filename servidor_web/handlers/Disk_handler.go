@@ -6,9 +6,10 @@ import (
 	"AppWeb/Utilities"
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 func CreateDiskPage(c *gin.Context) {

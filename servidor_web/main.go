@@ -49,7 +49,7 @@ func main() {
 	router.Static("web/static", "./web/static")
 
 	router.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
-	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutus.html", nil) })
+	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutUs.html", nil) })
 	router.GET("/docs", func(c *gin.Context) { c.HTML(http.StatusOK, "docs.html", nil) })
 
 	//TODO: Revisar
@@ -90,8 +90,8 @@ func main() {
 	router.GET("/createDisk", handlers.CreateDiskPage)
 
 	// TODO: DESCOMENTAR LUEGO
-	// router.GET("/api/machines", handlers.GetMachines)
-	router.GET("/controlMachine", handlers.ControlMachine)
+	//router.GET("/api/machines", handlers.GetMachines)
+	//router.GET("/controlMachine", handlers.ControlMachine)
 
 	router.POST("/login", handlers.Login)
 	//router.POST("/signin", handlers.Signin)
