@@ -88,7 +88,7 @@ func setDatabase() {
 			Nombre:      "admin",
 			Apellido:    "admin",
 			Email:       "admin@uqcloud.co",
-			Contrasenia: "admin",
+			Contrasenia: "$2y$10$JGxWitiykfO83Ep8IBab/.3fn.H/DxMjAK8dFTQCPZyJ5EHqZtfji", // Dejar este hash bcrypt para la contraseña "admin"
 			Rol:         1,
 		}
 
@@ -159,8 +159,8 @@ func manageServer(r *mux.Router) {
 		-----------------
 	*/
 
-	//Endpoint para peticiones de inicio de sesiòn
-	// r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
+	// Endpoint para peticiones de inicio de sesiòn
+	r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
 
 	//Endpoint para peticiones de inicio de sesiòn
 	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)
