@@ -19,11 +19,20 @@ import (
 
 // Funcion que responde al endpoint encargado de crear una maquina virtual
 func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
+
 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
 	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&payload); err != nil {
 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
+		log.Println("Error al decodificar JSON de la solicitud")
+		return
+	}
+
+	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if payload == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
 		return
 	}
 
