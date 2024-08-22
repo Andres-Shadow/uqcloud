@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -17,7 +18,9 @@ func LoginPage(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
+	log.Println(email)
 	if email != nil {
+		log.Println("Email invalido")
 		c.Redirect(http.StatusFound, "/mainPage")
 		return
 	}
@@ -42,6 +45,7 @@ func Login(c *gin.Context) {
 
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
+		log.Println("Error al decodificar: ", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -55,12 +59,15 @@ func Login(c *gin.Context) {
 		session.Set("rol", usuario.Role)
 		session.Save()
 
+		log.Println("Usuario inicia sesion con exito")
+		log.Printf("%+v\n", usuario)
 		c.Redirect(http.StatusFound, "/mainPage")
 	} else {
+		log.Println("Credenciales invalidas/Usuario no encontrado: ", err)
 		session := sessions.Default(c)
 		session.Set("loginError", ErrorMessage())
 		session.Save()
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusNotFound, "/login")
 	}
 }
 
@@ -87,7 +94,7 @@ func LoginTemp(c *gin.Context) {
 	jsonBody, err := json.Marshal(data)
 	if err != nil {
 		// Maneja el error si la conversión falla
-		fmt.Println("Error al convertir a JSON:", err)
+		log.Println("Error al convertir a JSON:", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
 		return
 	}
@@ -96,7 +103,7 @@ func LoginTemp(c *gin.Context) {
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		// Maneja el error si la creación de la solicitud falla
-		fmt.Println("Error al crear la solicitud HTTP:", err)
+		log.Println("Error al crear la solicitud HTTP:", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
 		return
 	}
@@ -106,7 +113,7 @@ func LoginTemp(c *gin.Context) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		fmt.Println("Error al realizar la solicitud HTTP:", err)
+		log.Println("Error al realizar la solicitud HTTP:", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
 		return
 	}
@@ -129,7 +136,7 @@ func LoginTemp(c *gin.Context) {
 
 		// Accede a los datos del mapa
 		mensaje := data["mensaje"]
-		fmt.Println("Mensaje recibido:", mensaje)
+		log.Println("usuario creado con exito", mensaje)
 
 		session.Set("email", mensaje)
 		session.Set("nombre", "Usuario")
@@ -139,9 +146,21 @@ func LoginTemp(c *gin.Context) {
 
 		c.Redirect(http.StatusSeeOther, "/controlMachine")
 	} else {
-
+		log.Println("No fue posible crear el usuario")
+		c.Redirect(http.StatusNotFound, "/login")
 	}
 
+}
+
+func Logout(c *gin.Context) {
+	// Acceder a la sesión
+	session := sessions.Default(c)
+	// Eliminar la información de la sesión, incluyendo el email
+	session.Delete("email")
+	session.Save()
+
+	// Redirigir al usuario a la página de inicio de sesión u otra página
+	c.Redirect(http.StatusFound, "/")
 }
 
 /*TODO: Funcion no se utiliza revisar si se puede eliminar o simplemente comentar

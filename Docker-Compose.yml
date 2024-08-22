@@ -31,7 +31,7 @@ services:
     networks:
       - general
     environment:
-      - servidor_procesamiento = procesamiento
+      - servidor_procesamiento=procesamiento
     depends_on:
       - procesamiento
 

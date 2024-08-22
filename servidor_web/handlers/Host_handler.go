@@ -4,6 +4,7 @@ import (
 	"AppWeb/Config"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
+	"log"
 
 	"fmt"
 	"github.com/gin-contrib/sessions"
@@ -19,6 +20,7 @@ func CreateHostPage(c *gin.Context) {
 
 	//TODO: Revisar si los roles pueden ser enum en vez de string (Revisar BASE DE DATOS)
 	if rol != "Administrador" {
+		log.Println("El usuario no es administrador no puede acceder")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
 		return
@@ -33,14 +35,21 @@ func CreateHostPage(c *gin.Context) {
 func CreateNewHost(c *gin.Context) {
 	// Crear el host a partir de la solicitud
 	newHost, err := CreateHostFromRequest(c)
+
+	log.Printf("%+v\n", newHost)
+
 	if err != nil {
+		log.Println("Error al decodificar el JSON del host", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar JSON: " + err.Error()})
 		return
 	}
 
 	// Registrar el host
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
+	log.Println(serverURL)
+
 	if err := Utilities.RegisterElements(serverURL, newHost); err != nil {
+		log.Println("Error al registrar el host", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registrar el host: " + err.Error()})
 		return
 	}
