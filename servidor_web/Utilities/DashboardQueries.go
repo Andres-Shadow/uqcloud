@@ -18,6 +18,7 @@ func CheckMetrics() (Models.DashboardData, error) {
 
 	resp, err := http.Get(serverURL)
 	if err != nil {
+		log.Println("Error getting metrics")
 		return metricas, err
 	}
 	defer resp.Body.Close()

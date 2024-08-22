@@ -14,7 +14,6 @@ import (
 )
 
 func CreateDiskPage(c *gin.Context) {
-	// Acceder a la sesión
 	session := sessions.Default(c)
 	email := session.Get("email").(string)
 	rol := session.Get("rol")
@@ -52,10 +51,9 @@ func CreateNewDisk(c *gin.Context) {
 		return
 	}
 
-	//Registrar el disk
-	// Definir la URL del servidor
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL)
 	log.Println(serverURL)
+
 	if err := Utilities.RegisterElements(serverURL, newDisk); err != nil {
 		log.Println("Error al registro el disco: ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disk"})

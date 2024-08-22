@@ -5,7 +5,6 @@ import (
 	"AppWeb/Utilities"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -214,8 +213,8 @@ func ConfigMachine(c *gin.Context) {
 		// Manejar el error si el JSON no es válido o no coincide con la estructura
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 
-		mv := fmt.Sprintf("Nombre: %s, RAM: %d, CPU: %d, Email: %s\n", specifications.VMName, specifications.Ram, specifications.CPU, specifications.Email)
-		log.Println("Informacion de configuracion de la VM", mv)
+		log.Printf("%+v\n", specifications)
+
 		confirmacion, err := Utilities.ConfigMachienFromServer(specifications)
 
 		if err != nil {

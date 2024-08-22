@@ -18,7 +18,6 @@ func CreateHostPage(c *gin.Context) {
 	session := sessions.Default(c)
 	rol := session.Get("rol")
 
-	//TODO: Revisar si los roles pueden ser enum en vez de string (Revisar BASE DE DATOS)
 	if rol != "Administrador" {
 		log.Println("El usuario no es administrador no puede acceder")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
@@ -33,7 +32,6 @@ func CreateHostPage(c *gin.Context) {
 
 // Función encargado de crear y registrar un nuevo
 func CreateNewHost(c *gin.Context) {
-	// Crear el host a partir de la solicitud
 	newHost, err := CreateHostFromRequest(c)
 
 	log.Printf("%+v\n", newHost)
@@ -44,7 +42,6 @@ func CreateNewHost(c *gin.Context) {
 		return
 	}
 
-	// Registrar el host
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
 	log.Println(serverURL)
 
