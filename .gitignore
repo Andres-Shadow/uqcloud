@@ -1,6 +1,10 @@
-servidor_procesamiento/Procesador/Environment/.env
+# Environment files
+servidor_procesamiento/Procesador/Environment/**
 *.env
 *endpoints.txt
 *JSONS.txt
 *id_rsa
-servidor_procesamiento/Procesador/Keys/id_rsa
+
+# IDE
+.idea/
+.vscode

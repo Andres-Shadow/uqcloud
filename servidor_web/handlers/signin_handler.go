@@ -1,15 +1,13 @@
 package handlers
 
 import (
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
+// TODO: Modificarlo para solo usuarios admin
 func SigninPage(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -24,6 +22,8 @@ func SigninPage(c *gin.Context) {
 	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
 
+/*
+// TODO: Eliminar la opción de registro
 func Signin(c *gin.Context) {
 	// Obtener los datos del formulario
 	nombre := c.PostForm("nombre")
@@ -32,7 +32,7 @@ func Signin(c *gin.Context) {
 	password := c.PostForm("password")
 
 	// Crear una estructura Account y convertirla a JSON
-	persona := Persona{Nombre: nombre, Apellido: apellido, Email: email, Contrasenia: password}
+	persona := Models.Person{Name: nombre, LastName: apellido, Email: email, Password: password}
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -51,7 +51,7 @@ func Signin(c *gin.Context) {
 }
 
 func sendRegisterJSONToServer(jsonData []byte) bool {
-	serverURL := fmt.Sprintf("http://%s:8081/json/signin", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/signin", Config.ServidorProcesamientoRoute)
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
@@ -76,4 +76,4 @@ func sendRegisterJSONToServer(jsonData []byte) bool {
 	} else {
 		return true
 	}
-}
+}*/

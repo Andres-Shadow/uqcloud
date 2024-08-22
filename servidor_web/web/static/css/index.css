@@ -1,0 +1,370 @@
+/* Fonts */
+:root {
+  --default-font: "Open Sans",  system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --heading-font: "Montserrat",  sans-serif;
+  --nav-font: "Poppins",  sans-serif;
+}
+
+/* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
+:root { 
+  --background-color: #ffffff; /* Background color for the entire website, including individual sections */
+  --default-color: #212529; /* Default color used for the majority of the text content across the entire website */
+  --heading-color: #32353a; /* Color for headings, subheadings and title throughout the website */
+  --accent-color: #3755be; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
+  --surface-color: #ffffff; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
+  --contrast-color: #ffffff; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+}
+
+/* Smooth scroll */
+:root {
+  scroll-behavior: smooth;
+}
+
+/*--------------------------------------------------------------
+# Global Sections
+--------------------------------------------------------------*/
+section,
+.section {
+  color: var(--default-color);
+  background-color: var(--background-color);
+  padding: 60px 0;
+  scroll-margin-top: 98px;
+  overflow: clip;
+}
+
+@media (max-width: 1199px) {
+
+  section,
+  .section {
+    scroll-margin-top: 64px;
+  }
+}
+
+/*--------------------------------------------------------------
+# Global Section Titles
+--------------------------------------------------------------*/
+.section-title {
+  text-align: center;
+  padding-bottom: 40px;
+  position: relative;
+}
+
+.section-title h2 {
+  font-size: 32px;
+  font-weight: 700;
+  position: relative;
+}
+
+.section-title h2:before,
+.section-title h2:after {
+  content: "";
+  width: 50px;
+  height: 2px;
+  background: var(--accent-color);
+  display: inline-block;
+}
+
+.section-title h2:before {
+  margin: 0 15px 10px 0;
+}
+
+.section-title h2:after {
+  margin: 0 0 10px 15px;
+}
+
+.section-title p {
+  margin-bottom: 0;
+}
+
+.gradient-bg {
+  /* fallback for old browsers */
+  background: #30cfd0;
+
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: -webkit-linear-gradient(to bottom, #1b1f3b, #3755be);
+
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: linear-gradient(to bottom, #1b1f3b, #3755be)
+}
+
+.btn-:hover,
+.btn-:focus:hover {
+  color: var(--contrast-color);
+  background: color-mix(in srgb, #1b1f3b, transparent 15%);
+}
+
+/*--------------------------------------------------------------
+# Hero Section
+--------------------------------------------------------------*/
+.hero {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  padding: 80px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.hero:before {
+  content: "";
+  background: color-mix(in srgb, var(--background-color), transparent 50%);
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 3;
+}
+
+.hero h2 {
+  margin: 0;
+  font-size: 44px;
+  font-weight: 700;
+}
+
+.hero p {
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  margin: 5px 0 0 0;
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .hero h2 {
+    font-size: 32px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+}
+
+
+/*--------------------------------------------------------------
+# Clients Section
+--------------------------------------------------------------*/
+.clients {
+  padding: 20px 0;
+}
+
+.clients .client-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.clients .client-logo img {
+  padding: 20px 40px;
+  max-width: 100%;
+  transition: 0.3s;
+  opacity: 0.5;
+  filter: grayscale(100);
+}
+
+.clients .client-logo img:hover {
+  filter: none;
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .clients .client-logo img {
+    padding: 20px;
+  }
+}
+
+
+/*--------------------------------------------------------------
+# Services Section
+--------------------------------------------------------------*/
+.services .service-item {
+  position: relative;
+  padding-top: 30px;
+}
+
+.services row img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+.services .service-item:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.services .service-item::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--accent-color);
+  border-right: 5px solid var(--background-color);
+}
+
+.services .service-item .title {
+  font-weight: 700;
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+.services .service-item .description {
+  line-height: 24px;
+  font-size: 18px;
+}
+
+
+/*--------------------------------------------------------------
+# Instances Section
+--------------------------------------------------------------*/
+.instances {
+  padding: 50px 0 120px 0;
+}
+
+.instances .section-title {
+  margin-bottom: 40px;
+}
+
+.instances .instances-item {
+  background-color: var(--surface-color);
+  box-shadow: 0 3px 20px -2px rgba(0, 0, 0, 0.3);
+  padding: 60px 40px;
+  height: 100%;
+  position: relative;
+  border-radius: 15px;
+}
+
+.instances h3 {
+  font-weight: 600;
+  margin-bottom: 15px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.instances .icon {
+  margin: 30px auto 20px auto;
+  width: 70px;
+  height: 70px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  transform-style: preserve-3d;
+}
+
+.instances .icon i {
+  color: var(--background-color);
+  font-size: 28px;
+  transition: ease-in-out 0.3s;
+  line-height: 0;
+}
+
+.instances .icon::before {
+  position: absolute;
+  content: "";
+  height: 86px;
+  width: 86px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  transition: all 0.3s ease-out 0s;
+  transform: translateZ(-1px);
+}
+
+.instances .icon::after {
+  position: absolute;
+  content: "";
+  height: 102px;
+  width: 102px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  transition: all 0.3s ease-out 0s;
+  transform: translateZ(-2px);
+}
+
+.instances ul {
+  padding: 20px 0;
+  list-style: none;
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  text-align: left;
+  line-height: 20px;
+}
+
+.instances ul li {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+}
+
+.instances ul i {
+  color: #059652;
+  font-size: 24px;
+  padding-right: 3px;
+}
+
+.instances ul .na {
+  color: color-mix(in srgb, var(--default-color), transparent 70%);
+}
+
+.instances ul .na i {
+  color: color-mix(in srgb, var(--default-color), transparent 70%);
+}
+
+.instances ul .na span {
+  text-decoration: line-through;
+}
+
+.instances .instance-btn {
+  color: color-mix(in srgb, var(--default-color), transparent 20%);
+  display: inline-block;
+  padding: 8px 40px 10px 40px;
+  border-radius: 50px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+  transition: none;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: var(--heading-font);
+  transition: 0.3s;
+}
+
+.instances .instance-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--contrast-color);
+  cursor: pointer;
+}
+
+/* featured : Clase para señalar la mejor opción | como resaltar- */
+.instances .featured {
+  z-index: 10;
+  border: 3px solid var(--accent-color);
+}
+
+@media (min-width: 992px) {
+  .instances .featured {
+    transform: scale(1.15);
+  }
+}

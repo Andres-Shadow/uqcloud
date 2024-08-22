@@ -1,5 +1,8 @@
 package handlers
 
+// TODO: Mover al package model y poner cada struct en una clase
+
+// Las estructuras fuero movidas al package model
 type Persona struct {
 	Nombre      string
 	Apellido    string
@@ -52,6 +55,7 @@ type Maquina_virtual struct {
 	Distribucion_sistema_operativo string
 }
 
+// TODO: Cambiar nombre
 type Conetendor struct {
 	ConetendorId string
 	Imagen       string

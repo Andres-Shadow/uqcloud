@@ -23,10 +23,10 @@ FROM debian:sid-slim
 COPY --from=builder /binario /binario
 
 # Copia las plantillas HTML
-COPY --from=builder /app/templates /templates
+COPY --from=builder /app/web/templates /web/templates
 
 # Copia los elementos de estilo
-COPY --from=builder /app/static /static
+COPY --from=builder /app/web/static /web/static
 
 # Asegúrate de que el binario tiene permisos de ejecución
 RUN chmod +x /binario

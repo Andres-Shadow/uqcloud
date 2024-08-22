@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"AppWeb/Config"
+	"AppWeb/Models"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -18,6 +20,7 @@ import (
 	"golang.org/x/crypto/ssh"
 )
 
+// ToDo: Revisar con cuidado
 func GestionContenedores(c *gin.Context) {
 	// Renderiza la plantilla HTML
 
@@ -42,7 +45,7 @@ func GestionContenedores(c *gin.Context) {
 
 func CrearContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/crearContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/crearContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -222,7 +225,7 @@ func CrearContenedor(c *gin.Context) {
 
 func CorrerContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -298,7 +301,7 @@ func CorrerContenedor(c *gin.Context) {
 
 func PausarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -374,7 +377,7 @@ func PausarContenedor(c *gin.Context) {
 
 func ReiniciarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -450,7 +453,7 @@ func ReiniciarContenedor(c *gin.Context) {
 
 func EliminarContenedor(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -525,7 +528,7 @@ func EliminarContenedor(c *gin.Context) {
 }
 
 func EliminarContenedores(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/gestionContenedor", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -623,8 +626,8 @@ func GetContendores(c *gin.Context) {
 
 }
 
-func obtenerContenedores(maquinaVirtual string) ([]Conetendor, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/ContenedoresVM", ServidorProcesamientoRoute)
+func obtenerContenedores(maquinaVirtual string) ([]Models.Container, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/ContenedoresVM", Config.ServidorProcesamientoRoute)
 
 	partes := strings.Split(maquinaVirtual, " - ")
 
@@ -669,7 +672,7 @@ func obtenerContenedores(maquinaVirtual string) ([]Conetendor, error) {
 	if err != nil {
 		return nil, err
 	}
-	var contenedores []Conetendor
+	var contenedores []Models.Container
 
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &contenedores); err != nil {
@@ -680,12 +683,12 @@ func obtenerContenedores(maquinaVirtual string) ([]Conetendor, error) {
 
 }
 
-func ObtenerImagenesC(maquinaVirtual string) ([]Imagen, error) {
+func ObtenerImagenesC(maquinaVirtual string) ([]Models.Imagen, error) {
 	// Lee la información de la máquina virtual seleccionada del cuerpo de la solicitud
 
 	partes := strings.Split(maquinaVirtual, " - ")
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", Config.ServidorProcesamientoRoute)
 
 	ip := partes[0]
 	hostname := partes[1]
@@ -731,7 +734,7 @@ func ObtenerImagenesC(maquinaVirtual string) ([]Imagen, error) {
 		return nil, err
 	}
 
-	var imagenes []Imagen
+	var imagenes []Models.Imagen
 
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &imagenes); err != nil {
@@ -742,10 +745,10 @@ func ObtenerImagenesC(maquinaVirtual string) ([]Imagen, error) {
 
 }
 
-func MaquinasActualesC(email string) ([]Maquina_virtual, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", ServidorProcesamientoRoute)
+func MaquinasActualesC(email string) ([]Models.VirtualMachine, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
 
-	persona := Persona{Email: email}
+	persona := Models.Person{Email: email}
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
 		return nil, err
@@ -779,7 +782,7 @@ func MaquinasActualesC(email string) ([]Maquina_virtual, error) {
 		return nil, err
 	}
 
-	var machines []Maquina_virtual
+	var machines []Models.VirtualMachine
 
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &machines); err != nil {

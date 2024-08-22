@@ -1,6 +1,7 @@
 package main
 
 import (
+	"AppWeb/Utilities"
 	"AppWeb/handlers"
 	"encoding/json"
 	"html/template"
@@ -26,9 +27,9 @@ func main() {
 	args := os.Args[1]
 	port := ":" + args
 
-	r := gin.Default()
+	router := gin.Default()
 
-	r.SetFuncMap(template.FuncMap{
+	router.SetFuncMap(template.FuncMap{
 		"json": func(v interface{}) string {
 			jsonValue, _ := json.Marshal(v)
 			return string(jsonValue)
@@ -37,74 +38,96 @@ func main() {
 	})
 
 	// Carga las plantillas
-	r.LoadHTMLGlob("templates/*.html")
+	router.LoadHTMLGlob("web/templates/*.html")
 
 	// Configurar la tienda de cookies para las sesiones
 	store := cookie.NewStore([]byte("tu_clave_secreta"))
-	r.Use(sessions.Sessions("sesion", store))
+	router.Use(sessions.Sessions("sesion", store))
 
 	// Configura las rutas
-	r.LoadHTMLGlob("templates/*.html")
-	r.Static("/static", "./static")
+	router.LoadHTMLGlob("web/templates/*.html")
+	router.Static("web/static", "./web/static")
 
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index.html", nil)
-	})
-	r.POST("/api/checkhost", handlers.Checkhost)
-	r.GET("/login", handlers.LoginPage)
-	r.GET("/signin", handlers.SigninPage)
-	r.GET("/mainPage", handlers.MainPage)
-	r.GET("/profile", handlers.ProfilePage)
-	r.GET("/imagenes", handlers.GestionImagenes)
-	r.GET("/contenedores", handlers.GestionContenedores)
-	r.GET("/welcome", handlers.WelcomePage)
-	r.GET("/dashboard", handlers.DashboardHandler)
-	r.GET("/createHost", handlers.CreateHostPage)
-	r.GET("/createDisk", handlers.CreateDiskPage)
-	r.GET("/helpCenter", handlers.HelpCenterPage)
-	r.GET("/aboutUs", handlers.AboutUsPage)
+	router.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
+	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutUs.html", nil) })
+	router.GET("/docs", func(c *gin.Context) { c.HTML(http.StatusOK, "docs.html", nil) })
 
-	r.GET("/index", handlers.Index)
+	//TODO: Revisar
+	router.POST("/api/checkhost", handlers.Checkhost)
 
-	r.GET("/scrollmenu", handlers.Scrollmenu)
-	r.GET("/api/machines", handlers.GetMachines)
-	r.GET("/controlMachine", handlers.ControlMachine)
-	r.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
+	//TODO: Cambiar ruta por /admin
+	router.GET("/login", handlers.LoginPage)
 
-	r.POST("/login", handlers.Login)
-	r.POST("/signin", handlers.Signin)
+	//TODO: Revisar para que siver o eliminar si se puede
+	router.GET("/signin", handlers.SigninPage)
 
-	r.POST("/api/createMachine", handlers.MainSend)
-	r.POST("/powerMachine", handlers.PowerMachine)
-	r.POST("/deleteMachine", handlers.DeleteMachine)
-	r.POST("/configMachine", handlers.ConfigMachine)
-	r.POST("/api/loginTemp", handlers.LoginTemp)
-	r.POST("/createHost", handlers.CreateHost)
-	r.POST("/createDisk", handlers.CreateDisk)
-	r.POST("/DockerHub", handlers.CrearImagen)
-	r.POST("/CrearImagenTar", handlers.CrearImagenArchivoTar)
-	r.POST("/CrearDockerFile", handlers.CrearImagenDockerFile)
-	r.POST("/eliminarImagen", handlers.EliminarImagen)
-	r.POST("/eliminarImagenes", handlers.EliminarImagenes)
-	r.POST("/crearContenedor", handlers.CrearContenedor)
-	r.POST("/CorrerContenedor", handlers.CorrerContenedor)
-	r.POST("/PausarContenedor", handlers.PausarContenedor)
-	r.POST("/ReiniciarContenedor", handlers.ReiniciarContenedor)
-	r.POST("/EliminarContenedor", handlers.EliminarContenedor)
-	r.POST("/eliminarContenedores", handlers.EliminarContenedores)
+	//TODO: Adaptar a los usuarios temporales
+	router.GET("/mainPage", handlers.MainPage)
 
-	r.POST("/api/contendores", handlers.GetContendores)
-	r.POST("/api/imagenes", handlers.GetImages)
+	//TODO: RUTAS NO DEBERIAN SER RUTAS? Y VAN EN EL /mainpage
+	// Por como está hecho este proyecto, archivos .html llaman a otros .html
+	// ya sea usando JQuery o iframe, por lo cual el servidor debe exponer estas
+	// rutas para acceder a las templates.
+	// Se debe buscar una forma de reescribir esto, como no tener el scrollmenu.html
+	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
+	// deje acceder a estas rutas desde el navegador.
 
-	r.POST("/cambiar-contenido", handlers.EnviarContenido)
+	router.GET("/profile", handlers.ProfilePage)
+	router.GET("/scrollmenu", handlers.Scrollmenu)
+	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
+	// router.GET("/imagenes", handlers.GestionImagenes)
+	// router.GET("/contenedores", handlers.GestionContenedores)
+	// router.GET("/helpCenter", handlers.HelpCenterPage)
 
-	r.POST("/uploadJSON", handlers.HandleUploadJSON)
-	r.POST("/api/mvtemp", handlers.Mvtemp)
+	//TODO: ELIMINAR ¿?
+	router.GET("/welcome", handlers.WelcomePage)
+
+	//TODO: DEJAR QUIETO HASTA TENER ACCESO AL ADMINISTRADOR
+	router.GET("/dashboard", handlers.DashboardHandler)
+
+	//TODO: Deberia ser un formulario dentro de dashboard y no una ruta
+	router.GET("/createHost", handlers.CreateHostPage)
+	router.GET("/createDisk", handlers.CreateDiskPage)
+
+	// TODO: DESCOMENTAR LUEGO
+	//router.GET("/api/machines", handlers.GetMachines)
+	//router.GET("/controlMachine", handlers.ControlMachine)
+
+	router.POST("/login", handlers.Login)
+	//router.POST("/signin", handlers.Signin)
+
+	//TODO: Mirar después
+	router.POST("/api/createMachine", handlers.MainSend)
+	router.POST("/powerMachine", handlers.PowerMachine)
+	router.POST("/deleteMachine", handlers.DeleteMachine)
+	router.POST("/configMachine", handlers.ConfigMachine)
+	router.POST("/api/loginTemp", handlers.LoginTemp)
+	router.POST("/createHost", handlers.CreateNewHost)
+	router.POST("/createDisk", handlers.CreateNewDisk)
+	router.POST("/DockerHub", handlers.CrearImagen)
+	router.POST("/CrearImagenTar", handlers.CrearImagenArchivoTar)
+	router.POST("/CrearDockerFile", handlers.CrearImagenDockerFile)
+	router.POST("/eliminarImagen", handlers.EliminarImagen)
+	router.POST("/eliminarImagenes", handlers.EliminarImagenes)
+	router.POST("/crearContenedor", handlers.CrearContenedor)
+	router.POST("/CorrerContenedor", handlers.CorrerContenedor)
+	router.POST("/PausarContenedor", handlers.PausarContenedor)
+	router.POST("/ReiniciarContenedor", handlers.ReiniciarContenedor)
+	router.POST("/EliminarContenedor", handlers.EliminarContenedor)
+	router.POST("/eliminarContenedores", handlers.EliminarContenedores)
+
+	router.POST("/api/contendores", handlers.GetContendores)
+	router.POST("/api/imagenes", handlers.GetImages)
+
+	router.POST("/cambiar-contenido", Utilities.SendContent)
+
+	router.POST("/uploadJSON", Utilities.UploadJSON)
+	//router.POST("/api/mvtemp", handlers.Mvtemp)
 	// Ruta para cerrar sesión
-	r.GET("/logout", handlers.Logout)
+	router.GET("/logout", handlers.Logout)
 
 	// Iniciar la aplicación
-	err := r.Run(port)
+	err := router.Run(port)
 	if err != nil {
 		log.Fatal(err)
 	}

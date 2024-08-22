@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"AppWeb/Config"
+	"AppWeb/Models"
 	"bytes"
 	"os/user"
 
@@ -45,7 +47,7 @@ func GestionImagenes(c *gin.Context) {
 }
 
 func CrearImagen(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenHub", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenHub", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -125,7 +127,7 @@ func CrearImagen(c *gin.Context) {
 }
 
 func CrearImagenArchivoTar(c *gin.Context) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenTar", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenTar", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -236,7 +238,7 @@ func CrearImagenArchivoTar(c *gin.Context) {
 
 func CrearImagenDockerFile(c *gin.Context) {
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenDockerFile", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenDockerFile", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -351,7 +353,7 @@ func EliminarImagen(c *gin.Context) {
 
 	fmt.Println("Eliminar")
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/eliminarImagen", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/eliminarImagen", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -418,7 +420,7 @@ func EliminarImagenes(c *gin.Context) {
 
 	fmt.Println("Eliminar")
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/eliminarImagen", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/eliminarImagen", Config.ServidorProcesamientoRoute)
 
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -479,10 +481,10 @@ func EliminarImagenes(c *gin.Context) {
 	})
 }
 
-func MaquinasActualesI(email string) ([]Maquina_virtual, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", ServidorProcesamientoRoute)
+func MaquinasActualesI(email string) ([]Models.VirtualMachine, error) {
+	serverURL := fmt.Sprintf("http://%s:8081/json/consultMachine", Config.ServidorProcesamientoRoute)
 
-	persona := Persona{Email: email}
+	persona := Models.Person{Email: email}
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
 		return nil, err
@@ -516,7 +518,7 @@ func MaquinasActualesI(email string) ([]Maquina_virtual, error) {
 		return nil, err
 	}
 
-	var machines []Maquina_virtual
+	var machines []Models.VirtualMachine
 
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &machines); err != nil {
@@ -601,12 +603,12 @@ func enviarArchivoSFTP(host, archivoLocal, nombreImagen, hostname string, config
 
 }
 
-func ObtenerImagenes(maquinaVirtual string) ([]Imagen, error) {
+func ObtenerImagenes(maquinaVirtual string) ([]Models.Imagen, error) {
 	// Lee la información de la máquina virtual seleccionada del cuerpo de la solicitud
 
 	partes := strings.Split(maquinaVirtual, " - ")
 
-	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:8081/json/imagenesVM", Config.ServidorProcesamientoRoute)
 
 	ip := partes[0]
 	hostname := partes[1]
@@ -652,7 +654,7 @@ func ObtenerImagenes(maquinaVirtual string) ([]Imagen, error) {
 		return nil, err
 	}
 
-	var imagenes []Imagen
+	var imagenes []Models.Imagen
 
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &imagenes); err != nil {

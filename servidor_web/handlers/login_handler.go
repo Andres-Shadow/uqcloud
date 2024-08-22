@@ -1,14 +1,13 @@
 package handlers
 
 import (
+	"AppWeb/Config"
+	"AppWeb/Utilities"
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -36,20 +35,24 @@ func Login(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
-	persona := Persona{Email: email, Contrasenia: password}
+	persona := map[string]string{
+		"email":       email,
+		"contrasenia": password,
+	}
+
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	usuario, er := sendJSONToServer(jsonData)
+	usuario, er := Utilities.SendInfoUserServer(jsonData)
 	if er == nil {
 		session := sessions.Default(c)
 		session.Set("email", email)
-		session.Set("nombre", usuario.Nombre)
-		session.Set("apellido", usuario.Apellido)
-		session.Set("rol", usuario.Rol)
+		session.Set("nombre", usuario.Name)
+		session.Set("apellido", usuario.LastName)
+		session.Set("rol", usuario.Role)
 		session.Save()
 
 		c.Redirect(http.StatusFound, "/mainPage")
@@ -65,9 +68,11 @@ func ErrorMessage() string {
 	return "Credenciales incorrectas. Inténtalo de nuevo."
 }
 
+// Funcion para el Login Temporal de un usuario
+// ToDo: Esta función puede cambiar en el futuro
 func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
-	serverURL := fmt.Sprintf("http://%s:8081/json/createGuestMachine", ServidorProcesamientoRoute)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CREATE_GUEST_VM_URL)
 
 	clientIP := c.ClientIP()
 	distribucion := c.PostForm("osCreate")
@@ -139,62 +144,7 @@ func LoginTemp(c *gin.Context) {
 
 }
 
-func Index(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", nil)
-}
-
-func sendJSONToServer(jsonData []byte) (Persona, error) {
-	serverURL := fmt.Sprintf("http://%s:8081/json/login", ServidorProcesamientoRoute)
-	var usuario Persona
-
-	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
-	if err != nil {
-		return usuario, err
-	}
-
-	// Establece el encabezado de tipo de contenido
-	req.Header.Set("Content-Type", "application/json")
-
-	// Realiza la solicitud HTTP
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return usuario, err
-	}
-	defer resp.Body.Close()
-
-	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
-	if resp.StatusCode != http.StatusOK {
-		return usuario, errors.New("Error en la respuesta del servidor")
-	}
-
-	responseBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return usuario, err
-	}
-	var resultado map[string]interface{}
-
-	if err := json.Unmarshal(responseBody, &resultado); err != nil {
-		fmt.Println("Error al deserializar")
-		return usuario, err
-	}
-	specsMap, _ := resultado["usuario"].(map[string]interface{})
-	specsJSON, err := json.Marshal(specsMap)
-	if err != nil {
-		fmt.Println("Error al serializar el usuario:", err)
-		return usuario, err
-	}
-
-	err = json.Unmarshal(specsJSON, &usuario)
-	if err != nil {
-		fmt.Println("Error al deserializar el usuario:", err)
-		return usuario, err
-	}
-
-	return usuario, nil
-}
-
+/*TODO: Funcion no se utiliza revisar si se puede eliminar o simplemente comentar
 func GuestLoginSend(c *gin.Context) {
 	// Acceder a la sesión
 	session := sessions.Default(c)
@@ -225,7 +175,7 @@ func GuestLoginSend(c *gin.Context) {
 	os := "Linux"
 
 	// Crear una estructura Account y convertirla a JSON
-	maquina_virtual := Maquina_virtual{Nombre: vmname, Sistema_operativo: os, Distribucion_sistema_operativo: ditOs, Ram: memory, Cpu: cpu, Persona_email: userEmail}
+	maquina_virtual := Models.VirtualMachine{Name: vmname, Sistema_operativo: os, Distrubucion_SO: ditOs, Ram: memory, Cpu: cpu, Person_Email: userEmail}
 	clientIP := c.ClientIP()
 
 	payload := map[string]interface{}{
@@ -251,3 +201,4 @@ func GuestLoginSend(c *gin.Context) {
 		})
 	}
 }
+*/
