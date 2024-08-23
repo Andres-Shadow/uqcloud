@@ -57,7 +57,7 @@ func main() {
 	go jobs.CheckContainerQueueChanges()
 	// Inicia el servidor HTTP en el puerto 8081.
 	fmt.Println("Servidor escuchando en el puerto 8081...")
-	if err := http.ListenAndServe(":9091", r); err != nil {
+	if err := http.ListenAndServe(":8081", r); err != nil {
 		log.Println("Error al iniciar el servidor:", err)
 	}
 
