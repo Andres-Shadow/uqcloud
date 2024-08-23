@@ -89,7 +89,7 @@ func GetHostByIp(ip string) (models.Host, error) {
 }
 
 func UpdateHostRamAndCPU(idHost int, ram int, cpu int) error {
-	err := DATABASE.Model(&models.Host{}).Where("id = ?", idHost).Update("ram", ram).Update("cpu", cpu).Error
+	err := DATABASE.Model(&models.Host{}).Where("id = ?", idHost).Update("ram_usada", ram).Update("cpu_usada", cpu).Error
 	if err != nil {
 		log.Println("Error al actualizar la información del host: ", err)
 		return err

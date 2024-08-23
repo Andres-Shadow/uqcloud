@@ -23,6 +23,8 @@ import (
 */
 func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
+	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+
 	if specs.Host_id > 0 {
 		// Creacion de Maquina Virtual con seleccion de usuario
 		// Obtenemeos el host por medio del indice que es previamente
@@ -35,8 +37,6 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		//se verifica el ssh de la maquina fisica con el marcapasos
 		estadossh := Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
 		if estadossh {
-
-			caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
 
 			nameVM := specs.Nombre + "_" + caracteres
 
@@ -87,7 +87,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		//Creacion de la Maquina con Algoritmo aleatorio
 		//Obtiene el usuario
 
-		caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+		
 
 		nameVM := specs.Nombre + "_" + caracteres
 
@@ -178,7 +178,7 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 	}
 
 	commands := []string{
-		"VBoxManage createvm --name \"" + nameVM + "\" --ostype " + disco.Distribucion_sistema_operativo + "_" + strconv.Itoa(disco.Arquitectura) + " --register",
+		"VBoxManage createvm --name \"" + nameVM + "\" --ostype  \"" + disco.Distribucion_sistema_operativo + "_" + strconv.Itoa(disco.Arquitectura) + "\" --register",
 		"VBoxManage modifyvm \"" + nameVM + "\" --memory " + strconv.Itoa(specs.Ram),
 		"VBoxManage storagectl \"" + nameVM + "\" --name hardisk --add sata",
 		"VBoxManage storageattach \"" + nameVM + "\" --storagectl hardisk --port 0 --device 0 --type hdd --medium \"" + disco.Ruta_ubicacion + "\"",
@@ -188,6 +188,7 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 
 	for _, command := range commands {
 		if _, err := SendSSHCommand(host.Ip, command, config); err != nil {
+
 			log.Println("Error al ejecutar comando:", err)
 			return false
 		}
