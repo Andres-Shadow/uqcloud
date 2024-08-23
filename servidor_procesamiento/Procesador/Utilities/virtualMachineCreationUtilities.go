@@ -8,7 +8,6 @@ import (
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -24,6 +23,8 @@ import (
 */
 func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
+	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+
 	if specs.Host_id > 0 {
 		// Creacion de Maquina Virtual con seleccion de usuario
 		// Obtenemeos el host por medio del indice que es previamente
@@ -37,17 +38,13 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		estadossh := Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
 		if estadossh {
 
-			caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
-
 			nameVM := specs.Nombre + "_" + caracteres
 
 			//Consulta si existe una MV con ese nombre
 			existe, error1 := ExistVM(nameVM)
 			if error1 != nil {
-				if error1 != sql.ErrNoRows {
-					log.Println("Error al consultar si existe una MV con el nombre indicado: ", error1)
-					return "Error al consultar si existe una MV con el nombre indicado"
-				}
+				fmt.Println("Erro al verificar si existe un registro en las maquinas virtuales con el nombre " + nameVM + " en la base de datos: " + error1.Error())
+				return "Error a la hora de verificar si existe un registro en las maquinas virtuales con el nombre: " + nameVM
 			} else if existe {
 				fmt.Println("El nombre " + nameVM + " no està disponible, por favor ingrese otro.")
 				return "Nombre de la MV no disponible"
@@ -63,130 +60,38 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			disco, err20 := database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
 			if err20 != nil {
 				log.Println("Error al obtener el disco:", err20)
-
 				return "Error al obtener el disco"
-			}
-			fmt.Println("llego aqui")
-			//Configura la conexiòn SSH con el host Obtenido
-			config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
-			if err != nil {
-				log.Println("Error al configurar SSH:", err)
-				return "Error al configurar la conexiòn SSH"
-			}
-
-			//Comando para crear una màquina virtual
-			createVM := "VBoxManage createvm --name " + "\"" + nameVM + "\"" + " --ostype " + disco.Distribucion_sistema_operativo + "_" + strconv.Itoa(disco.Arquitectura) + " --register"
-			uuid, err1 := SendSSHCommand(host.Ip, createVM, config)
-			if err1 != nil {
-				log.Println("Error al ejecutar el comando para crear y registrar la MV:", err1)
-				return "Error al crear la MV"
-			}
-
-			//Comando para asignar la memoria RAM a la MV
-			memoryCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --memory " + strconv.Itoa(specs.Ram)
-			_, err2 := SendSSHCommand(host.Ip, memoryCommand, config)
-			if err2 != nil {
-				log.Println("Error ejecutar el comando para asignar la memoria a la MV:", err2)
-				return "Error al asignar la memoria a la MV"
-			}
-
-			//Comando para agregar el controlador de almacenamiento
-			sctlCommand := "VBoxManage storagectl " + "\"" + nameVM + "\"" + " --name hardisk --add sata"
-			_, err3 := SendSSHCommand(host.Ip, sctlCommand, config)
-			if err3 != nil {
-				log.Println("Error al ejecutar el comando para asignar el controlador de almacenamiento a la MV:", err3)
-				return "Error al asignar el controlador de almacenamiento a la MV"
-			}
-
-			//Comando para conectar el disco multiconexiòn a la MV
-			sattachCommand := "VBoxManage storageattach " + "\"" + nameVM + "\"" + " --storagectl hardisk --port 0 --device 0 --type hdd --medium " + "\"" + disco.Ruta_ubicacion + "\""
-			_, err4 := SendSSHCommand(host.Ip, sattachCommand, config)
-			if err4 != nil {
-				log.Println("Error al ejecutar el comando para conectar el disco a la MV: ", err4)
-				return "Error al conectar el disco a la MV"
-			}
-
-			//Comando para asignar las unidades de procesamiento
-			cpuCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --cpus " + strconv.Itoa(specs.Cpu)
-			_, err5 := SendSSHCommand(host.Ip, cpuCommand, config)
-			if err5 != nil {
-				log.Println("Error al ejecutar el comando para asignar la cpu a la MV:", err5)
-				return "Error al asignar la cpu a la MV"
-			}
-
-			//Comando para poner el adaptador de red en modo puente (Bridge)
-			redAdapterCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --nic1 bridged --bridgeadapter1 " + "\"" + host.Adaptador_red + "\""
-			_, err6 := SendSSHCommand(host.Ip, redAdapterCommand, config)
-			if err6 != nil {
-				log.Println("Error al ejecutar el comando para configurar el adaptador de red de la MV:", err6)
-				return "Error al configurar el adaptador de red de la MV"
 			}
 
 			//Obtiene el UUID de la màquina virtual creda
-			lines := strings.Split(string(uuid), "\n")
-			for _, line := range lines {
-				if strings.HasPrefix(line, "UUID:") {
-					uuid = strings.TrimPrefix(line, "UUID:")
-				}
-			}
-			currentTime := time.Now().UTC()
+			// lines := strings.Split(string(uuid), "\n")
+			// for _, line := range lines {
+			// 	if strings.HasPrefix(line, "UUID:") {
+			// 		uuid = strings.TrimPrefix(line, "UUID:")
+			// 	}
+			// }
 
-			nuevaMaquinaVirtual := models.Maquina_virtual{
-				Uuid:              uuid,
-				Nombre:            nameVM,
-				Sistema_operativo: specs.Sistema_operativo,
-				Ram:               specs.Ram,
-				Cpu:               specs.Cpu,
-				Estado:            "Apagado",
-				Hostname:          "uqcloud",
-				Persona_email:     specs.Persona_email,
-				Fecha_creacion:    currentTime,
+			validation := configureAndCreateVM(host, specs, nameVM, disco)
+
+			if !validation {
+				return "Error al ejecutar los comandos para crear la máquina virtual mediante ssh"
 			}
 
-			//Crea el registro de la nueva MV en la base de datos
-			creado := database.CreateVirtualMachine(nuevaMaquinaVirtual)
-			if creado != nil {
-				log.Println("Error al crear el registro en la base de datos:", creado)
-				return "Error al crear el registro en la base de datos"
+			validation2 := createDatabaseRecords(host, specs, nameVM)
+			if validation2 != nil {
+				return "Error al crear los registros de la máquina virtual en la base de datos"
 			}
-
-			//Calcula la CPU y RAM usada en el host
-			usedCpu := host.Cpu_usada + specs.Cpu
-			usedRam := host.Ram_usada + (specs.Ram)
-
-			//Actualiza la informaciòn de los recursos usados en el host
-			err8 := database.UpdateHostRamAndCPU(host.Id, usedRam, usedCpu)
-			if err8 != nil {
-				log.Println("Error al actualizar el host en la base de datos: ", err8)
-				return "Error al actualizar el host en la base de datos"
-			}
-
-			fmt.Println("Màquina virtual creada con èxito")
-			StartVM(nameVM, clientIP)
-			return "Màquina virtual creada con èxito"
-
 		}
 
 	} else {
 		//Creacion de la Maquina con Algoritmo aleatorio
-		//Obtiene el usuario aaaaaaaaaaaaa
-		user, error0 := database.GetUser(specs.Persona_email)
-		if error0 != nil {
-			log.Println("Error al obtener el usuario")
-			return ""
-		}
+		//Obtiene el usuario
 
-		if user.Rol == 0 {
-			/*if cantidad >= 5 {
-				fmt.Println("El usuario " + user.Nombre + " no puede crear màs de 5 màquinas virtuales.")
-				return "El usuario " + user.Nombre + " no puede crear màs de 5 màquinas virtuales."
-			}*/
-		}
-
-		caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+		
 
 		nameVM := specs.Nombre + "_" + caracteres
 
+		fmt.Println("llego hasta aqui")
 		//Consulta si existe una MV con ese nombre
 		existe, error1 := ExistVM(nameVM)
 		if error1 != nil {
@@ -204,7 +109,6 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		host, er := IsAHostIp(clientIP) //Consulta si la ip de la peticiòn proviene de un host registrado en la BD
 		if er == nil {                  //nil = El host existe
 			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
-
 		}
 		fmt.Print("available", availableResources)
 
@@ -243,104 +147,83 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 			return "Error al obtener el disco"
 		}
-		//Configura la conexiòn SSH con el host
-		config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
-		if err != nil {
-			log.Println("Error al configurar SSH:", err)
-			return "Error al configurar la conexiòn SSH"
+
+		validation := configureAndCreateVM(host, specs, nameVM, disco)
+		if !validation {
+			return "Error al ejecutar los comandos para crear la máquina virtual mediante ssh"
 		}
+		// //Obtiene el UUID de la màquina virtual creda
+		// lines := strings.Split(string(uuid), "\n")
+		// for _, line := range lines {
+		// 	if strings.HasPrefix(line, "UUID:") {
+		// 		uuid = strings.TrimPrefix(line, "UUID:")
+		// 	}
+		// }
 
-		//Comando para crear una màquina virtual
-		createVM := "VBoxManage createvm --name " + "\"" + nameVM + "\"" + " --ostype " + disco.Distribucion_sistema_operativo + "_" + strconv.Itoa(disco.Arquitectura) + " --register"
-		uuid, err1 := SendSSHCommand(host.Ip, createVM, config)
-		if err1 != nil {
-			log.Println("Error al ejecutar el comando para crear y registrar la MV:", err1)
-			return "Error al crear la MV"
+		validation2 := createDatabaseRecords(host, specs, nameVM)
+		if validation2 != nil {
+			return "Error al crear los registros de la máquina virtual en la base de datos"
 		}
-
-		//Comando para asignar la memoria RAM a la MV
-		memoryCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --memory " + strconv.Itoa(specs.Ram)
-		_, err2 := SendSSHCommand(host.Ip, memoryCommand, config)
-		if err2 != nil {
-			log.Println("Error ejecutar el comando para asignar la memoria a la MV:", err2)
-			return "Error al asignar la memoria a la MV"
-		}
-
-		//Comando para agregar el controlador de almacenamiento
-		sctlCommand := "VBoxManage storagectl " + "\"" + nameVM + "\"" + " --name hardisk --add sata"
-		_, err3 := SendSSHCommand(host.Ip, sctlCommand, config)
-		if err3 != nil {
-			log.Println("Error al ejecutar el comando para asignar el controlador de almacenamiento a la MV:", err3)
-			return "Error al asignar el controlador de almacenamiento a la MV"
-		}
-
-		//Comando para conectar el disco multiconexiòn a la MV
-		sattachCommand := "VBoxManage storageattach " + "\"" + nameVM + "\"" + " --storagectl hardisk --port 0 --device 0 --type hdd --medium " + "\"" + disco.Ruta_ubicacion + "\""
-		_, err4 := SendSSHCommand(host.Ip, sattachCommand, config)
-		if err4 != nil {
-			log.Println("Error al ejecutar el comando para conectar el disco a la MV: ", err4)
-			return "Error al conectar el disco a la MV"
-		}
-
-		//Comando para asignar las unidades de procesamiento
-		cpuCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --cpus " + strconv.Itoa(specs.Cpu)
-		_, err5 := SendSSHCommand(host.Ip, cpuCommand, config)
-		if err5 != nil {
-			log.Println("Error al ejecutar el comando para asignar la cpu a la MV:", err5)
-			return "Error al asignar la cpu a la MV"
-		}
-
-		//Comando para poner el adaptador de red en modo puente (Bridge)
-		redAdapterCommand := "VBoxManage modifyvm " + "\"" + nameVM + "\"" + " --nic1 bridged --bridgeadapter1 " + "\"" + host.Adaptador_red + "\""
-		_, err6 := SendSSHCommand(host.Ip, redAdapterCommand, config)
-		if err6 != nil {
-			log.Println("Error al ejecutar el comando para configurar el adaptador de red de la MV:", err6)
-			return "Error al configurar el adaptador de red de la MV"
-		}
-
-		//Obtiene el UUID de la màquina virtual creda
-		lines := strings.Split(string(uuid), "\n")
-		for _, line := range lines {
-			if strings.HasPrefix(line, "UUID:") {
-				uuid = strings.TrimPrefix(line, "UUID:")
-			}
-		}
-		currentTime := time.Now().UTC()
-
-		nuevaMaquinaVirtual := models.Maquina_virtual{
-			Uuid:              uuid,
-			Nombre:            nameVM,
-			Sistema_operativo: specs.Sistema_operativo,
-			Ram:               specs.Ram,
-			Cpu:               specs.Cpu,
-			Estado:            "Apagado",
-			Hostname:          "uqcloud",
-			Persona_email:     specs.Persona_email,
-			Fecha_creacion:    currentTime,
-		}
-
-		//Crea el registro de la nueva MV en la base de datos
-		err7 := database.CreateVirtualMachine(nuevaMaquinaVirtual)
-		if err7 != nil {
-			log.Println("Error al crear el registro en la base de datos:", err7)
-			return "Error al crear el registro en la base de datos"
-		}
-
-		//Calcula la CPU y RAM usada en el host
-		usedCpu := host.Cpu_usada + specs.Cpu
-		usedRam := host.Ram_usada + (specs.Ram)
-
-		//Actualiza la informaciòn de los recursos usados en el host
-		err8 := database.UpdateHostRamAndCPU(host.Id, usedRam, usedCpu)
-		if err8 != nil {
-			log.Println("Error al actualizar el host en la base de datos: ", err8)
-			return "Error al actualizar el host en la base de datos"
-		}
-
-		fmt.Println("Màquina virtual creada con èxito")
-		StartVM(nameVM, clientIP)
-		return "Màquina virtual creada con èxito"
 
 	}
 	return "solicitud invalida"
+}
+
+func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM string, disco models.Disco) bool {
+	// Configurar SSH y enviar comandos para crear y configurar la MV
+	config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
+	if err != nil {
+		log.Println("Error al configurar SSH:", err)
+		return false
+	}
+
+	commands := []string{
+		"VBoxManage createvm --name \"" + nameVM + "\" --ostype  \"" + disco.Distribucion_sistema_operativo + "_" + strconv.Itoa(disco.Arquitectura) + "\" --register",
+		"VBoxManage modifyvm \"" + nameVM + "\" --memory " + strconv.Itoa(specs.Ram),
+		"VBoxManage storagectl \"" + nameVM + "\" --name hardisk --add sata",
+		"VBoxManage storageattach \"" + nameVM + "\" --storagectl hardisk --port 0 --device 0 --type hdd --medium \"" + disco.Ruta_ubicacion + "\"",
+		"VBoxManage modifyvm \"" + nameVM + "\" --cpus " + strconv.Itoa(specs.Cpu),
+		"VBoxManage modifyvm \"" + nameVM + "\" --nic1 bridged --bridgeadapter1 \"" + host.Adaptador_red + "\"",
+	}
+
+	for _, command := range commands {
+		if _, err := SendSSHCommand(host.Ip, command, config); err != nil {
+
+			log.Println("Error al ejecutar comando:", err)
+			return false
+		}
+	}
+
+	return true
+}
+
+func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameVM string) error {
+	// Lógica para crear los registros en la base de datos y actualizar recursos
+	currentTime := time.Now().UTC()
+
+	nuevaMaquinaVirtual := models.Maquina_virtual{
+		Uuid:              nameVM + "_uuid",
+		Nombre:            nameVM,
+		Sistema_operativo: specs.Sistema_operativo,
+		Ram:               specs.Ram,
+		Cpu:               specs.Cpu,
+		Estado:            "Apagado",
+		Hostname:          "uqcloud",
+		Persona_email:     specs.Persona_email,
+		Fecha_creacion:    currentTime,
+	}
+
+	if err := database.CreateVirtualMachine(nuevaMaquinaVirtual); err != nil {
+		log.Println("Error al crear el registro en la base de datos:", err)
+		return err
+	}
+
+	usedCpu := host.Cpu_usada + specs.Cpu
+	usedRam := host.Ram_usada + specs.Ram
+	if err := database.UpdateHostRamAndCPU(host.Id, usedRam, usedCpu); err != nil {
+		log.Println("Error al actualizar el host en la base de datos:", err)
+		return err
+	}
+
+	return nil
 }

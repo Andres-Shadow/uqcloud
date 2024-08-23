@@ -81,6 +81,8 @@ Funciòn que se encarga de realizar la configuraciòn SSH con el host
 */
 func ConfigureSSH(user string, privateKeyPath string) (*ssh.ClientConfig, error) {
 	authMethod, err := privateKeyFile(privateKeyPath)
+	fmt.Println("authMethod", authMethod)
+	fmt.Println(privateKeyFile(privateKeyPath))
 	if err != nil {
 		return nil, err
 	}
@@ -212,11 +214,11 @@ func ExistVM(virtualMachineName string) (bool, error) {
 
 	//err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
 	existe, err := database.ExistVirtualMachine(virtualMachineName)
-	if err != nil {
+	if err != nil && existe == true{
 		log.Println("Error al realizar la consulta: ", err)
 		return existe, err
 	}
-	return existe, err
+	return existe, nil
 }
 
 // Función que imprime las especificaciones de una máquina virtual.
