@@ -59,11 +59,12 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	persona, error := database.GetUser(email)
 	if error != nil {
+		http.Error(w, "Error al consultar el usuario en la base de datos", http.StatusBadRequest)
 		return
 	}
 
 	machines, err := database.ConsultMachines(persona)
-	if err != nil && err.Error() != "no Machines Found" {
+	if err != nil && err.Error() != "No Machines Found" {
 		fmt.Println(err)
 		log.Println("Error al consultar las màquinas del usuario")
 		http.Error(w, "Error al consultar las màquinas del usuario", http.StatusBadRequest)
@@ -83,11 +84,20 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de modificar una maquina virtual (en caliente o apagada)
 func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-	// Decodifica el JSON recibido en la solicitud en un mapa genérico.
+
+	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
 	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&payload); err != nil {
 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
+		log.Println("Error al decodificar JSON de la solicitud")
+		return
+	}
+
+	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if payload == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
 		return
 	}
 
@@ -118,9 +128,19 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	var datos map[string]interface{}
 
+	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
+	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&datos); err != nil {
-		http.Error(w, "Error al decodificar JSON de especificaciones", http.StatusBadRequest)
+	if err := decoder.Decode(&payload); err != nil {
+		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
+		log.Println("Error al decodificar JSON de la solicitud")
+		return
+	}
+
+	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if payload == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
 		return
 	}
 
@@ -153,7 +173,15 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&datos); err != nil {
+		log.Println("Error al decodificar JSON de especificaciones")
 		http.Error(w, "Error al decodificar JSON de especificaciones", http.StatusBadRequest)
+		return
+	}
+
+	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if datos == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
 		return
 	}
 
@@ -161,6 +189,7 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	nombreVM, nombrePresente := datos["nombreVM"].(string)
 
 	if !nombrePresente || nombreVM == "" {
+		log.Println("El tipo de solicitud y nombre de la máquina virtual son obligatorios")
 		http.Error(w, "El tipo de solicitud y nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
 		return
 	}
@@ -201,10 +230,18 @@ func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if datos == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
+		return
+	}
+
 	// Verificar si el nombre de la máquina virtual, la IP del host y el tipo de solicitud están presentes y no son nulos
 	nombreVM, nombrePresente := datos["nombreVM"].(string)
 
 	if !nombrePresente || nombreVM == "" {
+		log.Println("El tipo de solicitud y nombre de la máquina virtual son obligatorios")
 		http.Error(w, "El tipo de solicitud y nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
 		return
 	}

@@ -31,26 +31,26 @@
     </div>
     
     <script>
-        function cambiarContenido(contenido) {
-            const inframeMainPageContent = document.getElementById("mainPageContent");
-            inframeMainPageContent.src = contenido;
-        }
+        // function cambiarContenido(contenido) {
+        //     const inframeMainPageContent = document.getElementById("mainPageContent");
+        //     inframeMainPageContent.src = contenido;
+        // }
 
-        // Obtén una referencia al iframe
-        var inframe = document.getElementById("mainPageContent");
+        // // Obtén una referencia al iframe
+        // var inframe = document.getElementById("mainPageContent");
 
-        // Espera a que el contenido del iframe esté completamente cargado
-        inframe.addEventListener("load", function () {
-            // Accede al elemento con el id "input" dentro del iframe
-            var inputElement = inframe.contentDocument.getElementById("input");
+        // // Espera a que el contenido del iframe esté completamente cargado
+        // inframe.addEventListener("load", function () {
+        //     // Accede al elemento con el id "input" dentro del iframe
+        //     var inputElement = inframe.contentDocument.getElementById("input");
 
-            if (inputElement) {
-                // Configura el atributo "inputmode" del elemento dentro del iframe
-                inputElement.setAttribute("inputmode", "tel");
-            } else {
-                alert("No se encontró un elemento con el id 'input' dentro del iframe.");
-            }
-        });
+        //     if (inputElement) {
+        //         // Configura el atributo "inputmode" del elemento dentro del iframe
+        //         inputElement.setAttribute("inputmode", "tel");
+        //     } else {
+        //         alert("No se encontró un elemento con el id 'input' dentro del iframe.");
+        //     }
+        // });
     </script>
     
 </body>
