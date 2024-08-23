@@ -1,6 +1,9 @@
 package Config
 
-import "os"
+import (
+	"fmt"
+	"os"
+)
 
 // Se declara una variable global para almacenar la URL del servidor de procesamiento
 var ServidorProcesamientoRoute string
@@ -10,6 +13,7 @@ var ServidorProcesamientoRoute string
 func init() {
 	// Verifica si la variable de entorno "servidor_procesamiento" está definida
 	ServidorProcesamientoRoute = os.Getenv("servidor_procesamiento")
+	fmt.Println("Servidor de procesamiento: ", ServidorProcesamientoRoute)
 	if ServidorProcesamientoRoute == "" {
 		ServidorProcesamientoRoute = "localhost"
 	}

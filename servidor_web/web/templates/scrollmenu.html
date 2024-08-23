@@ -76,6 +76,7 @@
         });
 
         perfilLink.addEventListener("click", function (e) {
+            console.log("CLICK PERFIL");
             e.preventDefault();
             bloquearConexiones();
             cambiarContenido('profile');
@@ -127,6 +128,7 @@
         }
 
         function cambiarContenido(contenido) {
+            console.log("CONTENIDO", contenido);
             fetch("/cambiar-contenido", {
                 method: "POST",
                 headers: {
@@ -137,6 +139,7 @@
             .then(response => response.json())
             .then(data => {
                 // Cuando recibas la respuesta del servidor, actualiza el iframe.
+                console.log("Cambiando contenido:", data.url);
                 const iframeControlMachine = window.parent.document.getElementById("mainPageContent");
                 iframeControlMachine.src = data.url;
             })

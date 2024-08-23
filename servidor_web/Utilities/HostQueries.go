@@ -6,10 +6,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Funcion encargada de consultar la cantidad de host asociados al email de una persona

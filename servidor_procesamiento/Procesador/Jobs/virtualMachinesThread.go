@@ -26,6 +26,7 @@ func CheckVirtualMachinesQueueChanges() {
 			mu.Lock()
 			firstElement := config.GetMaquina_virtualQueue().Queue.Front()
 			data, dataPresent := firstElement.Value.(map[string]interface{})
+
 			//maquina_virtualesQueue.Queue.Remove(firstElement)
 			mu.Unlock()
 
@@ -60,7 +61,14 @@ func CheckVirtualMachinesQueueChanges() {
 				continue
 			}
 
-			clientIP := data["clientIP"].(string)
+			clientIP, ok := data["clientIP"].(string)
+			if !ok {
+				fmt.Println("Error: La IP del cliente no está presente o no es de tipo string")
+				mu.Lock()
+				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
+				mu.Unlock()
+				continue
+			}
 
 			fmt.Println(clientIP)
 
