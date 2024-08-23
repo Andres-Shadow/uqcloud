@@ -91,7 +91,7 @@ func main() {
 
 	// TODO: DESCOMENTAR LUEGO
 	//router.GET("/api/machines", handlers.GetMachines)
-	//router.GET("/controlMachine", handlers.ControlMachine)
+	router.GET("/controlMachine", handlers.ControlMachine)
 
 	router.POST("/login", handlers.Login)
 	//router.POST("/signin", handlers.Signin)
