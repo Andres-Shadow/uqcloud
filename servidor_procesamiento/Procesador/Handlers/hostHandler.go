@@ -43,6 +43,7 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 	var payload map[string]interface{}
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&payload); err != nil {
+		log.Println("Error al decodificar JSON de la solicitud")
 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
 		return
 	}
@@ -109,10 +110,11 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 // Funcion que responde al endpoint encargado de consultar los host registrados en la base de datos
 func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 	// Obtener la variable "name" de la ruta
-    vars := mux.Vars(r)
-    email := vars["email"]
+	vars := mux.Vars(r)
+	email := vars["email"]
 
 	if email == "" {
+		log.Println("Error al obtener el email del usuario")
 		http.Error(w, "Error al obtener el email del usuario", http.StatusBadRequest)
 		return
 	}
@@ -144,6 +146,7 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&host); err != nil {
+		log.Println("Error al decodificar JSON de especificaciones")
 		http.Error(w, "Error al decodificar JSON de especificaciones", http.StatusBadRequest)
 		return
 	}

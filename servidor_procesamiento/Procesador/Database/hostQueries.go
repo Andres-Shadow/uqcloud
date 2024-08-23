@@ -30,7 +30,8 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 	}
 
 	if len(results) == 0 {
-		return nil, errors.New("no Machines Found")
+		log.Println("No se encontraron máquinas registradas en la base de datos")
+		return nil, errors.New("No Machines Found")
 	}
 
 	return results, nil

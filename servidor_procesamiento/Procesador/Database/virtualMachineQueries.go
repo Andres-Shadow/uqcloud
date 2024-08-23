@@ -102,6 +102,7 @@ func GetStateFromVirtualMachineName(name string) (string, error) {
 	var maquina models.Maquina_virtual
 	err := DATABASE.Where("nombre = ?", name).First(&maquina).Error
 	if err != nil {
+		log.Println("Ha ocurrido un error alconsultar el estado de la máquina virtual:", err)
 		return "", err
 	}
 	return maquina.Estado, nil
@@ -155,7 +156,7 @@ func DeleteVirtualMachine(nameVM string) error {
 	return nil
 }
 
-func ExistVirtualMachine(virtualMachineName string)(bool, error) {
+func ExistVirtualMachine(virtualMachineName string) (bool, error) {
 	err := DATABASE.Where("nombre = ?", virtualMachineName).First(&models.Maquina_virtual{}).Error
 	if err != nil {
 		return false, err
