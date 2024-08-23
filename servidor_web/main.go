@@ -90,7 +90,7 @@ func main() {
 	router.GET("/createDisk", handlers.CreateDiskPage)
 
 	// TODO: DESCOMENTAR LUEGO
-	router.GET("/api/machines", handlers.GetMachines)
+	//router.GET("/api/machines", handlers.GetMachines)
 	router.GET("/controlMachine", handlers.ControlMachine)
 
 	router.POST("/login", handlers.Login)

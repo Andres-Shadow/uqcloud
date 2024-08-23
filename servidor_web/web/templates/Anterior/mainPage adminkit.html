@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Desktop Cloud Uniquindio</title>
+  <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
+  <script src="/web/static/bootstrap/js/bootstrap.min.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/web/static/css/styleMainPage.css">
+  <link rel="stylesheet" type="text/css" href="/web/static/css/styleNavbar.css">
+  <link rel="stylesheet" type="text/css" href="/web/static/css/mainPage.css">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
+  <link href="web/static/css/styles.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+  <!-- <script src="web/static/js/mainPage.js"></script> -->
+  <script src="web/static/js/main-page-test.js"></script>
+
+</head>
+
+<body>
+  <div class="wrapper">
+
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar js-sidebar">
+      <div class="sidebar-content js-simplebar">
+        <a class="logo d-flex align-items-center me-auto me-xl-0" href="#">
+          <img src="web/static/img/desktop-cloud.png" alt="">
+          <span class="">Desktop Cloud</span>
+        </a>
+
+        <ul class="sidebar-nav">
+          <li class="sidebar-header">Pages</li>
+
+          <li class="sidebar-item active">
+            <a class="sidebar-link" href="index.html">
+              <i class="bi bi-house-door"></i>
+              <span class="align-middle">Dashboard</span>
+            </a>
+
+            <ul>
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="pages-profile.html">
+                  <i class="bi bi-person-circle"></i>
+                  <span class="align-middle">Profile</span>
+                </a>
+              </li>
+            </ul>
+
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="pages-profile.html">
+              <!-- <i style="font-size: 25px;" class="bi bi-github"></i> -->
+              <i class="bi bi-person-circle"></i>
+              <span class="align-middle">Profile</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="pages-blank.html">
+              <i class="bi bi-window"></i>
+              <span class="align-middle">Blank</span>
+            </a>
+          </li>
+
+          <li class="sidebar-header">Tools & Components</li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="ui-buttons.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Buttons</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="ui-forms.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Forms</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="ui-cards.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Cards</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="ui-typography.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Typography</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="icons-feather.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Icons</span>
+            </a>
+          </li>
+
+          <li class="sidebar-header">Plugins & Addons</li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="charts-chartjs.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Charts</span>
+            </a>
+          </li>
+
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="maps-google.html">
+              <i class="bi bi-cup-hot"></i>
+              <span class="align-middle">Maps</span>
+            </a>
+          </li>
+        </ul>
+
+        <!-- <div class="sidebar-cta">
+          <div class="sidebar-cta-content">
+            <strong class="d-inline-block mb-2">Upgrade to Pro</strong>
+            <div class="mb-3 text-sm">
+              Are you looking for more components? Check out our premium
+              version.
+            </div>
+            <div class="d-grid">
+              <a href="upgrade-to-pro.html" class="btn btn-primary"
+                >Upgrade to Pro</a
+              >
+            </div>
+          </div>
+        </div> -->
+
+      </div>
+    </nav>
+
+    <div class="main">
+
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand navbar-light navbar-bg">
+
+        <a class="sidebar-toggle js-sidebar-toggle">
+          <i class="hamburger align-self-center"></i>
+          <!-- <i class="bi bi-filter-left"></i> -->
+        </a>
+
+        <div class="navbar-collapse collapse">
+          <ul class="navbar-nav navbar-align">
+
+            <li class="nav-item dropdown">
+              <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                <div class="position-relative">
+                  <!-- <i class="align-middle" data-feather="bell"></i> -->
+                  <i class="bi bi-bell"></i>
+                  <span class="indicator">4</span>
+                </div>
+              </a>
+
+              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                <div class="dropdown-menu-header">4 New Notifications</div>
+                <div class="list-group">
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <i class="text-danger" data-feather="alert-circle"></i>
+                      </div>
+                      <div class="col-10">
+                        <div class="text-dark">Update completed</div>
+                        <div class="text-muted small mt-1">
+                          Restart server 12 to complete the update.
+                        </div>
+                        <div class="text-muted small mt-1">30m ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+
+                        <i style="font-size: 25px;" class="bi bi-github"></i>
+
+                      </div>
+                      <div class="col-10">
+                        <div class="text-dark">Lorem ipsum</div>
+                        <div class="text-muted small mt-1">
+                          Aliquam ex eros, imperdiet vulputate hendrerit et.
+                        </div>
+                        <div class="text-muted small mt-1">2h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <i class="text-primary" data-feather="home"></i>
+                      </div>
+                      <div class="col-10">
+                        <div class="text-dark">Login from 192.186.1.8</div>
+                        <div class="text-muted small mt-1">5h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                  <a href="#" class="list-group-item">
+                    <div class="row g-0 align-items-center">
+                      <div class="col-2">
+                        <i class="text-success" data-feather="user-plus"></i>
+                      </div>
+                      <div class="col-10">
+                        <div class="text-dark">New connection</div>
+                        <div class="text-muted small mt-1">
+                          Christina accepted your request.
+                        </div>
+                        <div class="text-muted small mt-1">14h ago</div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+                <div class="dropdown-menu-footer">
+                  <a href="#" class="text-muted">Show all notifications</a>
+                </div>
+              </div>
+            </li>
+
+            <li class="nav-item dropdown">
+              <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+                <i class="align-middle" data-feather="settings"></i>
+              </a>
+
+              <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                <img src="web/static/img/aboutus/donomar.png" class="avatar img-fluid rounded me-1"
+                  alt="Charles Hall" />
+                <span class="text-dark">Charles Hall</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end">
+                <a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i>
+                  Profile</a>
+                <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i>
+                  Analytics</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i>
+                  Settings & Privacy</a>
+                <a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i>
+                  Help Center</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Log out</a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <main class="content">
+
+        <div class="container-fluid p-0">
+          <h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
+
+          <div class="row">
+            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+              <div class="card flex-fill">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">~~~Aquí pueden ir las vm</h5>
+                </div>
+                <table class="table table-hover my-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th class="d-none d-xl-table-cell">Start Date</th>
+                      <th class="d-none d-xl-table-cell">End Date</th>
+                      <th>Status</th>
+                      <th class="d-none d-md-table-cell">Assignee</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Project Apollo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Fireball</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-danger">Cancelled</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project Hades</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Nitro</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Phoenix</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project X</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Romeo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Christina Mason</td>
+                    </tr>
+                    <tr>
+                      <td>Project Wombat</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="container-fluid p-0">
+          <h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
+
+          <div class="row">
+            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+              <div class="card flex-fill">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">~~~Aquí pueden ir las vm</h5>
+                </div>
+                <table class="table table-hover my-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th class="d-none d-xl-table-cell">Start Date</th>
+                      <th class="d-none d-xl-table-cell">End Date</th>
+                      <th>Status</th>
+                      <th class="d-none d-md-table-cell">Assignee</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Project Apollo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Fireball</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-danger">Cancelled</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project Hades</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Nitro</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Phoenix</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project X</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Romeo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Christina Mason</td>
+                    </tr>
+                    <tr>
+                      <td>Project Wombat</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="container-fluid p-0">
+          <h1 class="h3 mb-3"><strong>Analytics</strong> Dashboard</h1>
+
+          <div class="row">
+            <div class="col-12 col-lg-8 col-xxl-9 d-flex">
+              <div class="card flex-fill">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">~~~Aquí pueden ir las vm</h5>
+                </div>
+                <table class="table table-hover my-0">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th class="d-none d-xl-table-cell">Start Date</th>
+                      <th class="d-none d-xl-table-cell">End Date</th>
+                      <th>Status</th>
+                      <th class="d-none d-md-table-cell">Assignee</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Project Apollo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Fireball</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-danger">Cancelled</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project Hades</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Nitro</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">Vanessa Tucker</td>
+                    </tr>
+                    <tr>
+                      <td>Project Phoenix</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                    <tr>
+                      <td>Project X</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Sharon Lessman</td>
+                    </tr>
+                    <tr>
+                      <td>Project Romeo</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td><span class="badge bg-success">Done</span></td>
+                      <td class="d-none d-md-table-cell">Christina Mason</td>
+                    </tr>
+                    <tr>
+                      <td>Project Wombat</td>
+                      <td class="d-none d-xl-table-cell">01/01/2021</td>
+                      <td class="d-none d-xl-table-cell">31/06/2021</td>
+                      <td>
+                        <span class="badge bg-warning">In progress</span>
+                      </td>
+                      <td class="d-none d-md-table-cell">William Harris</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+
+      </main>
+
+
+      {{template "footer.html"}}
+
+    </div>
+  </div>
+
+
+</body>
+
+</html>
