@@ -14,7 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func LoginPage(c *gin.Context) {
+func LoginAdminPage(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
@@ -34,7 +34,7 @@ func LoginPage(c *gin.Context) {
 	})
 }
 
-func Login(c *gin.Context) {
+func AdminLogin(c *gin.Context) {
 	email := c.PostForm("email")
 	password := c.PostForm("password")
 
@@ -67,7 +67,7 @@ func Login(c *gin.Context) {
 		session := sessions.Default(c)
 		session.Set("loginError", ErrorMessage())
 		session.Save()
-		c.Redirect(http.StatusNotFound, "/login")
+		c.Redirect(http.StatusFound, "/admin")
 	}
 }
 
