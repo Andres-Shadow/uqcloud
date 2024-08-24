@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AppWeb/Utilities"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -14,6 +15,7 @@ func DashboardHandler(c *gin.Context) {
 	session := sessions.Default(c)
 	rol := session.Get("rol")
 	if rol != "Administrador" {
+		log.Println("El usuario no es administrador no puede acceder")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
 		return

@@ -6,6 +6,7 @@ import (
 	"AppWeb/Utilities"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -13,12 +14,12 @@ import (
 )
 
 func CreateDiskPage(c *gin.Context) {
-	// Acceder a la sesión
 	session := sessions.Default(c)
 	email := session.Get("email").(string)
 	rol := session.Get("rol")
 
 	if rol != "Administrador" {
+		log.Println("El usuario no es administrador no puede acceder")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
 		c.Redirect(http.StatusFound, "/login")
 		return
@@ -27,6 +28,7 @@ func CreateDiskPage(c *gin.Context) {
 	hosts, err := Utilities.ConsultHostsFromServer(email)
 
 	if err != nil {
+		log.Println("Error al obtener el host", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar los host: " + err.Error()})
 	}
 
@@ -41,16 +43,19 @@ func CreateDiskPage(c *gin.Context) {
 func CreateNewDisk(c *gin.Context) {
 	//Crear el Disk a partir de la solicutud
 	newDisk, err := CreateDiskFromRequest(c)
+
+	log.Printf("%+v\n", newDisk)
 	if err != nil {
+		log.Println("errot al decodificar el JSON del disco: ", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar el JSON:" + err.Error()})
 		return
 	}
 
-	//Registrar el disk
-	// Definir la URL del servidor
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL)
+	log.Println(serverURL)
 
 	if err := Utilities.RegisterElements(serverURL, newDisk); err != nil {
+		log.Println("Error al registro el disco: ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disk"})
 		return
 	}
