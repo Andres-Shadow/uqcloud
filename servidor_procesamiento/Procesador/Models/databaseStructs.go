@@ -172,7 +172,7 @@ Estructura de datos tipo JSON que representa la informaciòn de los contenedores
 
 type Contenedor struct {
 	gorm.Model
-	ContenedorId string 
+	ContenedorId string
 	Imagen       string
 	Comando      string
 	Creado       string
