@@ -83,6 +83,7 @@ func setDatabase() {
 		&models.Contenedor{},
 		&models.CatalogoDisco{})
 
+	// Precarga del usuario administrador
 	if !database.CountAdminsRegistered() {
 		persona := models.Persona{
 			Nombre:      "admin",
