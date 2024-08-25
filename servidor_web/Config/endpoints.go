@@ -15,8 +15,8 @@ var CREATE_GUEST_VM_URL = "/api/v1/guest_virtual_machine"
 
 // URL asociadas a los host
 var HOSTS_URL = "/api/v1/hosts"
-var CHECK_HOST_URL = "api/v1/check_host"
-var HOST_URL = "api/v1/host"
+var CHECK_HOST_URL = "/api/v1/check_host"
+var HOST_URL = "/api/v1/host"
 
 // URL asociadas a los discos
 var DISK_VM_URL = "/api/v1/disk"
