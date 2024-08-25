@@ -24,7 +24,7 @@ func MainPage(c *gin.Context) {
 	// Recuperar o inicializar un arreglo de máquinas virtuales en la sesión del usuario
 	machines, _ := Utilities.ConsultMachineFromServer(email.(string))
 
-	c.HTML(http.StatusOK, "mainPage.html", gin.H{
+	c.HTML(http.StatusOK, "controlMachine.html", gin.H{
 		"email":    email,
 		"machines": machines,
 		"rol":      rol,

@@ -10,23 +10,21 @@ import (
 	"log"
 	"net/http"
 
-	"io/ioutil"
-	"net/http"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 func LoginAdminPage(c *gin.Context) {
 	session := sessions.Default(c)
-	email := session.Get("email")
+	// email := session.Get("email")
 
-	log.Println(email)
-	if email != nil {
-		log.Println("Email invalido")
-		c.Redirect(http.StatusFound, "/mainPage")
-		return
-	}
+	// TODO: POR QUE NO SIRVE BIEN??????
+	// log.Println(email)
+	// if email != nil {
+	// 	log.Println("Email invalido")
+	// 	c.Redirect(http.StatusFound, "/mainPage")
+	// 	return
+	// }
 
 	errorMessage := session.Get("loginError")
 	session.Delete("loginError")
