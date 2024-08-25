@@ -46,7 +46,7 @@ func main() {
 
 	// Configura las rutas
 	router.LoadHTMLGlob("web/templates/*.html")
-	router.Static("web/static", "./web/static")
+	router.Static("/web/static", "./web/static")
 
 	router.GET("/", func(c *gin.Context) { c.HTML(http.StatusOK, "index.html", nil) })
 	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutUs.html", nil) })
@@ -62,7 +62,7 @@ func main() {
 	router.GET("/signin", handlers.SigninPage)
 
 	//TODO: Adaptar a los usuarios temporales
-	router.GET("/mainPage", handlers.MainPage)
+	// router.GET("/mainPage", handlers.MainPage)
 
 	//TODO: RUTAS NO DEBERIAN SER RUTAS? Y VAN EN EL /mainpage
 	// Por como está hecho este proyecto, archivos .html llaman a otros .html
@@ -72,28 +72,36 @@ func main() {
 	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
 	// deje acceder a estas rutas desde el navegador.
 
-	router.GET("/profile", handlers.ProfilePage)
-	// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
-	// router.GET("/imagenes", handlers.GestionImagenes)
-	// router.GET("/contenedores", handlers.GestionContenedores)
-	// router.GET("/helpCenter", handlers.HelpCenterPage)
-
 	// TODO: Eliminar cuando esto ya no sirva del todo
 	// router.GET("/scrollmenu", handlers.Scrollmenu)
 
 	//TODO: ELIMINAR ¿?
 	router.GET("/welcome", handlers.WelcomePage)
 
-	//TODO: DEJAR QUIETO HASTA TENER ACCESO AL ADMINISTRADOR
-	router.GET("/dashboard", handlers.DashboardHandler)
+	// Explicación para julian de julian: no hay necesidad de asignarle el "adminGroup" al "router",
+	// porque directamente cuando se le asocia una variable con ":=" al "router", gin los junta directamente
+	// sin necesidad de escribir una funcion digamos: router.setGroups( []grupos ). ya tu sabe tu si entiendes
+	// --- RUTAS DE ADMIN ---
+	adminGroup := router.Group("/admin")
+	{
+		adminGroup.GET("/dashboard", handlers.DashboardHandler)
+		adminGroup.GET("/create-host", handlers.CreateHostPage)
+		adminGroup.GET("/create-disk", handlers.CreateDiskPage)
+	}
 
-	//TODO: Deberia ser un formulario dentro de dashboard y no una ruta
-	router.GET("/createHost", handlers.CreateHostPage)
-	router.GET("/createDisk", handlers.CreateDiskPage)
+	// --- RUTAS DE USUARIO COMUN ---
+	userGroup := router.Group("/mainpage")
+	{
+		userGroup.GET("/control-machine", handlers.ControlMachine)
+		userGroup.GET("/profile", handlers.ProfilePage)
+		userGroup.GET("/imagenes", handlers.GestionImagenes)
+		userGroup.GET("/contenedores", handlers.GestionContenedores)
+		// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
+		// router.GET("/helpCenter", handlers.HelpCenterPage)
+	}
 
 	// TODO: DESCOMENTAR LUEGO
-	router.GET("/api/machines", handlers.GetMachines)
-	router.GET("/controlMachine", handlers.ControlMachine)
+	//router.GET("/api/machines", handlers.GetMachines)
 
 	router.POST("/admin", handlers.AdminLogin)
 	//router.POST("/signin", handlers.Signin)
