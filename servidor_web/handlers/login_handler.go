@@ -144,7 +144,7 @@ func LoginTemp(c *gin.Context) {
 		session.Set("rol", "Invitado")
 		session.Save()
 
-		c.Redirect(http.StatusSeeOther, "/controlMachine")
+		c.Redirect(http.StatusSeeOther, "/mainpage/control-machine")
 	} else {
 		log.Println("No fue posible crear el usuario")
 		c.Redirect(http.StatusNotFound, "/login")
