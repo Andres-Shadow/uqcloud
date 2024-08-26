@@ -60,6 +60,11 @@ func SelectHost() (models.Host, error) {
 		return host, err
 	}
 
+	if count <= 0 {
+		log.Println("Error no existen host disponibles para crear la VM")
+		return host, errors.New("No existen host disponibles")
+	}
+
 	// Genera un número aleatorio dentro del rango de registros
 	rand.Seed(time.Now().Unix()) // Seed para generar números aleatorios diferentes en cada ejecución
 	randomIndex := rand.Intn(int(count))
