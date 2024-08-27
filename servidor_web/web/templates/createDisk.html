@@ -12,6 +12,8 @@
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">  
   <link href="/web/static/css/styles.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
   <!-- FontAwesome Icons -->
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
@@ -31,6 +33,16 @@
       transform: translateX(-50%);
       z-index: 1000;
     }
+    form label {
+      font-size: 1.1rem; /* Tamaño de letra un poco más grande */
+      color: #000000; /* Color más oscuro para el texto */
+      font-weight: inherit; /* Opción para hacer el texto más grueso */
+    }
+    .form-select option[value=""] {
+      color: #6c757d; /* Color más claro para las opciones de ayuda */
+    }
+
+
   </style>
 </head>
 
@@ -54,60 +66,70 @@
               <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ .message }}
               </div>
-              <form id="createForm" method="post" action="/createDisk" style="margin: 50px; width: 120vh;"
-                onsubmit="return showSuccessMessage()">
-                <h2 class="centre-tittle">Agregar Disco</h2>
-                <div style="display: flex;">
-                  <div style="width: 1000px; margin-right: 10px;">
-                    <div class="form-group">
-                      <label for="nameDisk">Nombre del Disco</label>
-                      <select class="form-control" id="nameDisk" name="nameDisk" required>
-                        <option value="Debian">Debian</option>
-                        <option value="Mint">Linux Mint</option>
-                        <option value="Ubuntu">Ubuntu</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="rutaDisk">Ruta del Disco:</label>
-                      <input type="text" class="form-control" id="rutaDisk" name="rutaDisk" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="osDisk">Sistema Operativo</label>
-                      <select class="form-control" id="osDisk" name="osDisk" required onchange="actualizarDistribuciones()">
-                        <option value="Windows">Windows</option>
-                        <option value="Linux">Linux</option>
-                        <option value="Mac">Mac</option>
-                      </select>
-                    </div>
-                  </div>
-                  <div style="width: 1100px; margin-left: 10px;">
-                    <div class="form-group">
-                      <label for="distriDisk">Distribución del Sistema Operativo</label>
-                      <select class="form-control" id="distriDisk" name="distriDisk" required>
-                        <!-- Las opciones se actualizarán dinámicamente con JavaScript -->
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="arquiDisk">Arquitectura</label>
-                      <select class="form-control" id="arquiDisk" name="arquiDisk" required>
-                        <option value="64">64</option>
-                        <option value="32">32</option>
-                      </select>
-                    </div>
-                    <div class="form-group">
-                      <label for="idHostDisk">Asociar al Host:</label>
-                      <select class="form-control" id="idHostDisk" name="idHostDisk" required>
-                        {{range .hosts}}
-                        <option value="{{.Id}}">Id: {{.Id}}, Nombre: {{.Nombre}}</option>
-                        {{end}}
-                      </select>
-                    </div>
-                  </div>
+              <form class="row g-3" id="createForm" method="post" action="/createDisk" style="margin: 50px; width: 100%; max-width: 1200px;" onsubmit="return showSuccessMessage()">
+                <h1 class="centre-tittle">
+                  <i class="bi bi-disc-fill"></i> Crear Discos
+                </h1>
+                <hr class="my-4">
+
+                <div class="col-md-6">
+                  <label for="inputSelectName" class="form-label">Nombre del disco</label>
+                  <select id="inputSelectName" class="form-select">
+                    <option value="" disabled selected>Seleccione el nombre del disco</option>
+                    <option value="option1">Debian Full</option>
+                    <option value="option2">Fedora DB</option>
+                    <option value="option3">Kali Linux</option>
+                  </select>
                 </div>
-                <div class="centrar-botones">
-                  <button type="submit" class="btn btn-primary" style="margin-top: 30px; width: 180px;">Crear
-                    Disco</button>
+
+                <div class="col-md-6">
+                  <label for="inputSelectDistribution" class="form-label">Distribución del sistema operativo</label>
+                  <select id="inputSelectDistribution" class="form-select">
+                    <option value="" disabled selected>Seleccione el tipo de distribución</option>
+                    <option value="option1">Debian</option>
+                    <option value="option2">Fedora</option>
+                    <option value="option3">Kali</option>
+                  </select>
                 </div>
+
+                <div class="col-md-6">
+                  <label for="inputRouteDisk" class="form-label">Ruta del disco</label>
+                  <input type="text" class="form-control" id="inputRouteDisk" placeholder="Ingresa la ruta donde esta el disco">
+                </div>
+
+                <div class="col-md-6">
+                  <label for="inputSelectArchitecture" class="form-label">Arquitectura</label>
+                  <select id="inputSelectArchitecture" class="form-select">
+                    <option value="" disabled selected>Seleccione el tipo de Arquitectura</option>
+                    <option value="option1">32</option>
+                    <option value="option2">64</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="inputSelectSystem" class="form-label">Sistema operativo</label>
+                  <select id="inputSelectSystem" class="form-select">
+                    <option value="" disabled selected>Seleccione el sistema operativo</option>
+                    <option value="option1">Linux</option>
+                    <option value="option2">Windows</option>
+                    <option value="option3">MacOS</option>
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="inputSelectHost" class="form-label">Host asociado</label>
+                  <select id="inputSelectHost" class="form-select">
+                    <option value="" disabled selected>Seleccione el sistema operativo</option>
+                    <option value="option1">10.100.100.100</option>
+                    <option value="option2">10.100.100.100</option>
+                    <option value="option3">10.100.100.100</option>
+                  </select>
+                </div>
+
+                <div class="col-md-4">
+                  <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Disco</button>
+                </div>
+
               </form>
             </div>
           </div>
@@ -174,6 +196,8 @@
 
     </div>
   </div>
+
+
 
 </body>
 
