@@ -10,6 +10,7 @@ import (
 	handlers "servidor_procesamiento/Procesador/Handlers"
 	jobs "servidor_procesamiento/Procesador/Jobs"
 	models "servidor_procesamiento/Procesador/Models"
+	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -83,6 +84,15 @@ func setDatabase() {
 		&models.Contenedor{},
 		&models.CatalogoDisco{})
 
+	// Precarga del usuario administrador
+	createAdmin()
+
+	// Precarga de los datos hosts
+	registerHostData()
+}
+
+// Funcion para precargar el usuario administrador
+func createAdmin() {
 	if !database.CountAdminsRegistered() {
 		persona := models.Persona{
 			Nombre:      "admin",
@@ -94,6 +104,22 @@ func setDatabase() {
 
 		database.DATABASE.Create(&persona)
 		fmt.Print("Usuario administrador creado\n")
+	}
+}
+
+// Función para precargar los datos de los hosts de la sala B y C (No cambian)
+func registerHostData() {
+	// Obtener la cantidad de hosts registrados en la BD
+	count, err := database.CountRegisteredHosts()
+	if err != nil {
+		log.Println("Error al contar los hosts registrados:", err)
+		return
+	}
+
+	// Verificar que no hayan hosts registrados
+	if count == 0 {
+		fmt.Println("Preregistrando datos de hosts...")
+		utilities.PreregisterHostJsonData()
 	}
 }
 

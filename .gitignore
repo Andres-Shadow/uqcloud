@@ -4,6 +4,7 @@ servidor_procesamiento/Procesador/Environment/**
 *endpoints.txt
 *JSONS.txt
 *id_rsa
+*hostRegistration.sql
 
 # IDE
 .idea/

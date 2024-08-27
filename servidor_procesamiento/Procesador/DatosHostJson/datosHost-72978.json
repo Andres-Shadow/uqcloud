@@ -1,0 +1,12 @@
+﻿{
+    "nameHost":  "X",
+    "ipHost":  "10.0.48.130",
+    "macHost":  "84:69:93:81:80:E9",
+    "adapHost":  "Intel(R) Ethernet Connection (17) I219-LM",
+    "soHost":  "Microsoft Windows 10 Pro",
+    "hostnameHost":  "Admin",
+    "ramHost":  32438,
+    "cpuHost":  16,
+    "almaceHost":  377,
+    "sshHost":  "C:\\Users\\Admin\\.ssh"
+}
