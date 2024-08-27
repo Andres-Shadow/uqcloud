@@ -60,21 +60,27 @@ func SelectHost() (models.Host, error) {
 		return host, err
 	}
 
-	// Genera un número aleatorio dentro del rango de registros
-	rand.Seed(time.Now().Unix()) // Seed para generar números aleatorios diferentes en cada ejecución
-	randomIndex := rand.Intn(int(count))
+	log.Println("Número de hosts: ", count)
 
-	// Consulta para seleccionar un registro aleatorio de la tabla "host"
-	err = DATABASE.Offset(randomIndex).Limit(1).Find(&host).Error
-	if err != nil {
-		log.Println("Error al realizar la consulta sql: ", err)
+	if count == 0 {
+		log.Println("No existen hosts disponibles para la creación de la VM")
 		return host, err
+	} else {
+		// Genera un número aleatorio dentro del rango de registros
+		rand.Seed(time.Now().Unix()) // Seed para generar números aleatorios diferentes en cada ejecución
+		randomIndex := rand.Intn(int(count))
+
+		// Consulta para seleccionar un registro aleatorio de la tabla "host"
+		err = DATABASE.Offset(randomIndex).Limit(1).Find(&host).Error
+		if err != nil {
+			log.Println("Error al realizar la consulta sql: ", err)
+			return host, err
+		}
+
+		// Imprime el registro aleatorio seleccionado
+		log.Printf("Registro aleatorio seleccionado: ID: %d, Nombre: %s, IP: %s\n", host.Id, host.Nombre, host.Ip)
+		return host, nil
 	}
-
-	// Imprime el registro aleatorio seleccionado
-	log.Printf("Registro aleatorio seleccionado: ID: %d, Nombre: %s, IP: %s\n", host.Id, host.Nombre, host.Ip)
-
-	return host, nil
 }
 
 func GetHostByIp(ip string) (models.Host, error) {
