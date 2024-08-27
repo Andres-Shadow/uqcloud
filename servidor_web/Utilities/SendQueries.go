@@ -3,10 +3,11 @@ package Utilities
 import (
 	"bytes"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Fucnión encargada de registrar cualquier tipo de elemento

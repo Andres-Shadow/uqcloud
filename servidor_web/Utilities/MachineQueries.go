@@ -6,10 +6,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Consultat maquinas virtuales asociadas a un email
@@ -42,11 +43,17 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	// defer func() { // De aquí saltaba un error REVISAR
+	// 	if resp.Body != nil {
+	// 		resp.Body.Close()
+	// 		log.Println("Se ha cerrado el cuerpo de la solicitud")
+	// 	}
+	// }()
 
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
 	if resp.StatusCode != http.StatusOK {
-		log.Println("Error: La solicitud no fue exitosa", err.Error())
-		return nil, errors.New("La solicitud al servidor no fue exitosa")
+		log.Println("Error: La solicitud no fue exitosa, ", err)
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
 	}
 
 	// Lee la respuesta del cuerpo de la respuesta HTTP
