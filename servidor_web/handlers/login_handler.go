@@ -62,7 +62,7 @@ func AdminLogin(c *gin.Context) {
 
 		log.Println("Usuario inicia sesion con exito")
 		log.Printf("%+v\n", usuario)
-		c.Redirect(http.StatusFound, "/mainPage")
+		c.Redirect(http.StatusFound, "/admin/dashboard")
 	} else {
 		log.Println("Credenciales invalidas/Usuario no encontrado: ", err)
 		session := sessions.Default(c)
