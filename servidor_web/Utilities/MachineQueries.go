@@ -6,9 +6,11 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
+	"log"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Consultat maquinas virtuales asociadas a un email
@@ -18,12 +20,14 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	persona := Models.Person{Email: email}
 	jsonData, err := json.Marshal(persona)
 	if err != nil {
+		log.Println("Error al deccodificar la estrcutura peronsa como json", err.Error())
 		return nil, err
 	}
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData))
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return nil, err
 	}
 
@@ -33,19 +37,29 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	// Realiza la solicitud HTTP
 	client := &http.Client{}
 	resp, err := client.Do(req)
+
 	if err != nil {
+		log.Println("Error al realizar la solicutad HTTP", err.Error())
 		return nil, err
 	}
 	defer resp.Body.Close()
+	// defer func() { // De aquí saltaba un error REVISAR
+	// 	if resp.Body != nil {
+	// 		resp.Body.Close()
+	// 		log.Println("Se ha cerrado el cuerpo de la solicitud")
+	// 	}
+	// }()
 
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("La solicitud al servidor no fue exitosa")
+		log.Println("Error: La solicitud no fue exitosa, ", err)
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
 	}
 
 	// Lee la respuesta del cuerpo de la respuesta HTTP
 	responseBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Fatal("Error al leer el cuerpo de la respuesta", err.Error())
 		return nil, err
 	}
 
@@ -54,6 +68,8 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	// Decodifica los datos de respuesta en la variable machines.
 	if err := json.Unmarshal(responseBody, &machines); err != nil {
 		// Maneja el error de decodificación aquí
+		log.Println("error al decodifcar el JSON", err.Error())
+		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
 	}
 
 	return machines, nil
@@ -71,6 +87,7 @@ func CreateMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, 
 	confirmacion, err := SendRequest("POST", serverURL, payload)
 
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 
@@ -89,6 +106,7 @@ func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
 	confirmacion, err := SendRequest("POST", serverURL, payload)
 
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 
@@ -108,6 +126,7 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 	confirmacion, err := SendRequest("DELETE", serverURL, payload)
 
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 
@@ -126,6 +145,7 @@ func ConfigMachienFromServer(specifications Models.VirtualMachineTemp) (bool, er
 	confirmacion, err := SendRequest("PUT", serverURL, payload)
 
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 
@@ -146,6 +166,7 @@ func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (b
 	confirmacion, err := SendRequest("GET", serverURL, payload)
 
 	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 

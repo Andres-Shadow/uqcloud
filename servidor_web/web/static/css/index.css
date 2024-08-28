@@ -368,3 +368,15 @@ section,
     transform: scale(1.15);
   }
 }
+
+/* featured : Clase para señalar la mejor opción | como resaltar- */
+.instances .featured {
+  z-index: 10;
+  border: 3px solid var(--accent-color);
+}
+
+@media (min-width: 992px) {
+  .instances .featured {
+    transform: scale(1.15);
+  }
+}

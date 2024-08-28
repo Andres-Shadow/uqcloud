@@ -1,24 +1,25 @@
 {{define "header.html"}}
 <head>
-    <link href="web/static/css/header.css" rel="stylesheet">
-    <script src="web/static/js/header.js"></script>
+    <link href="/web/static/css/header.css" rel="stylesheet">
+    <script src="/web/static/js/header.js"></script>
 </head>
 
 <body class="index-page">
 
+  <!-- Header -->
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
 
       <a href="/#" class="logo d-flex align-items-center me-auto me-xl-0">
-        <img src="web/static/img/desktop-cloud.png" alt="">
+        <img src="/web/static/img/desktop-cloud.png" alt="">
         <h1 class="sitename">Desktop Cloud</h1>
       </a>
 
       <nav id="navmenu" class="navmenu">
         <ul>
           <li><a href="/#" class="active">Inicio</a></li>
-          <li><a href="#services">Servicios</a></li>
-          <li><a href="#instances">Instancias</a></li>          
+          <li><a href="/#services">Servicios</a></li>
+          <li><a href="/#instances">Instancias</a></li>          
           <li><a href="/aboutus#">Cónocenos</a></li>
           <li class="dropdown"><a href="/docs"><span>Documentación</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
@@ -39,7 +40,7 @@
       </nav>
 
       <!-- TODO: Darle una acción a este boton de crear maquina (o escoger alguna opcion de las maquina de la seccion "instancias") -->
-      <a class="btn-getstarted" href="/">Crear Máquina</a>
+      <a class="btn-getstarted" href="/">Crear Máquina Personalizada</a>
 
     </div>
   </header>

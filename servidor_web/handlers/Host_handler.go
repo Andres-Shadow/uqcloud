@@ -6,23 +6,24 @@ import (
 	"AppWeb/Utilities"
 
 	"fmt"
-	"github.com/gin-contrib/sessions"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
-	"net/http"
 )
 
 func CreateHostPage(c *gin.Context) {
+	// TODO: DESCOMENTAR PARA QUE ENTREN SOLO LOS ADMIN
 	// Acceder a la sesión
-	session := sessions.Default(c)
-	rol := session.Get("rol")
+	// session := sessions.Default(c)
+	// // rol := session.Get("rol")
 
-	//TODO: Revisar si los roles pueden ser enum en vez de string (Revisar BASE DE DATOS)
-	if rol != "Administrador" {
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
+	// // //TODO: Revisar si los roles pueden ser enum en vez de string (Revisar BASE DE DATOS)
+	// // if rol != "Administrador" {
+	// // 	// Si el usuario no está autenticado, redirige a la página de inicio de sesión
+	// // 	c.Redirect(http.StatusFound, "/login")
+	// // 	return
+	// // }
 
 	c.HTML(http.StatusOK, "createHost.html", nil)
 }

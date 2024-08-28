@@ -1,0 +1,29 @@
+{{define "loginHeader.html"}}
+<head>
+    <link href="web/static/css/loginHeader.css" rel="stylesheet">
+    <script src="web/static/js/header.js"></script>
+</head>
+
+<body class="index-page">
+
+  <!-- Header -->
+  <header id="header" class="header">
+    <div class="container-fluid position-relative d-flex align-items-center justify-content-between">
+
+      <a href="/#" class="logo d-flex align-items-center me-auto me-xl-0">
+        <img src="web/static/img/desktop-cloud.png" alt="">
+        <h1 class="sitename">Desktop Cloud</h1>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+      <!-- TODO: Darle una acción a este boton de crear maquina (o escoger alguna opcion de las maquina de la seccion "instancias") -->
+      <a class="btn-getstarted" href="/#">Volver</a>
+
+    </div>
+  </header>
+</body>
+
+{{end}}

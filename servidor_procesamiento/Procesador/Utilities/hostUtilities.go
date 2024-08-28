@@ -1,6 +1,14 @@
 package utilities
 
-import models "servidor_procesamiento/Procesador/Models"
+import (
+	"bytes"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"path/filepath"
+	database "servidor_procesamiento/Procesador/Database"
+	models "servidor_procesamiento/Procesador/Models"
+)
 
 /*
 Funciòn que permite validar si un host tiene los recursos (CPU y RAM) que se estàn solicitando
@@ -34,4 +42,54 @@ func ValidateHostResourceAvailability(cpuRequerida int, ramRequerida int, host m
 		recursosDisponibles = true
 	}
 	return recursosDisponibles
+}
+
+/*
+Función que precarga la información tomada de los hosts por medio de los jsons generados
+por el script de obtenerdatoshost.ps1
+*/
+func PreregisterHostJsonData() {
+	// Ruta donde se encuentran los archivos JSON
+	jsonPath := "./DatosHostJson/"
+
+	// Buscar todos los archivos JSON en la carpeta
+	files, err := filepath.Glob(filepath.Join(jsonPath, "datosHost-*.json"))
+	if err != nil {
+		log.Fatalf("Error al buscar archivos JSON: %v", err)
+	}
+
+	if len(files) == 0 {
+		log.Println("No se encontraron archivos JSON en la ruta especificada.")
+		return
+	}
+
+	log.Printf("Archivos JSON encontrados: %v", files)
+
+	// Procesar cada archivo JSON
+	for _, file := range files {
+		// Leer el archivo JSON
+		data, err := ioutil.ReadFile(file)
+		if err != nil {
+			log.Printf("Error al leer el archivo %s: %v", file, err)
+			continue
+		}
+
+		// Eliminar BOM si existe
+		data = bytes.TrimPrefix(data, []byte("\xef\xbb\xbf"))
+
+		// Deserializar el contenido del JSON en un struct Host
+		var host models.Host
+		err = json.Unmarshal(data, &host)
+		if err != nil {
+			log.Printf("Error al deserializar el archivo %s: %v", file, err)
+			continue
+		}
+
+		// Guardar el host en la base de datos usando GORM
+		if err := database.DATABASE.Create(&host).Error; err != nil {
+			log.Printf("Error al guardar el host en la base de datos: %v", err)
+		} else {
+			log.Printf("Host registrado: %s", host.Nombre)
+		}
+	}
 }

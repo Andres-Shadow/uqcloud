@@ -81,22 +81,22 @@ Estructura de datos tipo JSON que contiene los campos de un host
 */
 type Host struct {
 	gorm.Model
-	Id                             int
-	Nombre                         string
-	Mac                            string
-	Ip                             string
-	Hostname                       string
-	Ram_total                      int
-	Cpu_total                      int
-	Almacenamiento_total           int
-	Ram_usada                      int
-	Cpu_usada                      int
-	Almacenamiento_usado           int
-	Adaptador_red                  string
-	Estado                         string
-	Ruta_llave_ssh_pub             string
-	Sistema_operativo              string
-	Distribucion_sistema_operativo string
+	Id                             int    `json:"id"`
+	Nombre                         string `json:"nameHost"`
+	Mac                            string `json:"macHost"`
+	Ip                             string `json:"ipHost"`
+	Hostname                       string `json:"hostnameHost"`
+	Ram_total                      int    `json:"ramHost"`
+	Cpu_total                      int    `json:"cpuHost"`
+	Almacenamiento_total           int    `json:"almaceHost"`
+	Ram_usada                      int    `json:"ramUsada"`
+	Cpu_usada                      int    `json:"cpuUsada"`
+	Almacenamiento_usado           int    `json:"almacenamientoUsado"`
+	Adaptador_red                  string `json:"adapHost"`
+	Estado                         string `json:"estadoHost"`
+	Ruta_llave_ssh_pub             string `json:"sshHost"`
+	Sistema_operativo              string `json:"soHost"`
+	Distribucion_sistema_operativo string `json:"distribucionSistemaOperativo"`
 }
 
 /*
