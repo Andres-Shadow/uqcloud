@@ -53,7 +53,7 @@ type Maquina_virtual struct {
 	Estado                         string
 	Hostname                       string
 	Persona_email                  string
-	Host_id                        int
+	Host_id                        int `json:"host_id"`
 	Disco_id                       int
 	Sistema_operativo              string
 	Distribucion_sistema_operativo string
@@ -168,7 +168,6 @@ Estructura de datos tipo JSON que representa la informaciòn de los contenedores
 @Puerto Representa la arquitectura del sistema operativo. Se representa en un valor entero. Por ejemplo: 32 o 64
 @Nombre Representa el identificador ùnico del host en el cual està ubicado el disco
 */
-
 
 type Contenedor struct {
 	gorm.Model

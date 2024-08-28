@@ -36,6 +36,9 @@ func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//imprimir el payload
+	fmt.Println(payload)
+
 	// Encola las especificaciones.
 	config.GetMu().Lock()
 	config.GetMaquina_virtualQueue().Queue.PushBack(payload)
