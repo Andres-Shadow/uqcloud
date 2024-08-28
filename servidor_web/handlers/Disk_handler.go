@@ -5,7 +5,10 @@ import (
 	"AppWeb/Models"
 	"AppWeb/Utilities"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -44,7 +47,7 @@ func CreateNewDisk(c *gin.Context) {
 	//Crear el Disk a partir de la solicutud
 	newDisk, err := CreateDiskFromRequest(c)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar el JSON:" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar el JSON: " + err.Error()})
 		return
 	}
 
@@ -53,10 +56,10 @@ func CreateNewDisk(c *gin.Context) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL)
 
 	if err := Utilities.RegisterElements(serverURL, newDisk); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disk"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disco"})
 		return
 	}
-	c.HTML(http.StatusOK, "newDisk.html", gin.H{"message": "Disk Creado correctamente"})
+	c.JSON(http.StatusOK, gin.H{"message": "Disco creado correctamente"})
 }
 
 /*Funcion que se encarga de decodificar los parametros para crear un nuevo disco
@@ -64,9 +67,22 @@ func CreateNewDisk(c *gin.Context) {
 func CreateDiskFromRequest(c *gin.Context) (Models.Disk, error) {
 	var newDisk Models.Disk
 
-	//Decodificar JSON DESDE EL CUERPO DE LA SOLICITUD
-	if err := json.NewDecoder(c.Request.Body).Decode(&newDisk); err != nil {
+	var bodyBytes []byte
+	if c.Request.Body != nil {
+		bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
+	}
+
+	log.Printf("Request Body: %s", string(bodyBytes))
+
+	if err := json.Unmarshal(bodyBytes, &newDisk); err != nil {
+		log.Println("Error al decodificar el JSON---: " + err.Error())
 		return Models.Disk{}, err
+	}
+
+	if newDisk.Name == "" || newDisk.Ruta_Ubicacion == "" || newDisk.Sistema_Operativo == "" ||
+		newDisk.Arquitectura < 0 || newDisk.Host_id <= 0 {
+		log.Println("Error existen campos vacios")
+		return Models.Disk{}, errors.New("Error existen campos vacios")
 	}
 
 	return newDisk, nil

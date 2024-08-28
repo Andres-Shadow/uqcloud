@@ -5,6 +5,7 @@
   <title>Agregar Disco</title>
 
   <title>Desktop Cloud Uniquindio</title>
+  <link rel="stylesheet"  href="/web/static/css/createDisk.css">
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainPage.css">
   
@@ -23,27 +24,8 @@
 
   <!-- <link rel="stylesheet" type="text/css" href="/web/static/css/style.css"> -->
   <link rel="stylesheet" type="text/css" href="/web/static/css/styleNavbar.css">
-  <style>
-    /* Estilos para el mensaje de éxito */
-    #successMessage {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-    }
-    form label {
-      font-size: 1.1rem; /* Tamaño de letra un poco más grande */
-      color: #000000; /* Color más oscuro para el texto */
-      font-weight: inherit; /* Opción para hacer el texto más grueso */
-    }
-    .form-select option[value=""] {
-      color: #6c757d; /* Color más claro para las opciones de ayuda */
-    }
 
 
-  </style>
 </head>
 
 <body class="sb-nav-fixed">
@@ -52,7 +34,6 @@
   {{template "mainpage-navbar.html"}}
 
   <div id="layoutSidenav">
-
     {{template "mainpage-sidebar.html" .}}
 
     <div id="layoutSidenav_content">
@@ -63,9 +44,16 @@
           <div class="container">
             <div class="center-content">
               <!-- Mensaje de éxito -->
-              <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+              <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
                 {{ .message }}
               </div>
+              <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;">
+                {{ .message }}
+                <button type="button" class="close" data-bs-dismiss="alert" aria-label="close"></button>
+              </div>
+
+
+
               <form class="row g-3" id="createForm" method="post" action="/createDisk" style="margin: 50px; width: 100%; max-width: 1200px;" onsubmit="return showSuccessMessage()">
                 <h1 class="centre-tittle">
                   <i class="bi bi-disc-fill"></i> Crear Discos
@@ -76,9 +64,9 @@
                   <label for="inputSelectName" class="form-label">Nombre del disco</label>
                   <select id="inputSelectName" class="form-select">
                     <option value="" disabled selected>Seleccione el nombre del disco</option>
-                    <option value="option1">Debian Full</option>
-                    <option value="option2">Fedora DB</option>
-                    <option value="option3">Kali Linux</option>
+                    <option value="Debian Full">Debian Full</option>
+                    <option value="Fedora DB">Fedora DB</option>
+                    <option value="Kali Linux">Kali Linux</option>
                   </select>
                 </div>
 
@@ -86,9 +74,9 @@
                   <label for="inputSelectDistribution" class="form-label">Distribución del sistema operativo</label>
                   <select id="inputSelectDistribution" class="form-select">
                     <option value="" disabled selected>Seleccione el tipo de distribución</option>
-                    <option value="option1">Debian</option>
-                    <option value="option2">Fedora</option>
-                    <option value="option3">Kali</option>
+                    <option value="Debian">Debian</option>
+                    <option value="Fedora">Fedora</option>
+                    <option value="Kali">Kali</option>
                   </select>
                 </div>
 
@@ -101,8 +89,8 @@
                   <label for="inputSelectArchitecture" class="form-label">Arquitectura</label>
                   <select id="inputSelectArchitecture" class="form-select">
                     <option value="" disabled selected>Seleccione el tipo de Arquitectura</option>
-                    <option value="option1">32</option>
-                    <option value="option2">64</option>
+                    <option value="64">64</option>
+                    <option value="32">32</option>
                   </select>
                 </div>
 
@@ -110,9 +98,9 @@
                   <label for="inputSelectSystem" class="form-label">Sistema operativo</label>
                   <select id="inputSelectSystem" class="form-select">
                     <option value="" disabled selected>Seleccione el sistema operativo</option>
-                    <option value="option1">Linux</option>
-                    <option value="option2">Windows</option>
-                    <option value="option3">MacOS</option>
+                    <option value="Linux">Linux</option>
+                    <option value="Windows">Windows</option>
+                    <option value="MacOS">MacOS</option>
                   </select>
                 </div>
 
@@ -120,9 +108,9 @@
                   <label for="inputSelectHost" class="form-label">Host asociado</label>
                   <select id="inputSelectHost" class="form-select">
                     <option value="" disabled selected>Seleccione el sistema operativo</option>
-                    <option value="option1">10.100.100.100</option>
-                    <option value="option2">10.100.100.100</option>
-                    <option value="option3">10.100.100.100</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
                   </select>
                 </div>
 
@@ -133,60 +121,7 @@
               </form>
             </div>
           </div>
-      
         </div>
-      
-      
-        <script>
-          // Función para mostrar el mensaje de éxito y luego enviar el formulario
-          function showSuccessMessage() {
-            var successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            setTimeout(function () {
-              successMessage.style.display = 'none';
-            }, 3000); // Desaparecer después de 5 segundos
-          }
-      
-          // Mostrar el mensaje de éxito al cargar la página si es necesario
-          window.onload = function () {
-            var message = "{{ .message }}";
-            if (message.trim() !== "") {
-              showSuccessMessage();
-            }
-          };
-      
-          ///
-          function actualizarDistribuciones() {
-            var osSelect = document.getElementById("osDisk");
-            var distriSelect = document.getElementById("distriDisk");
-      
-            // Limpiar las opciones actuales
-            distriSelect.innerHTML = "";
-      
-            // Obtener el valor seleccionado en el primer select
-            var selectedOs = osSelect.options[osSelect.selectedIndex].value;
-      
-            // Agregar nuevas opciones al segundo select basado en la selección del primero
-            if (selectedOs === "Linux") {
-              var distriOptions = ["Debian", "Linux Mint", "Ubuntu", "DebianDesarrollo", "DebianDocker"];
-              for (var i = 0; i < distriOptions.length; i++) {
-                var option = document.createElement("option");
-                option.text = distriOptions[i];
-                option.value = distriOptions[i];
-                distriSelect.add(option);
-              }
-            } else {
-              // Agregar otras opciones según sea necesario para otros sistemas operativos
-              // Por ejemplo, para Windows y Mac
-            }
-          }
-      
-          // Llamar a la función al cargar la página para asegurarse de que las opciones iniciales estén configuradas correctamente
-          // TODO: ERROR NO MUESTRA LA PAGINA
-          // TODO: SOLUCIONAR ERROR
-          // actualizarDistribuciones();
-        </script>
-
       </main>
 
       <!-- Footer -->
@@ -196,9 +131,7 @@
 
     </div>
   </div>
-
-
-
+  <script src="/web/static/js/createDisk.js"></script>
 </body>
 
 </html>
