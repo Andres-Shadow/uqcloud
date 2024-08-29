@@ -46,7 +46,7 @@ Estructura de datos tipo JSOn que contiene los datos de una màquina virtual
 type Maquina_virtual struct {
 	gorm.Model
 	Uuid                           string    `json:"uuid"`
-	Nombre                         string    `json:"vm_nombre"`
+	Nombre                         string    `json:"vm_name"`
 	Ram                            int       `json:"vm_ram"`
 	Cpu                            int       `json:"vm_cpu"`
 	Ip                             string    `json:"vm_ip"`

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 
@@ -15,11 +16,6 @@ import (
 /*
 Clase encargada de contener las funciones relacionadas con la gestion de maquinas virtuales
 */
-var privateKeyPath string
-
-func initPrivateKey(path string) {
-	privateKeyPath = path
-}
 
 /*
 Funciòn que verifica el tiempo de creaciòn de las màquinas de los usuarios invitados con el fin de determinar si se ha pasado o no del tiempo lìmite (2.5horas)
@@ -27,8 +23,6 @@ En caso de que una màquina se haya pasado del tiempo, se procederà a eliminarl
 */
 
 func CheckMachineTime(privateKey string) {
-
-	initPrivateKey(privateKey)
 
 	// Obtiene todas las máquinas virtuales de la base de datos
 	maquinas, err := database.GetGuestMachines()
@@ -54,7 +48,7 @@ func CheckMachineTime(privateKey string) {
 				return
 			}
 			//Configura la conexiòn SSH con el host
-			config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
+			config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 			if err2 != nil {
 				log.Println("Error al configurar SSH:", err2)
 				return
@@ -149,7 +143,7 @@ func DeleteVM(virtualMachineName string) string {
 		return "Error al obtener el host"
 	}
 	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
+	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"
@@ -214,7 +208,7 @@ func ExistVM(virtualMachineName string) (bool, error) {
 
 	//err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
 	existe, err := database.ExistVirtualMachine(virtualMachineName)
-	if err != nil && existe == true{
+	if err != nil && existe == true {
 		log.Println("Error al realizar la consulta: ", err)
 		return existe, err
 	}
