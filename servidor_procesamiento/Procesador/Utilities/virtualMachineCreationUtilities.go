@@ -87,8 +87,6 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		//Creacion de la Maquina con Algoritmo aleatorio
 		//Obtiene el usuario
 
-		
-
 		nameVM := specs.Nombre + "_" + caracteres
 
 		fmt.Println("llego hasta aqui")
@@ -211,6 +209,7 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 		Hostname:          "uqcloud",
 		Persona_email:     specs.Persona_email,
 		Fecha_creacion:    currentTime,
+		Host_id:           specs.Host_id,
 	}
 
 	if err := database.CreateVirtualMachine(nuevaMaquinaVirtual); err != nil {

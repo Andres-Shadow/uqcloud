@@ -19,16 +19,11 @@ import (
 
 // Variable que almacena la ruta de la llave privada ingresada por paametro cuando de ejecuta el programa
 var privateKeyPath = flag.String("key", "", "Ruta de la llave privada SSH")
+var preregisteredHosts = flag.Bool("h", false, "")
 
 func main() {
 
 	flag.Parse()
-
-	//Verifica que el paràmetro de la ruta de la llave privada no estè vacìo
-	if *privateKeyPath == "" {
-		fmt.Println("Debe ingresar la ruta de la llave privada SSH")
-		return
-	}
 
 	// Carga las variables de entorno del archivo .env
 	err := godotenv.Load("Environment/.env")
@@ -36,13 +31,24 @@ func main() {
 		log.Fatalf("Error loading .env file: %v", err)
 	}
 
+	// Inicializa la conexión a la base de datos y precarga de datos
+	setDatabase()
+
+	//Verifica que el paràmetro de la ruta de la llave privada no estè vacìo
+	if *privateKeyPath == "" {
+		fmt.Println("Debe ingresar la ruta de la llave privada SSH")
+		return
+	}
+
+	// Verifica si se ingresò el paràmetro para precargar los hosts
+	if *preregisteredHosts {
+		registerHostData()
+	}
+
 	r := mux.NewRouter()
 
 	// Inicializa la ruta de la llave privada SSH
 	config.InitPrivateKeyPath(*privateKeyPath)
-
-	// Inicializa la conexión a la base de datos y precarga de datos
-	setDatabase()
 
 	// Configura un manejador de solicitud para la ruta "/json".
 	manageServer(r)
@@ -69,8 +75,6 @@ Funcion que se encarga de realizar la conexión a la base de datos, cargar los m
 precargar el usuario administrador
 */
 func setDatabase() {
-	// Conexión a SQL
-	//database.ManageSqlConecction()
 
 	// Migración de modelos para la creación de las tablas en la base de datos.
 	database.DBConnection()
@@ -88,7 +92,7 @@ func setDatabase() {
 	createAdmin()
 
 	// Precarga de los datos hosts
-	registerHostData()
+	//registerHostData()
 }
 
 // Funcion para precargar el usuario administrador
@@ -115,11 +119,12 @@ func registerHostData() {
 		log.Println("Error al contar los hosts registrados:", err)
 		return
 	}
-
 	// Verificar que no hayan hosts registrados
 	if count == 0 {
 		fmt.Println("Preregistrando datos de hosts...")
 		utilities.PreregisterHostJsonData()
+	} else {
+		fmt.Println("Ya existen hosts registrados")
 	}
 }
 
