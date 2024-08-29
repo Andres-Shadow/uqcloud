@@ -1,0 +1,11 @@
+
+POST :8081/api/v1/disk
+
+{
+    "dsk_name": "disco alpine",
+    "dsk_route" : "C:\\Users\\andres\\Documents\\Alpine.vdi",
+    "dsk_so" : "linux",
+    "dsk_so_distro" : "alpine x64",
+    "dsk_arch": 64,
+    "dsk_host_id" : 16
+}

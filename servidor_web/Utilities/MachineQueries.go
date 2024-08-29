@@ -4,29 +4,27 @@ import (
 	"AppWeb/Config"
 	"AppWeb/Models"
 	"bytes"
+	"errors"
 	"fmt"
-	"github.com/goccy/go-json"
 	"io/ioutil"
 	"log"
 	"net/http"
+
+	"github.com/goccy/go-json"
 )
 
 // Consultat maquinas virtuales asociadas a un email
 func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
-	log.Println("Se va a realizar una solicitud a: ", serverURL)
 
-	log.Println("Se procese a obtener los datos de la persona")
 	persona := Models.Person{Email: email}
 	jsonData, err := json.Marshal(persona)
-
 	if err != nil {
 		log.Println("Error al deccodificar la estrcutura peronsa como json", err.Error())
 		return nil, err
 	}
 
-	log.Println("Los datos se han obtenido exitosamente desde el JSON, se procese a crear la solicitud HTTP")
-	// Crea una solicitud HTTP GET con el JSON como cuerpo
+	// Crea una solicitud HTTP POST con el JSON como cuerpo
 	req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())
@@ -35,41 +33,33 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 
 	// Establece el encabezado de tipo de contenido
 	req.Header.Set("Content-Type", "application/json")
-	log.Println("La solicitud ha sido creada exitosamente")
 
 	// Realiza la solicitud HTTP
-	log.Println("Se procese a realizar la solicitud")
 	client := &http.Client{}
 	resp, err := client.Do(req)
-	log.Println("Se ha realizado la solicitud")
 
 	if err != nil {
-		log.Println("Error al realizar la solicitud HTTP", err.Error())
+		log.Println("Error al realizar la solicutad HTTP", err.Error())
 		return nil, err
 	}
+	defer resp.Body.Close()
+	// defer func() { // De aquí saltaba un error REVISAR
+	// 	if resp.Body != nil {
+	// 		resp.Body.Close()
+	// 		log.Println("Se ha cerrado el cuerpo de la solicitud")
+	// 	}
+	// }()
 
-	log.Println("Se ha realizado la solicitud exitosamente")
-
-	defer func() {
-		if resp.Body != nil {
-			resp.Body.Close()
-			log.Println("Se ha cerrado el cuerpo de la solicitud ")
-		}
-	}()
-
-	log.Println("Estatus de la solicitud", resp.StatusCode)
-
+	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
 	if resp.StatusCode != http.StatusOK {
-		log.Println("Error: La solicitud no fue exitosa", resp.StatusCode)
-		return nil, fmt.Errorf("La solicitud al servidor no fue exitosa: %d %s", resp.StatusCode, http.StatusText(resp.StatusCode))
+		log.Println("Error: La solicitud no fue exitosa, ", err)
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
 	}
 
-	log.Println("La solicitud fue exitosa, se procede a leer el curpo de la respuesta")
 	// Lee la respuesta del cuerpo de la respuesta HTTP
 	responseBody, err := ioutil.ReadAll(resp.Body)
-	log.Println("Se ha leido la solicitud del cuerpo de la respuesta")
 	if err != nil {
-		log.Println("Error al leer el cuerpo de la respuesta", err.Error())
+		log.Fatal("Error al leer el cuerpo de la respuesta", err.Error())
 		return nil, err
 	}
 

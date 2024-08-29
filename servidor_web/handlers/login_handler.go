@@ -16,14 +16,15 @@ import (
 
 func LoginAdminPage(c *gin.Context) {
 	session := sessions.Default(c)
-	email := session.Get("email")
+	// email := session.Get("email")
 
-	log.Println(email)
-	if email != nil {
-		log.Println("Email invalido")
-		c.Redirect(http.StatusFound, "/mainPage")
-		return
-	}
+	// TODO: POR QUE NO SIRVE BIEN??????
+	// log.Println(email)
+	// if email != nil {
+	// 	log.Println("Email invalido")
+	// 	c.Redirect(http.StatusFound, "/mainPage")
+	// 	return
+	// }
 
 	errorMessage := session.Get("loginError")
 	session.Delete("loginError")
@@ -61,7 +62,7 @@ func AdminLogin(c *gin.Context) {
 
 		log.Println("Usuario inicia sesion con exito")
 		log.Printf("%+v\n", usuario)
-		c.Redirect(http.StatusFound, "/mainPage")
+		c.Redirect(http.StatusFound, "/admin/dashboard")
 	} else {
 		log.Println("Credenciales invalidas/Usuario no encontrado: ", err)
 		session := sessions.Default(c)

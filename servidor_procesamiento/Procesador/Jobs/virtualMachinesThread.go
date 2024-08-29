@@ -3,6 +3,7 @@ package jobs
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	config "servidor_procesamiento/Procesador/Config"
 	models "servidor_procesamiento/Procesador/Models"
 	utilities "servidor_procesamiento/Procesador/Utilities"
@@ -18,23 +19,25 @@ func CheckVirtualMachinesQueueChanges() {
 		mu.Lock()
 
 		currentQueueSize := config.GetMaquina_virtualQueue().Queue.Len()
-		//currentQueueSize :=  maquina_virtualesQueue.Queue.Len()
 		mu.Unlock()
 
 		if currentQueueSize > 0 {
 			// Imprime y elimina el primer elemento de la cola de especificaciones.
 			mu.Lock()
 			firstElement := config.GetMaquina_virtualQueue().Queue.Front()
-			data, dataPresent := firstElement.Value.(map[string]interface{})
+			if firstElement == nil {
+				log.Println("Error: No se pudo obtener el primer elemento de la cola")
+				mu.Unlock()
+				continue
+			}
 
-			//maquina_virtualesQueue.Queue.Remove(firstElement)
+			data, dataPresent := firstElement.Value.(map[string]interface{})
 			mu.Unlock()
 
 			if !dataPresent {
-				fmt.Println("No se pudo procesar la solicitud")
+				log.Println("No se pudo procesar la solicitud: el primer elemento no contiene datos válidos")
 				mu.Lock()
 				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
-				//maquina_virtualesQueue.Queue.Remove(firstElement)
 				mu.Unlock()
 				continue
 			}
@@ -42,10 +45,9 @@ func CheckVirtualMachinesQueueChanges() {
 			specsMap, _ := data["specifications"].(map[string]interface{})
 			specsJSON, err := json.Marshal(specsMap)
 			if err != nil {
-				fmt.Println("Error al extraer las especificaciones:", err)
+				log.Println("Error al extraer las especificaciones:", err)
 				mu.Lock()
 				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
-				//maquina_virtualesQueue.Queue.Remove(firstElement)
 				mu.Unlock()
 				continue
 			}
@@ -53,17 +55,18 @@ func CheckVirtualMachinesQueueChanges() {
 			var specifications models.Maquina_virtual
 			err = json.Unmarshal(specsJSON, &specifications)
 			if err != nil {
-				fmt.Println("Error al deserializar las especificaciones:", err)
+				log.Println("Error al deserializar las especificaciones:", err)
 				mu.Lock()
 				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
-				//maquina_virtualesQueue.Queue.Remove(firstElement)
 				mu.Unlock()
 				continue
 			}
 
+			fmt.Println(specifications)
+
 			clientIP, ok := data["clientIP"].(string)
 			if !ok {
-				fmt.Println("Error: La IP del cliente no está presente o no es de tipo string")
+				log.Println("Error: La IP del cliente no está presente o no es de tipo string")
 				mu.Lock()
 				config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
 				mu.Unlock()
@@ -72,9 +75,20 @@ func CheckVirtualMachinesQueueChanges() {
 
 			fmt.Println(clientIP)
 
-			go utilities.CreateVM(specifications, clientIP)
+			// Llama a la función CreateVM en una goroutine.
+			go func(specifications models.Maquina_virtual, clientIP string) {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Printf("Recuperado de un pánico en CreateVM: %v", r)
+					}
+				}()
+				utilities.CreateVM(specifications, clientIP)
+			}(specifications, clientIP)
+
+			mu.Lock()
 			config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
-			//maquina_virtualesQueue.Queue.Remove(firstElement)
+			mu.Unlock()
+
 			utilities.PrintVirtualMachine(specifications, true)
 		}
 

@@ -21,11 +21,11 @@ Estrucutura de datos tipo JSON que contiene los campos necesarios para la gesti�
 */
 type Persona struct {
 	gorm.Model
-	Nombre      string `json:"nombre"`
-	Apellido    string `json:"apellido"`
-	Email       string `json:"email"`
-	Contrasenia string `json:"contrasenia"`
-	Rol         byte   `json:"rol"`
+	Nombre      string `json:"usr_name"`
+	Apellido    string `json:"usr_surname"`
+	Email       string `json:"usr_email"`
+	Contrasenia string `json:"usr_password"`
+	Rol         byte   `json:"usr_role"`
 }
 
 /*
@@ -45,19 +45,19 @@ Estructura de datos tipo JSOn que contiene los datos de una màquina virtual
 */
 type Maquina_virtual struct {
 	gorm.Model
-	Uuid                           string
-	Nombre                         string
-	Ram                            int
-	Cpu                            int
-	Ip                             string
-	Estado                         string
-	Hostname                       string
-	Persona_email                  string
-	Host_id                        int
-	Disco_id                       int
-	Sistema_operativo              string
-	Distribucion_sistema_operativo string
-	Fecha_creacion                 time.Time
+	Uuid                           string    `json:"vm_uuid"`
+	Nombre                         string    `json:"vm_name"`
+	Ram                            int       `json:"vm_ram"`
+	Cpu                            int       `json:"vm_cpu"`
+	Ip                             string    `json:"vm_ip"`
+	Estado                         string    `json:"vm_state"`
+	Hostname                       string    `json:"vm_hostname"`
+	Persona_email                  string    `json:"vm_usr_email"`
+	Host_id                        int       `json:"vm_host_id"`
+	Disco_id                       int       `json:"vm_disk_id"`
+	Sistema_operativo              string    `json:"vm_so"`
+	Distribucion_sistema_operativo string    `json:"vm_so_distro"`
+	Fecha_creacion                 time.Time `json:"vm_creation_date"`
 }
 
 /*
@@ -81,22 +81,22 @@ Estructura de datos tipo JSON que contiene los campos de un host
 */
 type Host struct {
 	gorm.Model
-	Id                             int
-	Nombre                         string
-	Mac                            string
-	Ip                             string
-	Hostname                       string
-	Ram_total                      int
-	Cpu_total                      int
-	Almacenamiento_total           int
-	Ram_usada                      int
-	Cpu_usada                      int
-	Almacenamiento_usado           int
-	Adaptador_red                  string
-	Estado                         string
-	Ruta_llave_ssh_pub             string
-	Sistema_operativo              string
-	Distribucion_sistema_operativo string
+	Id                             int    `json:"hst_id"`
+	Nombre                         string `json:"hst_name"`
+	Mac                            string `json:"hst_mac"`
+	Ip                             string `json:"hst_ip"`
+	Hostname                       string `json:"hst_hostname"`
+	Ram_total                      int    `json:"hst_ram"`
+	Cpu_total                      int    `json:"hst_cpu"`
+	Almacenamiento_total           int    `json:"hst_storage"`
+	Ram_usada                      int    `json:"hst_used_ram"`
+	Cpu_usada                      int    `json:"hst_used_cpu"`
+	Almacenamiento_usado           int    `json:"hst_used_storage"`
+	Adaptador_red                  string `json:"hst_network"`
+	Estado                         string `json:"hst_state"`
+	Ruta_llave_ssh_pub             string `json:"hst_sshroute"`
+	Sistema_operativo              string `json:"hst_so"`
+	Distribucion_sistema_operativo string `json:"hst_so_distro"`
 }
 
 /*
@@ -110,13 +110,13 @@ Estructura de datos tipo JSON que contiene los campos para representar una MV de
 */
 type Catalogo struct {
 	gorm.Model
-	Id                             int
-	Nombre                         string
-	Ram                            int
-	Cpu                            int
-	Sistema_operativo              string
-	Distribucion_sistema_operativo string
-	Arquitectura                   int
+	Id                             int    `json:"cat_id"`
+	Nombre                         string `json:"cat_name"`
+	Ram                            int    `json:"cat_ram"`
+	Cpu                            int    `json:"cat_cpu"`
+	Sistema_operativo              string `json:"cat_so"`
+	Distribucion_sistema_operativo string `json:"cat_so_distro"`
+	Arquitectura                   int    `json:"cat_arch"`
 }
 
 /*
@@ -131,13 +131,13 @@ Estructura de datos tipo JSON que representa la informaciòn de los discos que t
 */
 type Disco struct {
 	gorm.Model
-	Id                             int
-	Nombre                         string
-	Ruta_ubicacion                 string
-	Sistema_operativo              string
-	Distribucion_sistema_operativo string
-	Arquitectura                   int
-	Host_id                        int
+	Id                             int    `json:"dsk_id"`
+	Nombre                         string `json:"dsk_name"`
+	Ruta_ubicacion                 string `json:"dsk_route"`
+	Sistema_operativo              string `json:"dsk_so"`
+	Distribucion_sistema_operativo string `json:"dsk_so_distro"`
+	Arquitectura                   int    `json:"dsk_arch"`
+	Host_id                        int    `json:"dsk_host_id"`
 }
 
 /*
@@ -168,7 +168,6 @@ Estructura de datos tipo JSON que representa la informaciòn de los contenedores
 @Puerto Representa la arquitectura del sistema operativo. Se representa en un valor entero. Por ejemplo: 32 o 64
 @Nombre Representa el identificador ùnico del host en el cual està ubicado el disco
 */
-
 
 type Contenedor struct {
 	gorm.Model

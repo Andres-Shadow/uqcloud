@@ -55,9 +55,6 @@ func main() {
 	//TODO: Revisar
 	router.POST("/api/checkhost", handlers.Checkhost)
 
-	//TODO: Cambiar ruta por /admin
-	router.GET("/admin", handlers.LoginAdminPage)
-
 	//TODO: Revisar para que siver o eliminar si se puede
 	router.GET("/signin", handlers.SigninPage)
 
@@ -84,6 +81,8 @@ func main() {
 	// --- RUTAS DE ADMIN ---
 	adminGroup := router.Group("/admin")
 	{
+		adminGroup.GET("", handlers.LoginAdminPage)
+		adminGroup.POST("", handlers.AdminLogin)
 		adminGroup.GET("/dashboard", handlers.DashboardHandler)
 		adminGroup.GET("/create-host", handlers.CreateHostPage)
 		adminGroup.GET("/create-disk", handlers.CreateDiskPage)
@@ -103,7 +102,6 @@ func main() {
 	// TODO: DESCOMENTAR LUEGO
 	//router.GET("/api/machines", handlers.GetMachines)
 
-	router.POST("/admin", handlers.AdminLogin)
 	//router.POST("/signin", handlers.Signin)
 
 	//TODO: Mirar después
