@@ -21,11 +21,11 @@ Estrucutura de datos tipo JSON que contiene los campos necesarios para la gesti√
 */
 type Persona struct {
 	gorm.Model
-	Nombre      string `json:"usr_nombre"`
-	Apellido    string `json:"usr_apellido"`
+	Nombre      string `json:"usr_name"`
+	Apellido    string `json:"usr_surname"`
 	Email       string `json:"usr_email"`
-	Contrasenia string `json:"usr_contrasenia"`
-	Rol         byte   `json:"usr_rol"`
+	Contrasenia string `json:"usr_password"`
+	Rol         byte   `json:"usr_role"`
 }
 
 /*
@@ -45,7 +45,7 @@ Estructura de datos tipo JSOn que contiene los datos de una m√†quina virtual
 */
 type Maquina_virtual struct {
 	gorm.Model
-	Uuid                           string    `json:"uuid"`
+	Uuid                           string    `json:"vm_uuid"`
 	Nombre                         string    `json:"vm_name"`
 	Ram                            int       `json:"vm_ram"`
 	Cpu                            int       `json:"vm_cpu"`
@@ -81,7 +81,7 @@ Estructura de datos tipo JSON que contiene los campos de un host
 */
 type Host struct {
 	gorm.Model
-	Id                             int    `json:"id"`
+	Id                             int    `json:"hst_id"`
 	Nombre                         string `json:"hst_name"`
 	Mac                            string `json:"hst_mac"`
 	Ip                             string `json:"hst_ip"`
