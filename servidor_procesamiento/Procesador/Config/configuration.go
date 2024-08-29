@@ -15,7 +15,6 @@ clases del programa
 // Variable de entorno que contiene la ruta del archivo de clave privada
 var privateKeyPath string
 
-
 // Declaraciòn de variables globales
 var (
 	maquina_virtualesQueue models.Maquina_virtualQueue

@@ -62,6 +62,8 @@ func CheckVirtualMachinesQueueChanges() {
 				continue
 			}
 
+			fmt.Println(specifications)
+
 			clientIP, ok := data["clientIP"].(string)
 			if !ok {
 				log.Println("Error: La IP del cliente no está presente o no es de tipo string")
