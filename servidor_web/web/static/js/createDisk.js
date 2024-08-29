@@ -1,19 +1,25 @@
-function showSuccessMessage() {
-    var successMessage = document.getElementById('successMessage');
-    successMessage.style.display = 'block';
-    setTimeout(function () {
-        successMessage.style.display = 'none';
-    }, 3000); // Desaparecer después de 5 segundos
+function showMessageIfNeeded() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get('message');
+
+    if (message) {
+        showMessage(message, 'success');
+    }
 }
 
-// Mostrar el mensaje de éxito al cargar la página si es necesario
-window.onload = function () {
-    var message = "{{ .message }}";
-    if (message.trim() !== "") {
-        showSuccessMessage();
-    }
-};
+// Llama a la función cuando se carga la página
+document.addEventListener('DOMContentLoaded', showMessageIfNeeded);
 
+function showMessage(message, type) {
+    const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
+    messageBox.textContent = message;
+    messageBox.style.display = 'block'; // Muestra el mensaje
+
+    // Oculta el mensaje después de 5 segundos
+    setTimeout(() => {
+        messageBox.style.display = 'none';
+    }, 5000);
+}
 
 
 document.addEventListener("DOMContentLoaded", function() {

@@ -2,9 +2,8 @@
 <html>
 
 <head>
-  <title>Agregar Disco</title>
+  <title>Desktop Cloud | Crear Disco</title>
 
-  <title>Desktop Cloud Uniquindio</title>
   <link rel="stylesheet"  href="/web/static/css/createDisk.css">
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainPage.css">
@@ -37,10 +36,8 @@
     {{template "mainpage-sidebar.html" .}}
 
     <div id="layoutSidenav_content">
-
       <main>
-        
-        <div style="height: 80vh;">
+        <div>
           <div class="container">
             <div class="center-content">
               <!-- Mensaje de éxito -->
@@ -51,10 +48,7 @@
                 {{ .message }}
                 <button type="button" class="close" data-bs-dismiss="alert" aria-label="close"></button>
               </div>
-
-
-
-              <form class="row g-3" id="createForm" method="post" action="/createDisk" style="margin: 50px; width: 100%; max-width: 1200px;" onsubmit="return showSuccessMessage()">
+              <form class="row g-3 create-form" id="createForm" method="post" action="/createDisk" onsubmit="return showSuccessMessage()">
                 <h1 class="centre-tittle">
                   <i class="bi bi-disc-fill"></i> Crear Discos
                 </h1>
@@ -116,6 +110,7 @@
 
                 <div class="col-md-4">
                   <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Disco</button>
+                  <button type="reset" class="btn btn-outline-secondary" id="buttonClean">Limpiar Formulario</button>
                 </div>
 
               </form>
@@ -128,7 +123,6 @@
       <div class="bg-light mt-auto">
         {{template "footer.html"}}
       </div>
-
     </div>
   </div>
   <script src="/web/static/js/createDisk.js"></script>

@@ -25,3 +25,14 @@
     transition: opacity 0.5s ease-out;
 }
 
+.create-form {
+    margin: 20px 50px 50px 50px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#createForm{
+    margin: 20px 50px 50px 50px;
+    width: 100%;
+    max-width: 1200px;
+}
