@@ -1,0 +1,29 @@
+
+POST -> :8081/api/v1/virtual_machine
+
+{
+    "specifications": {
+        "vm_name": "pc prueba casa 3",
+        "vm_so": "linux",
+        "vm_so_distro": "alpine x64",
+        "vm_ram": 2000,
+        "vm_cpu": 2,
+        "vm_usr_email": "admin@uqcloud.co",
+        "vm_host_id": 16
+    },
+    "clientIP" : "192.168.1.6"
+}
+
+POST -> :8081/api/v1/start_virtual_machine
+
+{
+    "nombreVM": "pc prueba casa 3_NgfK",
+    "clientIP" : "192.168.1.6"
+}
+
+POST -> :8081/api/v1/stop_virtual_machine
+
+{
+    "nombreVM": "pc prueba casa 3_NgfK",
+    "clientIP" : "192.168.1.6"
+}
