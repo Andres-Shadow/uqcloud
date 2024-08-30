@@ -6,6 +6,7 @@ import (
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+	"strings"
 )
 
 /*
@@ -17,12 +18,16 @@ Clase encargada de contener los handlers que responden a las acciones sobre los 
 // para registrar en la base de datos un nuevo disco para maquina virtual
 func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
 	var disco models.Disco
+	var rutaDisco string
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&disco); err != nil {
 		http.Error(w, "Error al decodificar JSON de especificaciones", http.StatusBadRequest)
 		return
 	}
+	rutaDisco = strings.ReplaceAll(disco.Ruta_ubicacion, "/", "\\")
+
+	disco.Ruta_ubicacion = rutaDisco
 
 	err := database.CreateDisck(disco)
 
