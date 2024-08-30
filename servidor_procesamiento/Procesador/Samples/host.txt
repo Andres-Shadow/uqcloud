@@ -17,4 +17,4 @@ POST -> :8081/api/v1/host
     "hst_sshroute": "c:\\users\\andres\\.ssh\\id_rsa.pub",
     "hst_so" : "windows",
     "hst_so_distro": "64"
-}aa
+}

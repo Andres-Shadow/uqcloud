@@ -140,7 +140,7 @@ func UpdateVirtualMachineState(nombre, newState string) error {
 	return nil
 }
 
-func UpdateVirtualMachineIP(newIP, nombre string) error {
+func UpdateVirtualMachineIP(nombre, newIP string) error {
 	err := DATABASE.Model(&models.Maquina_virtual{}).Where("nombre = ?", nombre).Update("ip", newIP).Error
 	if err != nil {
 		return err

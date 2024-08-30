@@ -40,8 +40,8 @@ func AdminLogin(c *gin.Context) {
 	password := c.PostForm("password")
 
 	persona := map[string]string{
-		"email":       email,
-		"contrasenia": password,
+		"usr_email":    email,
+		"usr_password": password,
 	}
 
 	jsonData, err := json.Marshal(persona)
@@ -55,9 +55,9 @@ func AdminLogin(c *gin.Context) {
 	if er == nil {
 		session := sessions.Default(c)
 		session.Set("email", email)
-		session.Set("nombre", usuario.Name)
-		session.Set("apellido", usuario.LastName)
-		session.Set("rol", usuario.Role)
+		session.Set("nombre", usuario.Nombre)
+		session.Set("apellido", usuario.Apellido)
+		session.Set("rol", usuario.Rol)
 		session.Save()
 
 		log.Println("Usuario inicia sesion con exito")

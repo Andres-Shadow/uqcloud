@@ -38,4 +38,4 @@ RUN chmod +x ./binario
 RUN apt-get update && apt-get install -y openssh-client
 
 # Ejecuta el binario
-CMD ["./binario", "-key=/Environment/id_rsa"] 
+CMD ["./binario", "-h", "-key=/Environment/id_rsa"] 
