@@ -6,7 +6,7 @@
     "soHost":  "Microsoft Windows 10 Pro",
     "hostnameHost":  "Admin",
     "ramHost":  32438,
-    "cpuHost":  16,
+    "cpuHost":  16, 
     "almaceHost":  397,
     "sshHost":  "C:\\Users\\Admin\\.ssh"
 }

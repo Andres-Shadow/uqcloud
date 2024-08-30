@@ -9,7 +9,7 @@ POST -> :8081/api/v1/virtual_machine
         "vm_ram": 2000,
         "vm_cpu": 2,
         "vm_usr_email": "admin@uqcloud.co",
-        "vm_host_id": 16
+        "vm_hostname":  "prueba pc casa"
     },
     "clientIP" : "192.168.1.6"
 }

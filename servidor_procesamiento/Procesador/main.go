@@ -155,7 +155,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"virtual_machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
 
 	//End point para eliminar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual_machine", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
+	r.HandleFunc(apiPrefix+"virtual_machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
 	//End point para encender màquinas virtuales
 	r.HandleFunc(apiPrefix+"start_virtual_machine", handlers.StartVirtualMachineHandler).Methods("POST")
