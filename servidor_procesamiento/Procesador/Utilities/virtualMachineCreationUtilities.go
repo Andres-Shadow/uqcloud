@@ -6,6 +6,7 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+
 	"strconv"
 	"time"
 )
@@ -27,26 +28,27 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 	var host models.Host
 	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
 	var virtualMachineName string = specs.Nombre + "_" + caracteres
+	var availableResources bool = false
+	var estadossh bool = false
 
-	if specs.Host_id > 0 {
+	if specs.Hostname != "aleatorio" {
 		// Creacion de Maquina Virtual con seleccion de usuario
 		// Obtenemeos el host por medio del indice que es previamente
-		mihost, err2 := database.GetHost(specs.Host_id)
-		if err2 != nil {
-			fmt.Println("Error al obtener el host", err)
+		host, err = GetHostIdByName(specs.Hostname)
+
+		if err != nil {
+			log.Println("Error al obtener el host por nombre:", err)
+			return "Error al obtener el host por nombre"
 		}
 
 		//se verifica el ssh de la maquina fisica con el marcapasos
-		estadossh := Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
+		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
 		if estadossh {
 			dispoible, mensaje := verifyVirtualMachineExistence(virtualMachineName) //Verifica si existe una MV con ese nombre
 
 			if !dispoible {
 				return mensaje
 			}
-
-			//Obtenemos el host
-			host, _ = database.GetHost(specs.Host_id)
 
 			//Obtenemos el disco multiconexion del host previamente obtenido
 			disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
@@ -55,6 +57,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 				return "Error al obtener el disco"
 			}
 
+		} else {
+			return "Error al verificar la conexión con el host seleccionado"
 		}
 
 	} else {
@@ -65,13 +69,6 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return mensaje
 		}
 
-		availableResources := false
-		host, er := IsAHostIp(clientIP) //Consulta si la ip de la peticiòn proviene de un host registrado en la BD
-		if er == nil {                  //nil = El host existe
-			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
-		}
-		fmt.Print("available", availableResources)
-
 		//Obtiene la cantidad total de hosts que hay en la base de datos
 		count, err := database.CountRegisteredHosts()
 		if err != nil {
@@ -79,10 +76,9 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return "Error al contar los host que hay en la base de datos"
 		}
 		count += 5 //Para dar n+5 iteraciones en busca de hosts con recursos disponibles, donde n es el total de hosts guardados en la bse de datos
-		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
-		//Escoge hosts al azar en busca de alguno que tenga recursos disponibles para crear la MV
+
 		log.Println(estadossh)
-		for !estadossh && count > 0 {
+		for !estadossh && !availableResources && count > 0 {
 			//Selecciona un host al azar
 			host, _ = database.SelectHost()
 			estadossh = Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
@@ -92,6 +88,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 		if !availableResources {
 			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
 		}
 
 		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
@@ -167,7 +164,7 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 		Ram:               specs.Ram,
 		Cpu:               specs.Cpu,
 		Estado:            "Apagado",
-		Hostname:          "uqcloud",
+		Hostname:          host.Hostname,
 		Persona_email:     specs.Persona_email,
 		Fecha_creacion:    currentTime,
 		Host_id:           specs.Host_id,
