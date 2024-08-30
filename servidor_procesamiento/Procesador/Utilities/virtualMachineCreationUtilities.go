@@ -81,6 +81,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return "Error al obtener el host por nombre " + specs.Hostname
 		}
 
+		log.Println("Host seleccionado: ", host.Nombre)
+
 		//se verifica el ssh de la maquina fisica con el marcapasos
 		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
 		if estadossh {
@@ -155,6 +157,9 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 	// Lógica para crear los registros en la base de datos y actualizar recursos
 	currentTime := time.Now().UTC()
 
+	log.Println("Creando registros en la base de datos...")
+	log.Println("Host seleccionado: ", host.Id)
+
 	nuevaMaquinaVirtual := models.Maquina_virtual{
 		Uuid:                           nameVM + "_uuid",
 		Nombre:                         nameVM,
@@ -164,7 +169,7 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 		Estado:                         "Apagado",
 		Hostname:                       host.Hostname,
 		Persona_email:                  specs.Persona_email,
-		Host_id:                        specs.Host_id,
+		Host_id:                        host.Id,
 		Disco_id:                       disco.Id,
 		Sistema_operativo:              specs.Sistema_operativo,
 		Distribucion_sistema_operativo: specs.Distribucion_sistema_operativo,

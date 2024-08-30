@@ -145,6 +145,8 @@ func StartVM(nameVM string, clientIP string) string {
 		//Almacena la direccion ip de la maquina virtual
 		ipAddress = strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
 
+		log.Println("Dirección IP de la máquina " + nameVM + ": " + ipAddress)
+
 		//Actualiza el estado de la MV en la base de datos
 		err9 := database.UpdateVirtualMachineState(nameVM, "Encendido")
 		if err9 != nil {
