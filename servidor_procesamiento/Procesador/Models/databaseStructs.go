@@ -23,7 +23,7 @@ type Persona struct {
 	gorm.Model
 	Nombre      string `json:"usr_name"`
 	Apellido    string `json:"usr_surname"`
-	Email       string `json:"usr_email"`
+	Email       string `json:"usr_email" gorm:"unique"`
 	Contrasenia string `json:"usr_password"`
 	Rol         byte   `json:"usr_role"`
 }
@@ -46,18 +46,18 @@ Estructura de datos tipo JSOn que contiene los datos de una màquina virtual
 type Maquina_virtual struct {
 	gorm.Model
 	Uuid                           string    `json:"vm_uuid"`
-	Nombre                         string    `json:"vm_name"`
-	Ram                            int       `json:"vm_ram"`
-	Cpu                            int       `json:"vm_cpu"`
+	Nombre                         string    `json:"vm_name" gorm:"unique"`
+	Ram                            int       `json:"vm_ram" gorm:"not null"`
+	Cpu                            int       `json:"vm_cpu" gorm:"not null"`
 	Ip                             string    `json:"vm_ip"`
-	Estado                         string    `json:"vm_state"`
-	Hostname                       string    `json:"vm_hostname"`
-	Persona_email                  string    `json:"vm_usr_email"`
-	Host_id                        int       `json:"vm_host_id"`
-	Disco_id                       int       `json:"vm_disk_id"`
-	Sistema_operativo              string    `json:"vm_so"`
-	Distribucion_sistema_operativo string    `json:"vm_so_distro"`
-	Fecha_creacion                 time.Time `json:"vm_creation_date"`
+	Estado                         string    `json:"vm_state" gorm:"not null"`
+	Hostname                       string    `json:"vm_hostname" gorm:"not null"`
+	Persona_email                  string    `json:"vm_usr_email" gorm:"not null"`
+	Host_id                        int       `json:"vm_host_id" gorm:"not null"`
+	Disco_id                       int       `json:"vm_disk_id" gorm:"not null"`
+	Sistema_operativo              string    `json:"vm_so" gorm:"not null"`
+	Distribucion_sistema_operativo string    `json:"vm_so_distro" gorm:"not null"`
+	Fecha_creacion                 time.Time `json:"vm_creation_date" gorm:"not null"`
 }
 
 /*
@@ -82,21 +82,21 @@ Estructura de datos tipo JSON que contiene los campos de un host
 type Host struct {
 	gorm.Model
 	Id                             int    `json:"hst_id"`
-	Nombre                         string `json:"hst_name"`
-	Mac                            string `json:"hst_mac"`
-	Ip                             string `json:"hst_ip"`
-	Hostname                       string `json:"hst_hostname"`
-	Ram_total                      int    `json:"hst_ram"`
-	Cpu_total                      int    `json:"hst_cpu"`
-	Almacenamiento_total           int    `json:"hst_storage"`
+	Nombre                         string `json:"hst_name" gorm:"unique"`
+	Mac                            string `json:"hst_mac" gorm:"unique, not null"`
+	Ip                             string `json:"hst_ip" gorm:"unique, not null"`
+	Hostname                       string `json:"hst_hostname" gorm:"not null"`
+	Ram_total                      int    `json:"hst_ram" gorm:"not null"`
+	Cpu_total                      int    `json:"hst_cpu" gorm:"not null"`
+	Almacenamiento_total           int    `json:"hst_storage" gorm:"not null"`
 	Ram_usada                      int    `json:"hst_used_ram"`
 	Cpu_usada                      int    `json:"hst_used_cpu"`
 	Almacenamiento_usado           int    `json:"hst_used_storage"`
-	Adaptador_red                  string `json:"hst_network"`
-	Estado                         string `json:"hst_state"`
-	Ruta_llave_ssh_pub             string `json:"hst_sshroute"`
-	Sistema_operativo              string `json:"hst_so"`
-	Distribucion_sistema_operativo string `json:"hst_so_distro"`
+	Adaptador_red                  string `json:"hst_network" gorm:"not null"`
+	Estado                         string `json:"hst_state" gorm:"not null"`
+	Ruta_llave_ssh_pub             string `json:"hst_sshroute" gorm:"not null"`
+	Sistema_operativo              string `json:"hst_so" gorm:"not null"`
+	Distribucion_sistema_operativo string `json:"hst_so_distro" gorm:"not null"`
 }
 
 /*
@@ -111,12 +111,12 @@ Estructura de datos tipo JSON que contiene los campos para representar una MV de
 type Catalogo struct {
 	gorm.Model
 	Id                             int    `json:"cat_id"`
-	Nombre                         string `json:"cat_name"`
-	Ram                            int    `json:"cat_ram"`
-	Cpu                            int    `json:"cat_cpu"`
-	Sistema_operativo              string `json:"cat_so"`
-	Distribucion_sistema_operativo string `json:"cat_so_distro"`
-	Arquitectura                   int    `json:"cat_arch"`
+	Nombre                         string `json:"cat_name" gorm:"not null"`
+	Ram                            int    `json:"cat_ram" gorm:"not null"`
+	Cpu                            int    `json:"cat_cpu" gorm:"not null"`
+	Sistema_operativo              string `json:"cat_so" gorm:"not null"`
+	Distribucion_sistema_operativo string `json:"cat_so_distro" gorm:"not null"`
+	Arquitectura                   int    `json:"cat_arch" gorm:"not null"`
 }
 
 /*
@@ -132,12 +132,12 @@ Estructura de datos tipo JSON que representa la informaciòn de los discos que t
 type Disco struct {
 	gorm.Model
 	Id                             int    `json:"dsk_id"`
-	Nombre                         string `json:"dsk_name"`
-	Ruta_ubicacion                 string `json:"dsk_route"`
-	Sistema_operativo              string `json:"dsk_so"`
-	Distribucion_sistema_operativo string `json:"dsk_so_distro"`
-	Arquitectura                   int    `json:"dsk_arch"`
-	Host_id                        int    `json:"dsk_host_id"`
+	Nombre                         string `json:"dsk_name" gorm:"not null"`
+	Ruta_ubicacion                 string `json:"dsk_route" gorm:"not null"`
+	Sistema_operativo              string `json:"dsk_so" gorm:"not null"`
+	Distribucion_sistema_operativo string `json:"dsk_so_distro" gorm:"not null"`
+	Arquitectura                   int    `json:"dsk_arch" gorm:"not null"`
+	Host_id                        int    `json:"dsk_host_id" gorm:"not null"`
 }
 
 /*
