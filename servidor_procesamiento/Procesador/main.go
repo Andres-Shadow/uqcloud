@@ -18,7 +18,7 @@ import (
 )
 
 // Variable que almacena la ruta de la llave privada ingresada por paametro cuando de ejecuta el programa
-var privateKeyPath = flag.String("key", "", "Ruta de la llave privada SSH")
+var privateKeyPath = flag.String("key", "./keys/id_rsa", "")
 var preregisteredHosts = flag.Bool("h", false, "")
 
 func main() {
@@ -36,8 +36,10 @@ func main() {
 
 	//Verifica que el paràmetro de la ruta de la llave privada no estè vacìo
 	if *privateKeyPath == "" {
-		fmt.Println("Debe ingresar la ruta de la llave privada SSH")
+		fmt.Println("Error al encontrar la llave privada externa especificada")
 		return
+	} else {
+		fmt.Println("Iniciando servidor con llave privada: ", *privateKeyPath)
 	}
 
 	// Verifica si se ingresò el paràmetro para precargar los hosts
@@ -89,26 +91,7 @@ func setDatabase() {
 		&models.CatalogoDisco{})
 
 	// Precarga del usuario administrador
-	createAdmin()
-
-	// Precarga de los datos hosts
-	//registerHostData()
-}
-
-// Funcion para precargar el usuario administrador
-func createAdmin() {
-	if !database.CountAdminsRegistered() {
-		persona := models.Persona{
-			Nombre:      "admin",
-			Apellido:    "admin",
-			Email:       "admin@uqcloud.co",
-			Contrasenia: "$2y$10$JGxWitiykfO83Ep8IBab/.3fn.H/DxMjAK8dFTQCPZyJ5EHqZtfji", // Dejar este hash bcrypt para la contraseña "admin"
-			Rol:         1,
-		}
-
-		database.DATABASE.Create(&persona)
-		fmt.Print("Usuario administrador creado\n")
-	}
+	database.CreateAdmin()
 }
 
 // Función para precargar los datos de los hosts de la sala B y C (No cambian)
@@ -155,7 +138,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"virtual_machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
 
 	//End point para eliminar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual_machine", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
+	r.HandleFunc(apiPrefix+"virtual_machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
 	//End point para encender màquinas virtuales
 	r.HandleFunc(apiPrefix+"start_virtual_machine", handlers.StartVirtualMachineHandler).Methods("POST")

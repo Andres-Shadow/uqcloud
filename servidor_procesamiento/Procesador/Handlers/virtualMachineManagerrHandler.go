@@ -129,37 +129,23 @@ func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 // Funcion que responde al endpoint encargado de eliminar una maquina virtual
 func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
-	var datos map[string]interface{}
-
-	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-	var payload map[string]interface{}
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
-		log.Println("Error al decodificar JSON de la solicitud")
+	// Obtener el nombre de la máquina virtual a partir del path param.
+	vars := mux.Vars(r)
+	virtualMachineName := vars["name"]
+	
+	// verificar que el path param no esté vacío
+	if virtualMachineName == "" {
+		http.Error(w, "El nombre de la máquina virtual es obligatorio", http.StatusBadRequest)
 		return
 	}
-
-	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
-	if payload == nil {
-		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
-		log.Println("El JSON de la solicitud está vacío")
-		return
-	}
-
-	// Verificar si el nombre de la máquina virtual, la IP del host y el tipo de solicitud están presentes y no son nulos
-	nombre, nombrePresente := datos["nombreVM"].(string)
-
-	if !nombrePresente || nombre == "" {
-		http.Error(w, "El tipo de solicitud y el nombre de la máquina virtual son obligatorios", http.StatusBadRequest)
-		return
-	}
-
-	datos["tipo_solicitud"] = "delete"
+	
+	payload := make(map[string]interface{})
+	payload["tipo_solicitud"] = "delete"
+	payload["nombreVM"] = virtualMachineName
 
 	// Encola las peticiones.
 	config.GetMu().Lock()
-	config.GetManagementQueue().Queue.PushBack(datos)
+	config.GetManagementQueue().Queue.PushBack(payload)
 	config.GetMu().Unlock()
 
 	// Envía una respuesta al cliente.

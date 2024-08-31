@@ -1,6 +1,6 @@
 # PORFAVOR NO BORRAR ESTO:
 # EJECUTAR PRIMERO EL SIGUIENTE COMANDO PARA CREAR LA RED DE DOCKER:
-# docker network create --driver bridge uqcloud
+# docker network create uqcloud
 
 services:
   #servicio del servidor de procesamiento
