@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Desktop Cloud Uniquindio</title>
+  <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/web/static/css/styleControlMachine.css">
+
+  <!-- Este CSS es para todos los archivos mainpage-* (los html importados pues)-->
+  <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
+  <!-- Este CSS es para lo que está dentro del <main> (principalmente lo de create-machine.html) -->
+  <link rel="stylesheet" type="text/css" href="/web/static/css/create-machine.css">
+
+  <script src="/web/static/js/mainpage.js"></script>
+  <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
+  <link href="/web/static/css/styles.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body style="background-color: #d9d9d9ff;">
+
+  <!-- NAVBAR -->
+  {{template "mainpage-navbar.html"}}
+
+  <div id="layoutSidenav">
+
+    <!-- Sidebar -->
+    <!-- Nota: Cuando se le pone el '.' al final de este llamado del template sidebar es para -->
+    <!--       mandar los datos-variables que son asignados a este html a traves del handler -->
+    <!--       En este caso: email, machines, rol-->
+    {{template "mainpage-sidebar.html" .}}
+
+    <div id="layoutSidenav_content">
+
+      <main>
+
+        <!-- FORMULARIO CON LOS DATOS DE LA MAQUINA -->
+        <form>
+
+          <!-- Breadcrumb -->
+          <div class="breadcrumb-instance">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/mainpage/control-machine">Máquinas</a></li>
+                <li><i class="fa-solid fa-angle-right"></i></li>
+                <li class="breadcrumb-item active" aria-current="page">Crea una máquina</li>
+              </ol>
+            </nav>
+          </div>
+
+          <div>
+            <h3>
+              Crea una máquina
+            </h3>
+            <p>
+              Desktop Cloud te permite crear máquinas virtuales de una forma sencilla. Solo llena y personaliza los
+              campos que están abajo.
+            </p>
+          </div>
+
+          <!-- Accordion: NOMBRE DE LA MAQUINA -->
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelNameVM"
+                  aria-expanded="true" aria-controls="panelNameVM-collapseOne">
+                  <strong>Nombre de la máquina</strong>
+                </button>
+              </h2>
+              <div id="panelNameVM" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+
+                  <div class="mb-3">
+                    <label for="nameVM" class="form-label">Nombre</label>
+                    <!-- <div class="form-text">Nombre</div> -->
+                    <input type="text" class="form-control" id="nameVM"
+                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
+                  </div>
+
+                  <!-- <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                  </div> -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion: SISTEMA OPERATIVO -->
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelSysOpVM"
+                  aria-expanded="true" aria-controls="panelSysOpVM-collapseOne">
+                  <strong>Sistema operativo</strong>
+                </button>
+              </h2>
+              <div id="panelSysOpVM" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+
+                  <div class="mb-3">
+                    <!-- <div class="form-text">Elige el sistema operativo que se adapte mejor a tu máquina virtual</div> -->
+                    <div class="form-label">Elige el sistema operativo que se adapte mejor a tu máquina virtual</div>
+                  </div>
+
+                  <!-- RadioButton-Cards con los Sistemas Operativos -->
+                  <div class="row" id="OpSys">
+
+                    <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
+                    <!-- var OpSys = $('#OpSys input:radio:checked').val(); -->
+
+                    <!-- Card Fedora -->
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <label>
+                        <input type="radio" name="os" value="fedora" selected checked class="card-input-element" />
+                        <div class="card card-input">
+                          <div class="card-body text-center">
+                            <p class="card-title">Fedora</p>
+                          </div>
+                          <img src="/web/static/img/fedora.png" class="card-img-top" alt="fedora">
+                        </div>
+                      </label>
+                    </div>                    
+
+                    <!-- Card Ubuntu -->
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <label>
+                        <input type="radio" name="os" value="ubuntu" class="card-input-element" />
+                        <div class="card card-input">
+                          <div class="card-body text-center">
+                            <p class="card-title">Ubuntu</p>
+                          </div>
+                          <img src="/web/static/img/ubuntu.png" class="card-img-top" alt="ubuntu">
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Card Alpine -->
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <label>
+                        <input type="radio" name="os" value="alpine" class="card-input-element" />
+                        <div class="card card-input">
+                          <div class="card-body text-center">
+                            <p class="card-title">Alpine</p>
+                          </div>
+                          <img src="/web/static/img/alpine.png" class="card-img-top" alt="alpine">
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Card Debian -->
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                      <label>
+                        <input type="radio" name="os" value="debian" class="card-input-element" />
+                        <div class="card card-input">
+                          <div class="card-body text-center">
+                            <p class="card-title">Debian</p>
+                          </div>
+                          <img src="/web/static/img/debian.png" class="card-img-top" alt="debian">
+                        </div>
+                      </label>
+                    </div>
+
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion: RAM y Nucleos de la maquina -->
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#panelResourcesVM" aria-expanded="true" aria-controls="panelResourcesVM-collapseOne">
+                  <strong>Configuración de recursos</strong>
+                </button>
+              </h2>
+              <div id="panelResourcesVM" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+
+                  <div class="row">
+
+                    <div class="mb-3 col-6">
+                      <label class="form-label">
+                        <i class="fa-solid fa-memory"></i>
+                        Memoria RAM
+                      </label>
+                      <select class="form-select">
+                        <option value="1">1 GB</option>
+                        <option value="2">2 GB</option>
+                        <option value="3">3 GB</option>
+                      </select>
+                    </div>
+  
+                    <div class="mb-3 col-6">
+                      <label class="form-label">
+                        <i class="fa-solid fa-microchip"></i>
+                        Núcleos de procesamiento
+                      </label>
+                      <select class="form-select">
+                        <option value="1">1 Núcleo</option>
+                        <option value="2">2 Núcleos</option>
+                        <option value="3">3 Núcleos</option>
+                      </select>
+                    </div>
+
+                  </div>
+                  
+
+                  <!-- <div class="mb-3">
+                    <label for="nameVM" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nameVM"
+                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
+                  </div> -->
+
+                  <!-- <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Email address</label>
+                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                  </div> -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Accordion: Detalles avanzados -->
+          <div class="accordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#panelAdvDetailsVM" aria-expanded="true"
+                  aria-controls="panelAdvDetailsVM-collapseOne">
+                  <strong>Detalles avanzados</strong>
+                </button>
+              </h2>
+              <div id="panelAdvDetailsVM" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+                  <div id="emailHelp" class="form-text">Selecciona en que Host quieres que esta máquina virtual quede
+                    almacenada. Por defecto, la máquina se almacena un lugar aleatorio.</div>
+                  <div class="mb-3">
+                    <label for="nameVM" class="form-label">Host</label>
+                    <input type="text" class="form-control" id="nameVM"
+                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </form>
+
+
+      </main>
+
+      <!-- Footer -->
+      <div class="bg-light mt-auto">
+        {{template "mainpage-footer.html"}}
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

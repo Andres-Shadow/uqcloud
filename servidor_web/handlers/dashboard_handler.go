@@ -22,7 +22,8 @@ func DashboardHandler(c *gin.Context) {
 	// Calcula los datos para el catálogo (esto es solo un ejemplo, debes obtener estos datos de tu lógica)
 	datosDashboard, _ := Utilities.CheckMetrics()
 
-	c.HTML(http.StatusOK, "dashboard.html", gin.H{
+	// TODO: CAMBIAR AL DASHBOARD.HTML
+	c.HTML(http.StatusOK, "create-machine.html", gin.H{
 		"email":          "email",
 		"machines":       nil,
 		"machinesChange": nil,
