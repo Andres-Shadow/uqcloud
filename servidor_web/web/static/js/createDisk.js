@@ -71,3 +71,26 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('/GetHost')
+        .then(response => response.json())
+        .then(data => {
+            const selectHost = document.getElementById('inputSelectHost');
+
+            // Limpiar opciones existentes (excepto la primera)
+            while (selectHost.options.length > 1) {
+                selectHost.remove(1);
+            }
+
+            // Añadir las nuevas opciones
+            data.forEach(host => {
+                const option = document.createElement('option');
+                option.value = host.id;  // Usar ID como valor
+                option.text = `${host.id} - ${host.nombre}`
+                selectHost.appendChild(option);
+            });
+        })
+        .catch(error => console.error('Error fetching hosts:', error));
+});
+
+

@@ -78,3 +78,13 @@ func CreateHostFromRequest(c *gin.Context) (Models.Host, error) {
 
 	return newHost, nil
 }
+
+func GetHosts(c *gin.Context) {
+	hosts, err := Utilities.GetHostsFromServer()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los hosts"})
+		return
+	}
+
+	c.JSON(http.StatusOK, hosts)
+}
