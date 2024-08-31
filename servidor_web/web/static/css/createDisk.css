@@ -1,7 +1,7 @@
 #successMessage, #errorMessage {
     display: none;
     position: fixed;
-    top: 120px;
+    top: 90px;
     left: 60%;
     text-align: center;
     transform: translateX(-50%);

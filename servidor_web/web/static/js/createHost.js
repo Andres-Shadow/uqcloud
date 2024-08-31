@@ -11,14 +11,35 @@ function showMessageIfNeeded() {
 document.addEventListener('DOMContentLoaded', showMessageIfNeeded);
 
 function showMessage(message, type) {
-    const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
-    messageBox.textContent = message;
-    messageBox.style.display = 'block'; // Muestra el mensaje
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `alert alert-${type === "success" ? "success" : "danger"} alert-dismissible fade show alert-message`;
+    messageDiv.role = "alert";
+    messageDiv.textContent = message;
 
-    // Oculta el mensaje después de 5 segundos
+    // Botón de cerrar para el mensaje
+    const closeButton = document.createElement("button");
+    closeButton.type = "button";
+    closeButton.className = "btn-close";
+    closeButton.setAttribute("data-bs-dismiss", "alert");
+    closeButton.setAttribute("aria-label", "Close");
+    messageDiv.appendChild(closeButton);
+
+    // Añadir el mensaje al cuerpo del documento
+    document.body.appendChild(messageDiv);
+
+    // Ocultar el mensaje después de 5 segundos
     setTimeout(() => {
-        messageBox.style.display = 'none';
-    }, 5000);
+        // Utilizar la clase de Bootstrap para la transición de desvanecimiento
+        messageDiv.classList.remove("show");
+        messageDiv.classList.add("fade-out");
+
+        // Eliminar el mensaje del DOM después de que la transición se complete
+        messageDiv.addEventListener("transitionend", () => {
+            if (messageDiv.parentElement) {
+                messageDiv.parentElement.removeChild(messageDiv);
+            }
+        });
+    }, 5000); // 5000 ms = 5 segundos
 }
 
 //Cargar archvio JSON para rellenar los campos
@@ -59,9 +80,9 @@ document.addEventListener("DOMContentLoaded", function() {
             hst_mac:        document.getElementById('inputMacHost').value,
             hst_ip:         document.getElementById('inputIpHost').value,
             hst_hostname:   document.getElementById('inputUserName').value,
-            hst_ram:        document.getElementById('inputRAM').value,
-            hst_cpu:        document.getElementById('inputCPUHost').value,
-            hst_storage:    document.getElementById('inputAlmacenamiento').value,
+            hst_ram:        parseInt (document.getElementById('inputRAM').value),
+            hst_cpu:        parseInt (document.getElementById('inputCPUHost').value),
+            hst_storage:    parseInt (document.getElementById('inputAlmacenamiento').value),
             hst_network:    document.getElementById('inputAdaptadorRed').value,
             hst_sshroute:   document.getElementById('inputRutaSSH').value,
             hst_so:         document.getElementById('inputSistemaOperativo').value,

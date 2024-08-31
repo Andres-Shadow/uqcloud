@@ -50,7 +50,7 @@ func CreateNewHost(c *gin.Context) {
 	}
 
 	// Mostrar un mensaje de éxito
-	c.HTML(http.StatusOK, "createHost.html", gin.H{"message": "Host creado correctamente"})
+	c.JSON(http.StatusOK, gin.H{"message": "Host creado correctamente"})
 }
 
 // Funcion que se encarga de descodificar los parametros para crear un nuevo host
