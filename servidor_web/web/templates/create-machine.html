@@ -45,7 +45,8 @@
       <main>
 
         <!-- FORMULARIO CON LOS DATOS DE LA MAQUINA -->
-        <form>
+        <!-- <form method="post" action="/api/createMachine" id="formCreateMachine"> -->
+        <form id="formCreateMachine">
 
           <!-- Breadcrumb -->
           <div class="breadcrumb-instance">
@@ -83,7 +84,7 @@
                   <div class="mb-3">
                     <label for="nameVM" class="form-label">Nombre</label>
                     <!-- <div class="form-text">Nombre</div> -->
-                    <input type="text" class="form-control" id="nameVM"
+                    <input type="text" class="form-control" id="nameVM" required
                       placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
                   </div>
 
@@ -116,10 +117,10 @@
                   </div>
 
                   <!-- RadioButton-Cards con los Sistemas Operativos -->
-                  <div class="row" id="OpSys">
+                  <div class="row" id="osVM">
 
                     <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
-                    <!-- var OpSys = $('#OpSys input:radio:checked').val(); -->
+                    <!-- var osVM = $('#osVM input:radio:checked').val(); -->
 
                     <!-- Card Fedora -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
@@ -200,7 +201,7 @@
                         <i class="fa-solid fa-memory"></i>
                         Memoria RAM
                       </label>
-                      <select class="form-select">
+                      <select class="form-select" id="ramVM" name="ramVM" required>
                         <option value="1">1 GB</option>
                         <option value="2">2 GB</option>
                         <option value="3">3 GB</option>
@@ -212,7 +213,7 @@
                         <i class="fa-solid fa-microchip"></i>
                         Núcleos de procesamiento
                       </label>
-                      <select class="form-select">
+                      <select class="form-select" id="cpuVM" name="cpuVM" required>
                         <option value="1">1 Núcleo</option>
                         <option value="2">2 Núcleos</option>
                         <option value="3">3 Núcleos</option>
@@ -243,13 +244,13 @@
           <div class="accordion">
             <div class="accordion-item">
               <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                   data-bs-target="#panelAdvDetailsVM" aria-expanded="true"
                   aria-controls="panelAdvDetailsVM-collapseOne">
                   <strong>Detalles avanzados</strong>
                 </button>
               </h2>
-              <div id="panelAdvDetailsVM" class="accordion-collapse collapse show">
+              <div id="panelAdvDetailsVM" class="accordion-collapse collapse">
                 <div class="accordion-body">
                   <!-- <h5 class="card-title">Selecciona un Host </h5> -->
                   <h6 class="form-text">Selecciona en que Host quieres que esta máquina virtual quede
@@ -268,22 +269,22 @@
                     <div class="host-card-body container-fluid">
                       <!-- <form method="post" action="/api/checkhost" id="formulario2"> -->
 
-                      
 
-                      <!-- START -->
+
+                      <!-- START HOSTMACHINE-->
                       <div class="row justify-content-center mt-3" id="hostMachine">
-                        
+
 
                         <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
                         <!-- var OpSys = $('#OpSys input:radio:checked').val(); -->
 
                         {{if and $.showNewButton (eq $.showNewButton true)}}
-                          <label> 
-                            Estas en este momento en un Host por lo que cuando
-                            uses el Boton Aleatorio tendrá prioridad para este Host,
-                            si este host llegase a tener problemas se utilizara
-                            una seleccion aleatoria automaticamente
-                          </label>
+                        <label>
+                          Estas en este momento en un Host por lo que cuando
+                          uses el Boton Aleatorio tendrá prioridad para este Host,
+                          si este host llegase a tener problemas se utilizara
+                          una seleccion aleatoria automaticamente
+                        </label>
                         {{end}}
 
                         <!-- Card Aleatorio -->
@@ -293,7 +294,8 @@
                             SOLUCIONADO CON UN MARGIN X AUTO INCREIBLE. UN MARGIN???? COMO NO SE ME HABIA OCURRIDO
                             LA SOLUCION MAS SENCILLA ES LA QUE UNO PIENSA -->
                           <label>
-                            <input type="radio" name="hostVM" value="0" selected checked class="host-card-input-element" />
+                            <input type="radio" name="hostVM" value="0" selected checked
+                              class="host-card-input-element" />
 
                             <div class="card card-default host-card-input">
                               <div class="host-card-body text-center">
@@ -307,27 +309,27 @@
 
                         {{range $index, $element := .hosts}}
 
-                          <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
-                            <label>
-                              <input type="radio" name="hostVM" value="{{$element.Id}}" selected checked class="host-card-input-element" />
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" value="{{$element.Id}}" selected checked
+                              class="host-card-input-element" />
 
-                              <div class="card card-default host-card-input">
-                                <div class="host-card-body text-center">
-                                  <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                  <p>{{$element.Nombre}}</p>
-                                </div>
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>{{$element.Nombre}}</p>
                               </div>
+                            </div>
 
-                            </label>
-                          </div>
+                          </label>
+                        </div>
 
                         {{end}}
 
 
                         <!-- ----------------------- TESTING ---------------------------- -->
 
-
-                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                        <!-- <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
                           <label>
                             <input type="radio" name="hostVM" class="host-card-input-element" />
 
@@ -339,55 +341,13 @@
                             </div>
 
                           </label>
-                        </div>
-
-                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
-                          <label>
-                            <input type="radio" name="hostVM" class="host-card-input-element" />
-
-                            <div class="card card-default host-card-input">
-                              <div class="host-card-body text-center">
-                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                <p>Host1_qwrwj</p>
-                              </div>
-                            </div>
-
-                          </label>
-                        </div>
-
-                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
-                          <label>
-                            <input type="radio" name="hostVM" class="host-card-input-element" />
-
-                            <div class="card card-default host-card-input">
-                              <div class="host-card-body text-center">
-                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                <p>Host1_qwrwj</p>
-                              </div>
-                            </div>
-
-                          </label>
-                        </div>
-
-                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
-                          <label>
-                            <input type="radio" name="hostVM" class="host-card-input-element" />
-
-                            <div class="card card-default host-card-input">
-                              <div class="host-card-body text-center">
-                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                <p>Host1_qwrwj</p>
-                              </div>
-                            </div>
-
-                          </label>
-                        </div>
+                        </div> -->
 
                         <!-- ----------------------- END-TESTING ---------------------------- -->
 
 
                       </div>
-                      <!-- END END END END END -->
+                      <!-- END END END END END HOSTMACHINE-->
 
 
                     </div>
@@ -401,9 +361,11 @@
           </div>
           <!-- Fin  Accordion: Detalles avanzados -->
 
-          <button type="submit" class="btn btn-success" fill="rgb(255, 255, 255)">
-            CREAR MÁQUINA
-          </button>
+          <div class="d-flex justify-content-end">
+            <button type="submit" onclick="createMachine()" class="btn btn-success" fill="rgb(255, 255, 255)">
+              CREAR MÁQUINA
+            </button>
+          </div>
 
         </form>
 
@@ -417,6 +379,42 @@
 
     </div>
   </div>
+
+  <script>
+
+    function createMachine() {
+      nameVM = document.getElementById("nameVM");
+      osVM = $('#osVM input:radio:checked').val();
+      ramVM = document.getElementById("ramVM").value;
+      cpuVM = document.getElementById("cpuVM").value;
+
+      console.log("name: ",nameVM, " osVM: ",osVM, " ramVM: ", ramVM, " cpuVM: ", cpuVM);
+
+      fetch('/api/createMachine', {
+        method: 'POST', // Método POST
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(
+          {
+            nameVM: nameVM.value.toString(),
+            osVM: osVM.toString(),
+            ramVM: ramVM.toString(),
+            cpuVM: cpuVM.toString(),            
+          }
+        ), // Ejemplo de datos a enviar
+      }
+      )
+        .then(response => response.json()) // Procesar respuesta
+        .then(data => {
+          console.log('Respuesta:', data); // Mostrar respuesta
+        })
+        .catch(error => {
+          console.error('Error:', error); // Manejar errores
+        });
+    }
+
+  </script>
 
 </body>
 

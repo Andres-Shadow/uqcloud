@@ -52,9 +52,6 @@ func main() {
 	router.GET("/aboutus", func(c *gin.Context) { c.HTML(http.StatusOK, "aboutUs.html", nil) })
 	router.GET("/docs", func(c *gin.Context) { c.HTML(http.StatusOK, "docs.html", nil) })
 
-	//TODO: Revisar
-	router.POST("/api/checkhost", handlers.Checkhost)
-
 	//TODO: Revisar para que siver o eliminar si se puede
 	router.GET("/signin", handlers.SigninPage)
 
@@ -100,17 +97,12 @@ func main() {
 		// router.GET("/helpCenter", handlers.HelpCenterPage)
 	}
 
-	// TODO: DESCOMENTAR LUEGO
-	//router.GET("/api/machines", handlers.GetMachines)
-
 	//router.POST("/signin", handlers.Signin)
 
 	//TODO: Mirar después
-	router.POST("/api/createMachine", handlers.MainSend)
 	router.POST("/powerMachine", handlers.PowerMachine)
 	router.POST("/deleteMachine", handlers.DeleteMachine)
 	router.POST("/configMachine", handlers.ConfigMachine)
-	router.POST("/api/loginTemp", handlers.LoginTemp)
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
 	router.POST("/DockerHub", handlers.CrearImagen)
@@ -125,13 +117,19 @@ func main() {
 	router.POST("/EliminarContenedor", handlers.EliminarContenedor)
 	router.POST("/eliminarContenedores", handlers.EliminarContenedores)
 
+	// API ROUTES
+	router.GET("/api/machines", handlers.GetMachines)
+
+	router.POST("/api/createMachine", handlers.MainSend)
+	router.POST("/api/loginTemp", handlers.LoginTemp)
 	router.POST("/api/contendores", handlers.GetContendores)
 	router.POST("/api/imagenes", handlers.GetImages)
+	router.POST("/api/checkhost", handlers.Checkhost)
+	// router.POST("/api/mvtemp", handlers.Mvtemp)
 
 	router.POST("/cambiar-contenido", Utilities.SendContent)
-
 	router.POST("/uploadJSON", Utilities.UploadJSON)
-	//router.POST("/api/mvtemp", handlers.Mvtemp)
+
 	// Ruta para cerrar sesión
 	router.GET("/logout", handlers.Logout)
 
