@@ -23,7 +23,7 @@ func DashboardHandler(c *gin.Context) {
 	datosDashboard, _ := Utilities.CheckMetrics()
 
 	// TODO: CAMBIAR AL DASHBOARD.HTML
-	c.HTML(http.StatusOK, "create-machine.html", gin.H{
+	c.HTML(http.StatusOK, "dashboard.html", gin.H{
 		"email":          "email",
 		"machines":       nil,
 		"machinesChange": nil,

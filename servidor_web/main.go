@@ -92,6 +92,7 @@ func main() {
 	userGroup := router.Group("/mainpage")
 	{
 		userGroup.GET("/control-machine", handlers.ControlMachine)
+		userGroup.GET("/control-machine/create-machine", handlers.CreateMachinePage)
 		userGroup.GET("/profile", handlers.ProfilePage)
 		userGroup.GET("/imagenes", handlers.GestionImagenes)
 		userGroup.GET("/contenedores", handlers.GestionContenedores)

@@ -68,6 +68,48 @@ func ControlMachine(c *gin.Context) {
 	})
 }
 
+func CreateMachinePage(c *gin.Context) {
+	// Acceder a la sesión
+	session := sessions.Default(c)
+	email := session.Get("email")
+
+	//TODO: Se debe adaptar para las sesiones de usuarios temporales
+	/*TODO: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
+	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
+	 */
+	log.Println(email)
+	if email == nil {
+		log.Println("Error: Email vacio/invalido")
+		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	hosts, _ := Utilities.CheckAvaibleHost()
+
+	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
+	session.Set("machinesChange", true)
+	session.Save()
+
+	machinesChange := session.Get("machinesChange")
+	clientIP := c.ClientIP()
+	showNewButton := false
+	for _, host := range hosts {
+		// Depuración
+		if host.Ip == clientIP {
+			showNewButton = true
+			break
+		}
+	}
+	c.HTML(http.StatusOK, "create-machine.html", gin.H{
+		"email":          email,
+		"machinesChange": machinesChange, // TODO: Esta si será necesaria?
+		"hosts":          hosts,
+		"showNewButton":  showNewButton,
+		"clientIP":       clientIP,
+	})
+}
+
 // Metodo que se encarga de crear y enviar la maquina virtual para su creación en el servidor
 func MainSend(c *gin.Context) {
 	// Acceder a la sesión

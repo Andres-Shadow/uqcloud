@@ -132,7 +132,7 @@
                           <img src="/web/static/img/fedora.png" class="card-img-top" alt="fedora">
                         </div>
                       </label>
-                    </div>                    
+                    </div>
 
                     <!-- Card Ubuntu -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
@@ -206,7 +206,7 @@
                         <option value="3">3 GB</option>
                       </select>
                     </div>
-  
+
                     <div class="mb-3 col-6">
                       <label class="form-label">
                         <i class="fa-solid fa-microchip"></i>
@@ -220,7 +220,7 @@
                     </div>
 
                   </div>
-                  
+
 
                   <!-- <div class="mb-3">
                     <label for="nameVM" class="form-label">Nombre</label>
@@ -251,18 +251,159 @@
               </h2>
               <div id="panelAdvDetailsVM" class="accordion-collapse collapse show">
                 <div class="accordion-body">
-                  <div id="emailHelp" class="form-text">Selecciona en que Host quieres que esta máquina virtual quede
-                    almacenada. Por defecto, la máquina se almacena un lugar aleatorio.</div>
-                  <div class="mb-3">
+                  <!-- <h5 class="card-title">Selecciona un Host </h5> -->
+                  <h6 class="form-text">Selecciona en que Host quieres que esta máquina virtual quede
+                    almacenada. Por defecto, la máquina se almacena un lugar aleatorio.</h6>
+
+                  <!-- <div class="mb-3">
                     <label for="nameVM" class="form-label">Host</label>
                     <input type="text" class="form-control" id="nameVM"
                       placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
+                  </div> -->
+
+
+                  <!-- Seleccionar lugar de creación de vm -->
+
+                  <div class="card bg-light">
+                    <div class="host-card-body container-fluid">
+                      <!-- <form method="post" action="/api/checkhost" id="formulario2"> -->
+
+                      
+
+                      <!-- START -->
+                      <div class="row justify-content-center mt-3" id="hostMachine">
+                        
+
+                        <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
+                        <!-- var OpSys = $('#OpSys input:radio:checked').val(); -->
+
+                        {{if and $.showNewButton (eq $.showNewButton true)}}
+                          <label> 
+                            Estas en este momento en un Host por lo que cuando
+                            uses el Boton Aleatorio tendrá prioridad para este Host,
+                            si este host llegase a tener problemas se utilizara
+                            una seleccion aleatoria automaticamente
+                          </label>
+                        {{end}}
+
+                        <!-- Card Aleatorio -->
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <!-- MALDITASEA esos grids. cuando eran menos de 4 se sobreescribian las tarjeticas
+                            quedaban una encima de la otra. que rabia.
+                            SOLUCIONADO CON UN MARGIN X AUTO INCREIBLE. UN MARGIN???? COMO NO SE ME HABIA OCURRIDO
+                            LA SOLUCION MAS SENCILLA ES LA QUE UNO PIENSA -->
+                          <label>
+                            <input type="radio" name="hostVM" value="0" selected checked class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>Aleatorio</p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
+                        {{range $index, $element := .hosts}}
+
+                          <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                            <label>
+                              <input type="radio" name="hostVM" value="{{$element.Id}}" selected checked class="host-card-input-element" />
+
+                              <div class="card card-default host-card-input">
+                                <div class="host-card-body text-center">
+                                  <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                  <p>{{$element.Nombre}}</p>
+                                </div>
+                              </div>
+
+                            </label>
+                          </div>
+
+                        {{end}}
+
+
+                        <!-- ----------------------- TESTING ---------------------------- -->
+
+
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>Host1_qwrwj</p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>Host1_qwrwj</p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>Host1_qwrwj</p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <p>Host1_qwrwj</p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
+                        <!-- ----------------------- END-TESTING ---------------------------- -->
+
+
+                      </div>
+                      <!-- END END END END END -->
+
+
+                    </div>
                   </div>
+
 
                 </div>
               </div>
+
             </div>
           </div>
+          <!-- Fin  Accordion: Detalles avanzados -->
+
+          <button type="submit" class="btn btn-success" fill="rgb(255, 255, 255)">
+            CREAR MÁQUINA
+          </button>
 
         </form>
 

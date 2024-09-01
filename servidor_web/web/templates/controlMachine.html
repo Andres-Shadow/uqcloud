@@ -54,12 +54,22 @@
                 <h1 style="font-family: 'Arial', sans-serif; color: #333;">TUS MÁQUINAS VIRTUALES</h1>
               </div>
               <div class="centrar-botones">
-                <button onclick="abrirVentanaEmergente()" type="button" class="btn btn-primary"
+                <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
                   style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
                   Crear Máquina Virtual
                   <img src="/web/static/img/icons/add.png" alt="Icono"
                     style="width: 16px; height: 16px; margin-left: 5px;">
-                </button>
+                </a>
+
+                <!--  BUTTON VERSION -->
+                <!-- <button onclick="abrirVentanaEmergente()" type="button" class="btn btn-primary"
+                style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
+                Crear Máquina Virtual
+                <img src="/web/static/img/icons/add.png" alt="Icono"
+                  style="width: 16px; height: 16px; margin-left: 5px;">
+                </button> -->
+
+
               </div>
             </div>
             <div class="table">
@@ -128,7 +138,7 @@
           </div>
 
           <!--Segunda Iteracion DesktopCloud-->
-          <div class="card" id="div2" style="display: none; ">
+          <!-- <div class="card" id="div2" style="display: none; ">
             <div class="card bg-light " style="max-width: 500rem;align-items: center;align-content:center;">
               <div class="card-body">
                 <form method="post" action="/api/checkhost" id="formulario2">
@@ -146,10 +156,10 @@
                     <button type="submit" name="host" value="0" class="btn btn-warning btn-sm"
                       fill="rgb(255, 255, 255)">
                       <img src="/web/static/img/icons/pc.png" alt="{{.Nombre}}" class="icon-img" width="40"
-                        height="40" />
+                        height="40" /> -->
                       <!-- Icono del botón -->
-                      Aleatorio <!-- Texto del botón -->
-                    </button>
+                      <!-- Aleatorio Texto del botón -->
+                    <!-- </button>
 
                     <div class="centrar-botones">
 
@@ -158,16 +168,16 @@
                       <br>
                       <div>
                         {{range $index, $element := .hosts}}
-                        <button type="submit" name="host" value="{{$element.Id}}"
-                          class="btn btn-info btn-sm {{if eq $element.Ip $.clientIP}}highlight{{end}}">
-                          <img src="/web/static/img/icons/pc.png" alt="{{$element.Nombre}}" class="icon-img" width="30"
-                            height="30" />
-                          {{$element.Nombre}}
-                        </button>
+                          <button type="submit" name="host" value="{{$element.Id}}"
+                            class="btn btn-info btn-sm {{if eq $element.Ip $.clientIP}}highlight{{end}}">
+                            <img src="/web/static/img/icons/pc.png" alt="{{$element.Nombre}}" class="icon-img" width="30"
+                              height="30" />
+                            {{$element.Nombre}}
+                          </button>
 
-                        {{if eq (mod $index 4) 3}}
-                        <br>
-                        {{end}}
+                          {{if eq (mod $index 4) 3}}
+                          <br>
+                          {{end}}
                         {{end}}
 
                       </div>
@@ -176,10 +186,10 @@
 
                   <button type="button" class="btn btn-danger" onclick="cerrarVentanahost(2)"> Cerrar Ventana </button>
                 </form>
-              </div>
+              </div> -->
 
-            </div>
-          </div>
+            <!-- </div>
+          </div> -->
 
 
           <div id="VentanaEmergenteConfiguracion" class="ventana-emergente">
@@ -306,14 +316,14 @@
               </ul>
             </form>
           </div>
-    
+
       </main>
 
       <!-- Footer -->
       <div class="bg-light mt-auto">
         {{template "mainpage-footer.html"}}
       </div>
-      
+
     </div>
   </div>
 
