@@ -7,6 +7,7 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+	"strings"
 
 	"time"
 
@@ -226,4 +227,61 @@ func PrintVirtualMachine(specs models.Maquina_virtual, isCreateVM bool) {
 	fmt.Printf("Memoria Requerida: %d Mb\n", specs.Ram)
 	fmt.Printf("CPU Requerida: %d núcleos\n", specs.Cpu)
 
+}
+
+// Funcion para actualizar la base de datos con las maquinas virtuales que estan realmente disponibles en los hosts
+func UpdateVirtualMachinesActualStatus() {
+	// Se obtienen todas las maquinas virtuales de la base de datos
+	maquinas, err := database.GetAllVirtualMachines()
+	if err != nil {
+		log.Println("Error al obtener las maquinas virtuales:", err)
+		return
+	}
+
+	log.Println("Maquinas virtuales en la base de datos: ", maquinas)
+
+	/* Se comparan con las maquinas virtuales que estan realmente en los hosts utilizando VBoxManage remotamente
+	y se eliminan de la base de datos las maquinas virtuales que no estan realmente en los hosts*/
+	for _, maquina := range maquinas {
+		// Se verifica si la maquina virtual esta realmente en el host
+		if !ExistVirtualMachineInHost(maquina.Nombre) {
+			log.Println("La maquina virtual ", maquina.Nombre, " no esta realmente en el host, se eliminara de la base de datos")
+			// Se elimina la maquina virtual de la base de datos
+			database.DeleteVirtualMachine(maquina.Nombre)
+		}
+	}
+
+}
+
+// Función que permite verificar si una máquina virtual se encuentra realmente en alguno de los hosts registrados
+func ExistVirtualMachineInHost(nombreVM string) bool {
+	// Obtiene la máquina virtual
+	maquinaVirtual, err := database.GetVM(nombreVM)
+	if err != nil {
+		log.Println("Error al obtener la MV:", err)
+		return false
+	}
+	// Obtiene el host en el cual está alojada la MV
+	host, err1 := database.GetHost(maquinaVirtual.Host_id)
+	if err1 != nil {
+		log.Println("Error al obtener el host:", err1)
+		return false
+	}
+	// Configura la conexión SSH con el host
+	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
+	if err2 != nil {
+		log.Println("Error al configurar SSH:", err2)
+		return false
+	}
+
+	command := "VBoxManage list vms"
+	// Obtiene la lista de máquinas virtuales en el host
+	salida, err := SendSSHCommand(host.Ip, command, config)
+	if err != nil {
+		log.Println("Error al obtener la lista de MVs:", err)
+		return false
+	}
+
+	// Si la salida contiene el nombre de la máquina virtual, entonces la máquina virtual existe en el host
+	return strings.Contains(salida, nombreVM)
 }

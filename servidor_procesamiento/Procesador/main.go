@@ -92,6 +92,9 @@ func setDatabase() {
 
 	// Precarga del usuario administrador
 	database.CreateAdmin()
+
+	// Actualizar las máquinas virtuales que estén disponibles realmente en los hosts
+	utilities.UpdateVirtualMachinesActualStatus()
 }
 
 // Función para precargar los datos de los hosts de la sala B y C (No cambian)
