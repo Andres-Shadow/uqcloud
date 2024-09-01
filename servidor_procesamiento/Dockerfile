@@ -28,6 +28,9 @@ COPY --from=builder /app/Procesador/Environment/.env /Environment/.env
 # Copia la key del builder de la carpeta Keys
 COPY --from=builder /app/Procesador/Keys/id_rsa /Environment/id_rsa
 
+# Copia la key del builder de la carpeta DatosHostJson
+COPY --from=builder /app/Procesador/DatosHostJson/ /DatosHostJson/
+
 # Asegúrate de que el binario tiene permisos de ejecución
 RUN chmod +x ./binario
 
@@ -35,4 +38,4 @@ RUN chmod +x ./binario
 RUN apt-get update && apt-get install -y openssh-client
 
 # Ejecuta el binario
-CMD ["./binario", "-key=/Environment/id_rsa"] 
+CMD ["./binario", "-h", "-key=/Environment/id_rsa"] 

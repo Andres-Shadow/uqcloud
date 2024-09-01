@@ -3,6 +3,7 @@ package utilities
 import (
 	"fmt"
 	"log"
+	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	"strings"
 	"time"
@@ -34,8 +35,8 @@ func StartVM(nameVM string, clientIP string) string {
 		log.Println("Error al obtener el host:", err1)
 		return "Error al obtener el host"
 	}
-	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath) //RERVISAR QUE SI LE LLEGUE
+	//Configura la conexiòn SSH con el host aaaaa
+	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath()) //RERVISAR QUE SI LE LLEGUE
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"
@@ -144,6 +145,8 @@ func StartVM(nameVM string, clientIP string) string {
 		//Almacena la direccion ip de la maquina virtual
 		ipAddress = strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
 
+		log.Println("Dirección IP de la máquina " + nameVM + ": " + ipAddress)
+
 		//Actualiza el estado de la MV en la base de datos
 		err9 := database.UpdateVirtualMachineState(nameVM, "Encendido")
 		if err9 != nil {
@@ -181,7 +184,7 @@ func TurnOffVM(nameVM string, clientIP string) string {
 		return "Error al obtener el host"
 	}
 	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigureSSH(host.Hostname, privateKeyPath)
+	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
 	if err2 != nil {
 		log.Println("Error al configurar SSH:", err2)
 		return "Error al configurar SSH"

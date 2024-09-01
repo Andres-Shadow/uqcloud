@@ -2,6 +2,7 @@ package database
 
 import (
 	_ "database/sql"
+	"fmt"
 	"log"
 	models "servidor_procesamiento/Procesador/Models"
 
@@ -72,6 +73,22 @@ func CreateNewUser(persona models.Persona) bool {
 		return false
 	}
 	return true
+}
+
+// Funcion para precargar el usuario administrador
+func CreateAdmin() {
+	if !CountAdminsRegistered() {
+		persona := models.Persona{
+			Nombre:      "admin",
+			Apellido:    "admin",
+			Email:       "admin@uqcloud.co",
+			Contrasenia: "$2y$10$JGxWitiykfO83Ep8IBab/.3fn.H/DxMjAK8dFTQCPZyJ5EHqZtfji", // Dejar este hash bcrypt para la contraseña "admin"
+			Rol:         1,
+		}
+
+		DATABASE.Create(&persona)
+		fmt.Print("Usuario administrador creado\n")
+	}
 }
 
 /*

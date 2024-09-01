@@ -1,0 +1,20 @@
+
+POST -> :8081/api/v1/host
+
+{
+    "hst_name": "prueba pc personal 3",
+    "hst_mac": "0A-00-27-00-00-0A",
+    "hst_ip":"192.168.1.5",
+    "hst_hostname": "andres",
+    "hst_ram" : 16000,
+    "hst_cpu" : 16,
+    "hst_storage": 500,
+    "hst_used_ram": 2000,
+    "hst_used_cpu": 2,  
+    "hst_used_storage" : 12,
+    "hst_network": "Realtek 8821CE Wireless LAN 802.11ac PCI-E NIC",
+    "hst_state": "apagado",
+    "hst_sshroute": "c:\\users\\andres\\.ssh\\id_rsa.pub",
+    "hst_so" : "windows",
+    "hst_so_distro": "64"
+}

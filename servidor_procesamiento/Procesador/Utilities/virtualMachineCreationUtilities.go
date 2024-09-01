@@ -1,12 +1,12 @@
 package utilities
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+
 	"strconv"
 	"time"
 )
@@ -23,150 +23,106 @@ import (
 */
 func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
+	var disco models.Disco
+	var err error
+	var host models.Host
 	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+	var virtualMachineName string = specs.Nombre + "_" + caracteres
+	var availableResources bool = false
+	var estadossh bool = false
+	var validation = false
 
-	if specs.Host_id > 0 {
-		// Creacion de Maquina Virtual con seleccion de usuario
-		// Obtenemeos el host por medio del indice que es previamente
-		mihost, err := database.GetHost(specs.Host_id)
-		if err != nil {
-			fmt.Println("Error al obtener el host", err)
+	// Verifica la disponibilidad del nombre de la MV
+	dispoible, mensaje := verifyVirtualMachineExistence(virtualMachineName) //Verifica si existe una MV con ese nombre
 
-		}
+	if !dispoible {
+		return mensaje
+	}
 
-		//se verifica el ssh de la maquina fisica con el marcapasos
-		estadossh := Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
-		if estadossh {
-
-			nameVM := specs.Nombre + "_" + caracteres
-
-			//Consulta si existe una MV con ese nombre
-			existe, error1 := ExistVM(nameVM)
-			if error1 != nil {
-				fmt.Println("Erro al verificar si existe un registro en las maquinas virtuales con el nombre " + nameVM + " en la base de datos: " + error1.Error())
-				return "Error a la hora de verificar si existe un registro en las maquinas virtuales con el nombre: " + nameVM
-			} else if existe {
-				fmt.Println("El nombre " + nameVM + " no està disponible, por favor ingrese otro.")
-				return "Nombre de la MV no disponible"
-			}
-
-			//Inicializamos la creacion de una variable tipo host
-			var host models.Host
-
-			//Obtenemos el host
-			host, _ = database.GetHost(specs.Host_id)
-
-			//Obtenemos el disco multiconexion del host previamente obtenido
-			disco, err20 := database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
-			if err20 != nil {
-				log.Println("Error al obtener el disco:", err20)
-				return "Error al obtener el disco"
-			}
-
-			//Obtiene el UUID de la màquina virtual creda
-			// lines := strings.Split(string(uuid), "\n")
-			// for _, line := range lines {
-			// 	if strings.HasPrefix(line, "UUID:") {
-			// 		uuid = strings.TrimPrefix(line, "UUID:")
-			// 	}
-			// }
-
-			validation := configureAndCreateVM(host, specs, nameVM, disco)
-
-			if !validation {
-				return "Error al ejecutar los comandos para crear la máquina virtual mediante ssh"
-			}
-
-			validation2 := createDatabaseRecords(host, specs, nameVM)
-			if validation2 != nil {
-				return "Error al crear los registros de la máquina virtual en la base de datos"
-			}
-		}
-
-	} else {
-		//Creacion de la Maquina con Algoritmo aleatorio
-		//Obtiene el usuario
-
-		
-
-		nameVM := specs.Nombre + "_" + caracteres
-
-		fmt.Println("llego hasta aqui")
-		//Consulta si existe una MV con ese nombre
-		existe, error1 := ExistVM(nameVM)
-		if error1 != nil {
-			if error1 != sql.ErrNoRows {
-				log.Println("Error al consultar si existe una MV con el nombre indicado: ", error1)
-				return "Error al consultar si existe una MV con el nombre indicado"
-			}
-		} else if existe {
-			fmt.Println("El nombre " + nameVM + " no està disponible, por favor ingrese otro.")
-			return "Nombre de la MV no disponible"
-		}
-
-		var host models.Host
-		availableResources := false
-		host, er := IsAHostIp(clientIP) //Consulta si la ip de la peticiòn proviene de un host registrado en la BD
-		if er == nil {                  //nil = El host existe
-			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
-		}
-		fmt.Print("available", availableResources)
+	if specs.Hostname == "aleatorio" {
 
 		//Obtiene la cantidad total de hosts que hay en la base de datos
 		count, err := database.CountRegisteredHosts()
 		if err != nil {
 			log.Println("Error al contar los host que hay en la base de datos: " + err.Error())
-			return "Error al contar los gost que hay en la base de datos"
+			return "Error al contar los host que hay en la base de datos"
 		}
 		count += 5 //Para dar n+5 iteraciones en busca de hosts con recursos disponibles, donde n es el total de hosts guardados en la bse de datos
-		fmt.Print("count :", count)
-		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
-		//Escoge hosts al azar en busca de alguno que tenga recursos disponibles para crear la MV
-		log.Println(estadossh)
-		for !estadossh && count > 0 {
-			//Selecciona un host al azar
 
+		log.Println(estadossh)
+		for !estadossh && !availableResources && count > 0 {
+			//Selecciona un host al azar
 			host, _ = database.SelectHost()
 			estadossh = Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
-			if err != nil {
-				log.Println("Error al seleccionar el host:", err)
-
-			}
 			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
-			//fmt.Print("resources :", availableResources)
 			count--
 		}
 
 		if !availableResources {
 			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
 		}
 
-		disco, err20 := database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
-		if err20 != nil {
-			log.Println("Error al obtener el disco:", err20)
+		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
+		if err != nil {
+			log.Println("Error al obtener el disco:", err)
 
 			return "Error al obtener el disco"
 		}
 
-		validation := configureAndCreateVM(host, specs, nameVM, disco)
-		if !validation {
-			return "Error al ejecutar los comandos para crear la máquina virtual mediante ssh"
-		}
-		// //Obtiene el UUID de la màquina virtual creda
-		// lines := strings.Split(string(uuid), "\n")
-		// for _, line := range lines {
-		// 	if strings.HasPrefix(line, "UUID:") {
-		// 		uuid = strings.TrimPrefix(line, "UUID:")
-		// 	}
-		// }
+	} else {
 
-		validation2 := createDatabaseRecords(host, specs, nameVM)
-		if validation2 != nil {
-			return "Error al crear los registros de la máquina virtual en la base de datos"
+		// Creacion de Maquina Virtual con seleccion de usuario
+		// Obtenemeos el host por medio del indice que es previamente
+		host, err = GetHostByName(specs.Hostname)
+
+		if err != nil {
+			log.Println("Error al obtener el host por nombre:", err)
+			return "Error al obtener el host por nombre " + specs.Hostname
 		}
 
+		log.Println("Host seleccionado: ", host.Nombre)
+
+		//se verifica el ssh de la maquina fisica con el marcapasos
+		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
+		if estadossh {
+			//Obtenemos el disco multiconexion del host previamente obtenido
+			disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
+			if err != nil {
+				log.Println("Error al obtener el disco:", err)
+				return "Error al obtener el disco"
+			}
+
+		} else {
+			return "Error al verificar la conexión con el host seleccionado"
+		}
 	}
+
+	validation = configureAndCreateVM(host, specs, virtualMachineName, disco)
+	if !validation {
+		return "Error al ejecutar los comandos para crear la máquina virtual mediante ssh"
+	}
+
+	err = createDatabaseRecords(host, specs, virtualMachineName, disco)
+	if err != nil {
+		return "Error al crear los registros de la máquina virtual en la base de datos"
+	}
+
 	return "solicitud invalida"
+}
+
+func verifyVirtualMachineExistence(virtualMachineName string) (bool, string) {
+	//Consulta si existe una MV con ese nombre
+	existe, error1 := ExistVM(virtualMachineName)
+	if error1 != nil {
+		log.Println("Error al consultar si existe una MV con el nombre indicado: ", error1)
+		return false, "Error al consultar si existe una MV con el nombre indicado"
+
+	} else if existe {
+		fmt.Println("El nombre " + virtualMachineName + " no està disponible, por favor ingrese otro.")
+		return false, "Nombre de la MV no disponible"
+	}
+	return true, ""
 }
 
 func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM string, disco models.Disco) bool {
@@ -197,21 +153,27 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 	return true
 }
 
-func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameVM string) error {
+func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameVM string, disco models.Disco) error {
 	// Lógica para crear los registros en la base de datos y actualizar recursos
 	currentTime := time.Now().UTC()
 
+	log.Println("Creando registros en la base de datos...")
+	log.Println("Host seleccionado: ", host.Id)
+
 	nuevaMaquinaVirtual := models.Maquina_virtual{
-		Uuid:              nameVM + "_uuid",
-		Nombre:            nameVM,
-		Sistema_operativo: specs.Sistema_operativo,
-		Ram:               specs.Ram,
-		Cpu:               specs.Cpu,
-		Estado:            "Apagado",
-		Hostname:          "uqcloud",
-		Persona_email:     specs.Persona_email,
-		Fecha_creacion:    currentTime,
-	}
+		Uuid:                           nameVM + "_uuid",
+		Nombre:                         nameVM,
+		Ram:                            specs.Ram,
+		Cpu:                            specs.Cpu,
+		Ip:                             "",
+		Estado:                         "Apagado",
+		Hostname:                       host.Hostname,
+		Persona_email:                  specs.Persona_email,
+		Host_id:                        host.Id,
+		Disco_id:                       disco.Id,
+		Sistema_operativo:              specs.Sistema_operativo,
+		Distribucion_sistema_operativo: specs.Distribucion_sistema_operativo,
+		Fecha_creacion:                 currentTime}
 
 	if err := database.CreateVirtualMachine(nuevaMaquinaVirtual); err != nil {
 		log.Println("Error al crear el registro en la base de datos:", err)
