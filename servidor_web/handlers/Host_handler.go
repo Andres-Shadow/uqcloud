@@ -4,6 +4,9 @@ import (
 	"AppWeb/Config"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
+	"errors"
+	"io/ioutil"
+	"log"
 
 	"fmt"
 	"net/http"
@@ -47,17 +50,41 @@ func CreateNewHost(c *gin.Context) {
 	}
 
 	// Mostrar un mensaje de éxito
-	c.HTML(http.StatusOK, "createHost.html", gin.H{"message": "Host creado correctamente"})
+	c.JSON(http.StatusOK, gin.H{"message": "Host creado correctamente"})
 }
 
 // Funcion que se encarga de descodificar los parametros para crear un nuevo host
 func CreateHostFromRequest(c *gin.Context) (Models.Host, error) {
 	var newHost Models.Host
 
-	// Decodificar JSON desde el cuerpo de la solicitud
-	if err := json.NewDecoder(c.Request.Body).Decode(&newHost); err != nil {
+	var bodyBytes []byte
+	if c.Request.Body != nil {
+		bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
+	}
+
+	log.Printf("Request Body: %s", string(bodyBytes))
+
+	if err := json.Unmarshal(bodyBytes, &newHost); err != nil {
+		log.Println("Error al decodificar el JSON---: " + err.Error())
 		return Models.Host{}, err
 	}
 
+	if newHost.Name == "" || newHost.Mac == "" || newHost.Ip == "" || newHost.Hostname == "" || newHost.Ram_total <= 0 || newHost.Cpu_total <= 0 ||
+		newHost.Almacenamiento_total <= 0 || newHost.Adaptador_red == "" || newHost.Ruta_llave_ssh_pub == "" || newHost.Sistema_operativo == "" {
+		log.Println("Error existen campos vacios")
+		return Models.Host{}, errors.New("Error existen campos vacios")
+
+	}
+
 	return newHost, nil
+}
+
+func GetHosts(c *gin.Context) {
+	hosts, err := Utilities.GetHostsFromServer()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los hosts"})
+		return
+	}
+
+	c.JSON(http.StatusOK, hosts)
 }

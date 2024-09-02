@@ -104,6 +104,8 @@ func main() {
 
 	//router.POST("/signin", handlers.Signin)
 
+	router.GET("/GetHost", handlers.GetHosts)
+
 	//TODO: Mirar después
 	router.POST("/api/createMachine", handlers.MainSend)
 	router.POST("/powerMachine", handlers.PowerMachine)

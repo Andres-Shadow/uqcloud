@@ -38,7 +38,7 @@ func RegisterElements[T any](URL string, element T) error {
 
 	//Verificar respuesta
 	if resp.StatusCode != http.StatusOK {
-		log.Println("Error: La solicitud no fue exitosa")
+		log.Printf("Error: La solicitud no fue exitosa: %d", resp.StatusCode)
 		return fmt.Errorf("register element failed with status code: %d", resp.StatusCode)
 	}
 

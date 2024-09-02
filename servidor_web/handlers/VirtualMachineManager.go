@@ -24,7 +24,7 @@ func ControlMachine(c *gin.Context) {
 	/*ToDo: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
 	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
 	 */
-	log.Println(email)
+	log.Println("El email es:", email)
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
@@ -33,14 +33,18 @@ func ControlMachine(c *gin.Context) {
 	}
 
 	// Recuperar o inicializar un arreglo de máquinas virtuales en la sesión del usuario
+	log.Println("Se ha envidado el email para consultar sus host")
 	machines, _ := Utilities.ConsultMachineFromServer(email.(string))
 
+	log.Println("Se ha procesado la solicitud")
 	hosts, _ := Utilities.CheckAvaibleHost()
 
 	if sessionMachines, ok := session.Get("machines").([]Models.VirtualMachine); ok {
+		log.Println("Se han encontrado las maquinas asociadas al usuario")
 		machines = sessionMachines
 	} else {
 		// Inicializa un nuevo arreglo de máquinas si no existe en la sesión
+		log.Println("No se han encontrado las maquinas asociadas al usuario")
 		machines = []Models.VirtualMachine{}
 	}
 
@@ -51,6 +55,11 @@ func ControlMachine(c *gin.Context) {
 	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
 	showNewButton := false
+
+	if len(hosts) <= 0 {
+		log.Println("No existen host para realizar esta operación, se deben registrar los host")
+		return
+	}
 	for _, host := range hosts {
 		// Depuración
 		if host.Ip == clientIP {
