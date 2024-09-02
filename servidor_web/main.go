@@ -1,6 +1,7 @@
 package main
 
 import (
+	authentication "AppWeb/Auth"
 	"AppWeb/Utilities"
 	"AppWeb/handlers"
 	"encoding/json"
@@ -41,7 +42,7 @@ func main() {
 	router.LoadHTMLGlob("web/templates/*.html")
 
 	// Configurar la tienda de cookies para las sesiones
-	store := cookie.NewStore([]byte("tu_clave_secreta"))
+	store := cookie.NewStore([]byte("ADMIN_SESSION_SUPER_SECRET"))
 	router.Use(sessions.Sessions("sesion", store))
 
 	// Configura las rutas
@@ -79,10 +80,15 @@ func main() {
 	// porque directamente cuando se le asocia una variable con ":=" al "router", gin los junta directamente
 	// sin necesidad de escribir una funcion digamos: router.setGroups( []grupos ). ya tu sabe tu si entiendes
 	// --- RUTAS DE ADMIN ---
-	adminGroup := router.Group("/admin")
+	authGroup := router.Group("/admin")
 	{
-		adminGroup.GET("", handlers.LoginAdminPage)
-		adminGroup.POST("", handlers.AdminLogin)
+		authGroup.GET("", handlers.LoginAdminPage)
+		authGroup.POST("", handlers.AdminLogin)
+	}
+
+	adminGroup := router.Group("/auth-admin")
+	adminGroup.Use(authentication.AuthRequired)
+	{
 		adminGroup.GET("/dashboard", handlers.DashboardHandler)
 		adminGroup.GET("/create-host", handlers.CreateHostPage)
 		adminGroup.GET("/create-disk", handlers.CreateDiskPage)
