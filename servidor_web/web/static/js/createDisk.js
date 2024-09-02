@@ -28,12 +28,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Crear el objeto con los datos del formulario
         const data = {
-            name: document.getElementById("inputSelectName").value,
-            ruta_ubicacion: document.getElementById("inputRouteDisk").value,
-            sistema_operativo: document.getElementById("inputSelectSystem").value,
-            distrubucion_so: document.getElementById("inputSelectDistribution").value,
-            arquitectura: parseInt(document.getElementById("inputSelectArchitecture").value),
-            host_id: parseInt(document.getElementById("inputSelectHost").value)
+            dsk_name: document.getElementById("inputSelectName").value,
+            dsk_route: document.getElementById("inputRouteDisk").value,
+            dsk_so: document.getElementById("inputSelectSystem").value,
+            dsk_so_distro: document.getElementById("inputSelectDistribution").value,
+            dsk_arch: parseInt(document.getElementById("inputSelectArchitecture").value),
+            dsk_host_id: parseInt(document.getElementById("inputSelectHost").value)
         };
 
         console.log(data)
