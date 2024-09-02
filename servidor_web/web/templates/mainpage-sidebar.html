@@ -10,26 +10,28 @@
       <div class="sb-sidenav-menu">
         <div class="nav">
 
+          {{ if eq .rol 1 }}
           <!---- SECCIÓN ADMIN ---->
           <div class="sb-sidenav-menu-heading">Admin</div>
-          <a class="nav-link" href="/admin/dashboard">
+          <a class="nav-link" href="/auth-admin/dashboard">
             <div class="sb-nav-link-icon">
               <i class="fas fa-tachometer-alt"></i>
             </div>
             Dashboard
           </a>
-          <a class="nav-link" href="/admin/create-host">
+          <a class="nav-link" href="/auth-admin/create-host">
             <div class="sb-nav-link-icon">
               <i class="fa-solid fa-ghost"></i>
             </div>
             Crear Hosts
           </a>
-          <a class="nav-link" href="/admin/create-disk">
+          <a class="nav-link" href="/auth-admin/create-disk">
             <div class="sb-nav-link-icon">
               <i class="fa-solid fa-compact-disc"></i>
             </div>
             Crear Discos
           </a>
+          {{ end }}
 
           <!---- SECCIÓN MÁQUINAS ---->
           <div class="sb-sidenav-menu-heading">Máquinas</div>
