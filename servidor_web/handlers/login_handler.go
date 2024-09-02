@@ -16,15 +16,6 @@ import (
 
 func LoginAdminPage(c *gin.Context) {
 	session := sessions.Default(c)
-	// email := session.Get("email")
-
-	// TODO: POR QUE NO SIRVE BIEN??????
-	// log.Println(email)
-	// if email != nil {
-	// 	log.Println("Email invalido")
-	// 	c.Redirect(http.StatusFound, "/mainPage")
-	// 	return
-	// }
 
 	errorMessage := session.Get("loginError")
 	session.Delete("loginError")
@@ -52,17 +43,22 @@ func AdminLogin(c *gin.Context) {
 	}
 
 	usuario, er := Utilities.SendInfoUserServer(jsonData)
+	log.Println("Usuario: ", usuario)
 	if er == nil {
 		session := sessions.Default(c)
+		session.Set("authenticated", true)
+
 		session.Set("email", email)
 		session.Set("nombre", usuario.Nombre)
 		session.Set("apellido", usuario.Apellido)
 		session.Set("rol", usuario.Rol)
-		session.Save()
 
 		log.Println("Usuario inicia sesion con exito")
 		log.Printf("%+v\n", usuario)
-		c.Redirect(http.StatusFound, "/admin/dashboard")
+
+		session.Save()
+
+		c.Redirect(http.StatusFound, "/auth-admin/dashboard")
 	} else {
 		log.Println("Credenciales invalidas/Usuario no encontrado: ", err)
 		session := sessions.Default(c)
@@ -154,10 +150,11 @@ func LoginTemp(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
+
 	// Acceder a la sesión
 	session := sessions.Default(c)
-	// Eliminar la información de la sesión, incluyendo el email
-	session.Delete("email")
+	// Eliminar la información de la sesión
+	session.Clear()
 	session.Save()
 
 	// Redirigir al usuario a la página de inicio de sesión u otra página

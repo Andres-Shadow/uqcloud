@@ -5,7 +5,9 @@ import (
 	"AppWeb/Models"
 	"AppWeb/Utilities"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -15,25 +17,12 @@ import (
 
 func CreateDiskPage(c *gin.Context) {
 	session := sessions.Default(c)
-	email := session.Get("email").(string)
-	// rol := session.Get("rol")
-
-	// TODO: DESCOMENTAR PARA QUE ENTREN SOLO LOS ADMIN
-	// if rol != "Administrador" {
-	// 	// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-	// 	c.Redirect(http.StatusFound, "/login")
-	// 	return
-	// }
-
-	// TODO: SOLUCIONAR ERROR CON HOSTS
-	// hosts, err := Utilities.ConsultHostsFromServer(email)
-
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al consultar los host: " + err.Error()})
-	// }
 
 	c.HTML(http.StatusOK, "createDisk.html", gin.H{
-		"email": email,
+		"email":    session.Get("email").(string),
+		"nombre":   session.Get("nombre").(string),
+		"apellido": session.Get("apellido").(string),
+		"rol":      session.Get("rol").(uint8),
 		// "hosts": hosts,
 	})
 }
@@ -43,23 +32,20 @@ func CreateDiskPage(c *gin.Context) {
 func CreateNewDisk(c *gin.Context) {
 	//Crear el Disk a partir de la solicutud
 	newDisk, err := CreateDiskFromRequest(c)
-
-	log.Printf("%+v\n", newDisk)
 	if err != nil {
-		log.Println("errot al decodificar el JSON del disco: ", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar el JSON:" + err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al decodificar el JSON: " + err.Error()})
 		return
 	}
 
+	//Registrar el disk
+	// Definir la URL del servidor
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL)
-	log.Println(serverURL)
 
 	if err := Utilities.RegisterElements(serverURL, newDisk); err != nil {
-		log.Println("Error al registro el disco: ", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disk"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disco"})
 		return
 	}
-	c.HTML(http.StatusOK, "newDisk.html", gin.H{"message": "Disk Creado correctamente"})
+	c.JSON(http.StatusOK, gin.H{"message": "Disco creado correctamente"})
 }
 
 /*Funcion que se encarga de decodificar los parametros para crear un nuevo disco
@@ -67,9 +53,22 @@ func CreateNewDisk(c *gin.Context) {
 func CreateDiskFromRequest(c *gin.Context) (Models.Disk, error) {
 	var newDisk Models.Disk
 
-	//Decodificar JSON DESDE EL CUERPO DE LA SOLICITUD
-	if err := json.NewDecoder(c.Request.Body).Decode(&newDisk); err != nil {
+	var bodyBytes []byte
+	if c.Request.Body != nil {
+		bodyBytes, _ = ioutil.ReadAll(c.Request.Body)
+	}
+
+	log.Printf("Request Body: %s", string(bodyBytes))
+
+	if err := json.Unmarshal(bodyBytes, &newDisk); err != nil {
+		log.Println("Error al decodificar el JSON---: " + err.Error())
 		return Models.Disk{}, err
+	}
+
+	if newDisk.Name == "" || newDisk.Ruta_Ubicacion == "" || newDisk.Sistema_Operativo == "" ||
+		newDisk.Arquitectura < 0 || newDisk.Host_id <= 0 {
+		log.Println("Error existen campos vacios")
+		return Models.Disk{}, errors.New("Error existen campos vacios")
 	}
 
 	return newDisk, nil

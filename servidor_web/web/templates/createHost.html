@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>Desktop Cloud Uniquindio</title>
+  <title>Desktop Cloud | Crear Host</title>
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
 
@@ -22,18 +22,8 @@
   <!-- <link rel="stylesheet" type="text/css" href="/web/static/css/style.css"> -->
   <link rel="stylesheet" type="text/css" href="/web/static/css/styleNavbar.css">
   <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
+  <link rel="stylesheet"  href="/web/static/css/createDisk.css">
 
-  <style>
-    /* Estilos para el mensaje de éxito */
-    #successMessage {
-      display: none;
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 1000;
-    }
-  </style>
 </head>
 
 
@@ -47,136 +37,98 @@
     {{template "mainpage-sidebar.html" .}}
 
     <div id="layoutSidenav_content">
-
       <main>
-
-        <div style="height: 80vh;">
+        <div>
           <div class="container">
             <div class="center-content">
               <!-- Mensaje de éxito -->
-              <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+              <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
                 {{ .message }}
               </div>
-              <form method="post" action="/createHost" style="margin: 50px; width: 120vh;">
-                <h2 class="centre-tittle">Crear Host</h2>
-                <div style="display: flex;">
-                  <div style="width: 1000px; margin-right: 10px;">
-                    <div class="form-group">
-                      <label for="nameHost">Apodo del Host:</label>
-                      <input type="text" class="form-control" id="nameHost" name="nameHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="ipHost">IP del Host:</label>
-                      <input type="text" class="form-control" id="ipHost" name="ipHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="macHost">MAC del Host:</label>
-                      <input type="text" class="form-control" id="macHost" name="macHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="adapHost">Adaptador Red del Host:</label>
-                      <input type="text" class="form-control" id="adapHost" name="adapHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="soHost">Sistema Operativo del Host:</label>
-                      <input type="text" class="form-control" id="soHost" name="soHost" required>
-                    </div>
-                  </div>
-                  <div style="width: 1000px; margin-left: 10px;">
-                    <div class="form-group">
-                      <label for="hostnameHost">Username:</label>
-                      <input type="text" class="form-control" id="hostnameHost" name="hostnameHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="ramHost">RAM Total del Host (MB):</label>
-                      <input type="number" class="form-control" id="ramHost" name="ramHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="cpuHost">CPU Total del Host:</label>
-                      <input type="number" class="form-control" id="cpuHost" name="cpuHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="almaceHost">Almacenamiento Total del Host:</label>
-                      <input type="number" class="form-control" id="almaceHost" name="almaceHost" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="sshHost">Ruta de la Llave SSH Host:</label>
-                      <input type="text" class="form-control" id="sshHost" name="sshHost" required>
-                    </div>
-                  </div>
+              <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none;">
+                {{ .message }}
+                <button type="button" class="close" data-bs-dismiss="alert" aria-label="close"></button>
+              </div>
+              <form class="row g-3 create-form" id="createHost" method="post" action="/createHost" onsubmit="return showSuccessMessage()">
+                <h1 class="centre-tittle">
+                  <i class="bi bi-pc-display"></i> Crear Host
+                </h1>
+                <hr class="my-4">
+
+                <div class="col-md-4">
+                  <label for="inputNameHost" class="form-label">Nombre del Host</label>
+                  <input type="text" class="form-control" id="inputNameHost" placeholder="Ingresa el nombre del Host">
                 </div>
-                <div class="centrar-botones">
-                  <label for="fileInput">Cargar archivo JSON:</label>
-                  <input type="file" id="fileInput" name="fileInput" accept=".json" style="display: none;">
-                  <label for="fileInput" class="btn btn-primary"
-                    style="margin-top: 30px; width: 180px; margin-left: 40px;">Seleccionar Archivo </label>
+
+                <div class="col-md-4">
+                  <label for="inputUserName" class="form-label">Nombre del usuario</label>
+                  <input type="text" class="form-control" id="inputUserName" placeholder="Ingresa el nombre del usuario">
                 </div>
-                <div class="centrar-botones">
-                  <button type="submit" class="btn btn-primary" style="margin-top: 10px; width: 180px;">Crear Host</button>
-                  <button type="reset" class="btn btn-secondary ml-2"
-                    style="margin-top: 10px; width: 180px; margin-left: 20px;">Limpiar Formulario</button>
+
+                <div class="col-md-4"></div>
+
+                <div class="col-md-4">
+                  <label for="inputIpHost" class="form-label">IP del Host</label>
+                  <input type="text" class="form-control" id="inputIpHost" placeholder="Ingresa la dirección IP del host">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputMacHost" class="form-label">MAC del Host</label>
+                  <input type="text" class="form-control" id="inputMacHost" placeholder="Ingresa la MAC del host">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputAdaptadorRed" class="form-label">Adaptador de red del Host</label>
+                  <input type="text"  class="form-control" id="inputAdaptadorRed" placeholder="Ingresa el adaptador de red del Host">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputCPUHost" class="form-label">CPU total del Host</label>
+                  <input type="number" min="1" max="16" class="form-control" id="inputCPUHost" placeholder="Ingresa la CPU total del host">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputAlmacenamiento" class="form-label">Almacenamiento total del Host en gigabyte(GB)</label>
+                  <input type="number" min="1" class="form-control" id="inputAlmacenamiento" placeholder="Ingresa el almacenamiento total del Host GB">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputRAM" class="form-label">RAM total del Host en megabyte(MB)</label>
+                  <input type="number" min="1" class="form-control" id="inputRAM" placeholder="Ingresa la memoria RAM total del Host MB">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputSistemaOperativo" class="form-label">Sistema operativo del Host</label>
+                  <input type="text"  class="form-control" id="inputSistemaOperativo" placeholder="Ingresa el sistema operativo del Host">
+                </div>
+
+
+                <div class="col-md-4">
+                  <label for="inputRutaSSH" class="form-label">Ruta SSH del Host</label>
+                  <input type="text"  class="form-control" id="inputRutaSSH" placeholder="Ingresa la ruta SSH del Host">
+                </div>
+
+                <div class="col-md-6">
+                  <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Host</button>
+
+                  <input type="file" id="fileInputJSON" name="fileInput" accept=".json" style="display: none;">
+                  <label for="fileInputJSON" class="btn btn-secondary">Cargar archivo JSON </label>
+
+                  <button type="reset" class="btn btn-outline-secondary" id="buttonClean">Limpiar Formulario</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
-        <script>
-          document.getElementById('fileInput').addEventListener('change', function (e) {
-            var file = e.target.files[0];
-            if (!file) return;
-      
-            var reader = new FileReader();
-            reader.onload = function (e) {
-              try {
-                var jsonData = JSON.parse(e.target.result);
-      
-                // Llenar automáticamente los campos del formulario
-                document.getElementById('nameHost').value = jsonData.nameHost;
-                document.getElementById('ipHost').value = jsonData.ipHost;
-                document.getElementById('macHost').value = jsonData.macHost;
-                document.getElementById('adapHost').value = jsonData.adapHost;
-                document.getElementById('soHost').value = jsonData.soHost;
-                document.getElementById('hostnameHost').value = jsonData.hostnameHost;
-                document.getElementById('ramHost').value = jsonData.ramHost;
-                document.getElementById('cpuHost').value = jsonData.cpuHost;
-                document.getElementById('almaceHost').value = jsonData.almaceHost;
-                document.getElementById('sshHost').value = jsonData.sshHost;
-              } catch (err) {
-                alert('Error al cargar el archivo JSON: ' + err.message);
-              }
-            };
-            reader.readAsText(file);
-          });
-        </script>
-        <script>
-          // Mostrar el mensaje de éxito
-          function showSuccessMessage() {
-            var successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            setTimeout(function () {
-              successMessage.style.display = 'none';
-            }, 3000); // Desaparecer después de 5 segundos
-          }
-      
-          // Mostrar el mensaje de éxito al cargar la página si es necesario
-          window.onload = function () {
-            var message = "{{ .message }}";
-            if (message.trim() !== "") {
-              showSuccessMessage();
-            }
-          };
-        </script>
-
       </main>
 
       <!-- Footer -->
       <div class="bg-light mt-auto">
         {{template "footer.html"}}
       </div>
-
     </div>
   </div>
-
+  <script src="/web/static/js/createHost.js"></script>
 </body>
 
 </html>

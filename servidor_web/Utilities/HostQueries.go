@@ -79,7 +79,7 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 	}
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Println("error al crear la solicitud HTTP", err.Error())
 		return nil, err
@@ -116,6 +116,34 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 	if err := json.Unmarshal(responseBody, &hosts); err != nil {
 		log.Println("error al decodificar la JSON de la respuesta", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
+	}
+
+	return hosts, nil
+}
+
+func GetHostsFromServer() ([]Models.HostConsult, error) {
+
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOSTS_URL)
+	log.Println(serverURL)
+
+	resp, err := http.Get(serverURL)
+	if err != nil {
+		return nil, fmt.Errorf("error al realizar la solicitud: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("error en la solicitud: estado HTTP no es 200 OK")
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("error al leer el cuerpo de la respuesta: %w", err)
+	}
+
+	var hosts []Models.HostConsult
+	if err := json.Unmarshal(body, &hosts); err != nil {
+		return nil, fmt.Errorf("error al decodificar el JSON: %w", err)
 	}
 
 	return hosts, nil
