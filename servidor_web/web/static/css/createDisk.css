@@ -1,0 +1,38 @@
+#successMessage, #errorMessage {
+    display: none;
+    position: fixed;
+    top: 90px;
+    left: 60%;
+    text-align: center;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+.form-label {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: inherit;
+}
+.form-select option[value=""] {
+    color: #6c757d;
+}
+
+.message-container {
+    margin-top: 100px;
+}
+
+.fade-out {
+    opacity: 0;
+    transition: opacity 0.5s ease-out;
+}
+
+.create-form {
+    margin: 20px 50px 50px 50px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+#createForm{
+    margin: 20px 50px 50px 50px;
+    width: 100%;
+    max-width: 1200px;
+}
