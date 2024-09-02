@@ -24,7 +24,7 @@ Cuando se crea la cuenta e ingresa a la base de datos, se encarga de invocar la 
 */
 
 func CreateTempAccount(clientIP string, distribucionSO string) string {
-	
+
 	persona := models.Persona{
 		Nombre:   "Usuario",
 		Apellido: "Invitado",

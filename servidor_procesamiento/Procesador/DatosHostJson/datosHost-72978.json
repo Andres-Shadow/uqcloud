@@ -1,12 +1,12 @@
-﻿{
-    "nameHost":  "X",
-    "ipHost":  "10.0.48.130",
-    "macHost":  "84:69:93:81:80:E9",
-    "adapHost":  "Intel(R) Ethernet Connection (17) I219-LM",
-    "soHost":  "Microsoft Windows 10 Pro",
-    "hostnameHost":  "Admin",
-    "ramHost":  32438,
-    "cpuHost":  16,
-    "almaceHost":  377,
-    "sshHost":  "C:\\Users\\Admin\\.ssh"
+{
+    "hst_name": "72978",
+    "hst_ip": "10.0.48.130",
+    "hst_mac": "84:69:93:81:80:E9",
+    "hst_network": "Intel(R) Ethernet Connection (17) I219-LM",
+    "hst_so": "Microsoft Windows 10 Pro",
+    "hst_hostname": "Admin",
+    "hst_ram": 32438,
+    "hst_cpu": 16,
+    "hst_storage": 377,
+    "hst_sshroute": "C:\\Users\\Admin\\.ssh"
 }
