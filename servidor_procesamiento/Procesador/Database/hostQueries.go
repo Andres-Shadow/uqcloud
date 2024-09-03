@@ -22,7 +22,11 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 	var results []map[string]interface{}
 
 	// Realiza la consulta y guarda los resultados directamente en una lista de mapas
+	// Nota: Está estructura del map se debe usar así para obtener los valores de la BD
+	// 		 Luego, el map cambia cuando toca pasar los key:valor a la estructura del servidor web
 	err := DATABASE.Model(&models.Host{}).Select("id, nombre").Find(&results).Error
+
+	log.Println("RESULTS: ", results)
 
 	if err != nil {
 		log.Println("Error al realizar la consulta de máquinas en la BD:", err)
@@ -33,6 +37,18 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 		log.Println("No se encontraron máquinas registradas en la base de datos")
 		return nil, errors.New("No Machines Found")
 	}
+
+	// ESO ERAAAAAAAA JASJSAJASJASJ DOS DIAS PAARA SACAR EL NOMBRE DEL HOST, DIOSMIO AJSJSAJJSJ SOY ELMOEJR JULIOPROYT777 REPORTANDO
+	// Se cambia la key 'nombre' a 'hst_name', para no tener los errores de:
+	// RESPONSE:  [{"id":1,"nombre":"prueba pc personal 3"}] 			|  MAL  Model.Host struct NO LO ACEPTA
+	// RESPONSE:  [{"id":1,"hst_name":"prueba pc personal 3"}]			|  BIEN Model.Host struct LO ACEPTA
+	for _, result := range results {
+		if nombre, ok := result["nombre"]; ok {
+			result["hst_name"] = nombre
+			delete(result, "nombre")
+		}
+	}
+	log.Println("NEW RESULTS: ", results)
 
 	return results, nil
 }

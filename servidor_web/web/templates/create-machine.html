@@ -125,7 +125,7 @@
                     <!-- Card Fedora -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="os" value="fedora" selected checked class="card-input-element" />
+                        <input type="radio" name="osVM" value="fedora" selected checked class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Fedora</p>
@@ -138,7 +138,7 @@
                     <!-- Card Ubuntu -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="os" value="ubuntu" class="card-input-element" />
+                        <input type="radio" name="osVM" value="ubuntu" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Ubuntu</p>
@@ -151,7 +151,7 @@
                     <!-- Card Alpine -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="os" value="alpine" class="card-input-element" />
+                        <input type="radio" name="osVM" value="alpine" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Alpine</p>
@@ -164,7 +164,7 @@
                     <!-- Card Debian -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="os" value="debian" class="card-input-element" />
+                        <input type="radio" name="osVM" value="debian" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Debian</p>
@@ -272,7 +272,7 @@
 
 
                       <!-- START HOSTMACHINE-->
-                      <div class="row justify-content-center mt-3" id="hostMachine">
+                      <div class="row justify-content-center mt-3" id="hostVM">
 
 
                         <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
@@ -311,13 +311,12 @@
 
                         <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
                           <label>
-                            <input type="radio" name="hostVM" value="{{$element.Id}}" selected checked
-                              class="host-card-input-element" />
+                            <input type="radio" name="hostVM" value="{{$element.Id}}" class="host-card-input-element" />
 
                             <div class="card card-default host-card-input">
                               <div class="host-card-body text-center">
                                 <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                <p>{{$element.Nombre}}</p>
+                                <p>{{$element.Name}}</p>
                               </div>
                             </div>
 
@@ -362,7 +361,7 @@
           <!-- Fin  Accordion: Detalles avanzados -->
 
           <div class="d-flex justify-content-end">
-            <button type="submit" onclick="createMachine()" class="btn btn-success" fill="rgb(255, 255, 255)">
+            <button type="submit" onclick="createMachine(event)" class="btn btn-success" fill="rgb(255, 255, 255)">
               CREAR MÁQUINA
             </button>
           </div>
@@ -382,13 +381,18 @@
 
   <script>
 
-    function createMachine() {
-      nameVM = document.getElementById("nameVM");
+    function createMachine(event) {
+
+      // Esto es pa que no me manden los datos por la URL (porque pa que sioque)
+      event.preventDefault();
+
+      nameVM = document.getElementById("nameVM").value;
       osVM = $('#osVM input:radio:checked').val();
       ramVM = document.getElementById("ramVM").value;
       cpuVM = document.getElementById("cpuVM").value;
+      hostVM = $('#hostVM input:radio:checked').val();
 
-      console.log("name: ",nameVM, " osVM: ",osVM, " ramVM: ", ramVM, " cpuVM: ", cpuVM);
+      console.log("name: ", nameVM, " osVM: ", osVM, " ramVM: ", ramVM, " cpuVM: ", cpuVM, " hostVM: ", hostVM);
 
       fetch('/api/createMachine', {
         method: 'POST', // Método POST
@@ -397,12 +401,17 @@
         },
         body: JSON.stringify(
           {
-            nameVM: nameVM.value.toString(),
-            osVM: osVM.toString(),
-            ramVM: ramVM.toString(),
-            cpuVM: cpuVM.toString(),            
+            // Aqui se tiene que mandar la 'KEY' de acuerdo a "Models.VirtualMachine"
+            //    * Nombre del json tags (que especifica como se Encode y Decode)
+            //    * Tipo de dato (que está definido en el modelo)
+            name: nameVM.toString(),
+            person_email: "{{.email}}", // este email es mandado desde handler jijiji
+            distribucion_SO: osVM.toString(),
+            ram: parseInt(ramVM),
+            cpu: parseInt(cpuVM),
+            host_id: parseInt(hostVM),
           }
-        ), // Ejemplo de datos a enviar
+        ),
       }
       )
         .then(response => response.json()) // Procesar respuesta
@@ -412,6 +421,30 @@
         .catch(error => {
           console.error('Error:', error); // Manejar errores
         });
+    }
+
+
+    function showAlert(message, alertType) {
+      var alertBox = document.getElementById("alert-message");
+      alertBox.innerText = message;
+      alertBox.className = "alert alert-" + alertType;
+      var alertContainer = document.getElementById("alert-container");
+      alertContainer.style.display = "block";
+
+      // Ocultar la alerta después de 5 segundos (5000 milisegundos)
+      setTimeout(function () {
+        alertContainer.style.display = "none";
+      }, 5000);
+    }
+
+    var successMessage = "{{ .SuccessMessage }}";
+    if (successMessage !== "") {
+      showAlert(successMessage, "success");
+    }
+
+    var errorMessage = "{{ .ErrorMessage }}";
+    if (errorMessage !== "") {
+      showAlert(errorMessage, "danger");
     }
 
   </script>

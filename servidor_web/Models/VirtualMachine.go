@@ -13,5 +13,5 @@ type VirtualMachine struct {
 	Host_id           int    `json:"host_id"`
 	Disco_id          int    `json:"disco_id"`
 	Sistema_operativo string `json:"sistema_operativo"`
-	Distrubucion_SO   string `json:"distrubucion_SO"`
+	Distribucion_SO   string `json:"distribucion_SO"`
 }

@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -96,6 +98,11 @@ func CreateMachinePage(c *gin.Context) {
 
 	hosts, _ := Utilities.CheckAvaibleHost()
 
+	// for _, host := range hosts {
+	// 	log.Println("---hostName: ", host.Name)
+	// 	log.Println("---host: ", host)
+	// }
+
 	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
 	session.Set("machinesChange", true)
 	session.Save()
@@ -134,7 +141,7 @@ func MainSend(c *gin.Context) {
 		return
 	}
 
-	maquina_virtual, err := createVirualMachine(c)
+	maquina_virtual, err := createVirtualMachine(c)
 	clientIP := c.ClientIP()
 
 	log.Printf("%+v\n", maquina_virtual)
@@ -142,8 +149,8 @@ func MainSend(c *gin.Context) {
 
 	//Se podría hacer una función para manjejar este tipo de errores ¿?
 	if err != nil {
-		log.Println("No es posible crear la maquina virutal, debido a alguen parametro invalido", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquinva virutal" + err.Error()})
+		log.Println("No es posible crear la maquina virtual, debido a alguen parametro invalido", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No es posible crear maquina virtual" + err.Error()})
 		return
 	}
 
@@ -169,25 +176,40 @@ func MainSend(c *gin.Context) {
 }
 
 // Función para crear máquina virtual decodificando sus atributos desde un json
-func createVirualMachine(c *gin.Context) (Models.VirtualMachine, error) {
+func createVirtualMachine(c *gin.Context) (Models.VirtualMachine, error) {
 	var newVM Models.VirtualMachine
 
 	// Decodificar JSON desde el cuerpo de la solicitud
 	if err := json.NewDecoder(c.Request.Body).Decode(&newVM); err != nil {
-		log.Println("Erro al decoficar el JSON para crear la maquina virutal", err.Error())
+		log.Println("Error al decoficar el JSON para crear la maquina virutal", err.Error())
 		return Models.VirtualMachine{}, err
 	}
 
+	// verifiquemos pues si si es como estoy diciendo con el tag del struct de la vm
+	log.Println("New Virtual Machine: ", newVM)
+
 	// Validar campos necesarios
 	log.Printf("%+v\n", newVM)
-	if newVM.Name == "" || newVM.Person_Email == "" || newVM.Ram == 0 || newVM.Cpu == 0 || newVM.Host_id == 0 {
+	if newVM.Name == "" || newVM.Person_Email == "" || newVM.Ram == 0 || newVM.Cpu == 0 || newVM.Distribucion_SO == "" {
 		log.Println("Error: Hay campos vacios")
 		return Models.VirtualMachine{}, errors.New("missing required fields")
 	}
 
+	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
+	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
+	if newVM.Host_id == 0 {
+		hosts, _ := Utilities.CheckAvaibleHost()
+
+		rand.Seed(time.Now().UnixNano())
+		randomHost := rand.Intn(len(hosts)) + 1
+		log.Println("RANDOM hostId: ", randomHost)
+
+		newVM.Host_id = randomHost
+	}
+
 	// Asignar valores predeterminados si es necesario
 	if newVM.Sistema_operativo == "" {
-		newVM.Sistema_operativo = "Linux"
+		newVM.Sistema_operativo = "linux" // o cualquiera si sae
 	}
 
 	return newVM, nil

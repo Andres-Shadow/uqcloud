@@ -53,6 +53,8 @@ func SendRequest(method, url string, payload interface{}) (bool, error) {
 		return false, fmt.Errorf("error marshaling payload: %w", err)
 	}
 
+	log.Println("JSON DATA PAYLOAD: ", string(jsonData))
+
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(jsonData))
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())

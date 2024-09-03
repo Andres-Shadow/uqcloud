@@ -110,6 +110,19 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 		return nil, err
 	}
 
+	// Cuando se obtiene la respuesta en byte[] y se traduce con string se tiene:
+	// RESPONSE:  [{"id":1,"nombre":"prueba pc personal 3"}]
+	log.Println("RESPONSE: ", string(responseBody))
+
+	// El problema que cuando se usa el json.Unmarshal() para transformar los bytes[]
+	// a la estructura de Models.Host no se encuentra "nombre", porque en esta estructura
+	// se llama "Name", pero su valor json es `json:"hst_name"` por lo que se tiene que cambiar a:
+	// RESPONSE:  [{"id":1,"hst_name":"prueba pc personal 3"}]
+	//
+	// Eso se soluciona en:
+	// servidor_procesamiento > Procesador > Database > hostQueries.go > ConsultHosts()
+	// Cambiando el map con el que se colecta en la BD por un map que se ajuste al struct Host del servidor web
+
 	var hosts []Models.Host
 
 	// Decodifica los datos de respuesta en la variable machines.
@@ -117,6 +130,8 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 		log.Println("error al decodificar la JSON de la respuesta", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
 	}
+
+	log.Println("Hosts from servidorWeb > HostQueries: ", hosts)
 
 	return hosts, nil
 }

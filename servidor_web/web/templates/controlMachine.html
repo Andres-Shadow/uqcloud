@@ -170,9 +170,9 @@
                         {{range $index, $element := .hosts}}
                           <button type="submit" name="host" value="{{$element.Id}}"
                             class="btn btn-info btn-sm {{if eq $element.Ip $.clientIP}}highlight{{end}}">
-                            <img src="/web/static/img/icons/pc.png" alt="{{$element.Nombre}}" class="icon-img" width="30"
+                            <img src="/web/static/img/icons/pc.png" alt="{{$element.Name}}" class="icon-img" width="30"
                               height="30" />
-                            {{$element.Nombre}}
+                            {{$element.Name}}
                           </button>
 
                           {{if eq (mod $index 4) 3}}
