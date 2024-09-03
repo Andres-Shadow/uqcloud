@@ -164,6 +164,15 @@ func ExistVirtualMachine(virtualMachineName string) (bool, error) {
 	return true, nil
 }
 
+func GetAllVirtualMachines() ([]models.Maquina_virtual, error) {
+	var maquinas []models.Maquina_virtual
+	err := DATABASE.Find(&maquinas).Error
+	if err != nil {
+		return nil, err
+	}
+	return maquinas, nil
+}
+
 /*
 Funciòn que permite obtener todas las màquinas virtuales creadas en la plataforma por los usuarios con rol invitado
 @return Retorna un arreglo con todas las màquinas encontradas

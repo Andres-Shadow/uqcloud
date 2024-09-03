@@ -54,7 +54,20 @@ func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
 	/*En la base de datos los indices de los host empiezan desde el indice 1
 	si el valor es cero se utiliza para disparar el algoritmo aleatorio
 	*/
-	id := int(mv["Host_id"].(float64))
+
+	// Intenta obtener el valor de "host_id" como float64 (Ni idea de por que llega el host_id como float) y luego convertir a int
+	var id int
+	switch v := mv["host_id"].(type) {
+	case float64:
+		id = int(v)
+	case int:
+		id = v
+	default:
+		// Maneja el caso en que el valor no es float64 ni int (genera un panic)
+		log.Println("El valor de host_id es nil o no es un float64 ni un int: ", mv["host_id"])
+		id = -1 // Valor predeterminado en caso de error
+	}
+
 	switch {
 	case id == 0:
 		//Se encola la maquina virtual a crear
