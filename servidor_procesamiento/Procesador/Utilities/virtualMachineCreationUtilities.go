@@ -74,11 +74,18 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 		// Creacion de Maquina Virtual con seleccion de usuario
 		// Obtenemeos el host por medio del indice que es previamente
-		host, err = GetHostByName(specs.Hostname)
+		// host, err = GetHostByName(specs.Hostname)
+
+		// if err != nil {
+		// 	log.Println("Error al obtener el host por nombre:", err)
+		// 	return "Error al obtener el host por nombre " + specs.Hostname
+		// }
+
+		host, err = GetHostById(specs.Host_id)
 
 		if err != nil {
-			log.Println("Error al obtener el host por nombre:", err)
-			return "Error al obtener el host por nombre " + specs.Hostname
+			log.Println("Error al obtener el host por id:", err)
+			return "Error al obtener el host por id " + specs.Hostname
 		}
 
 		log.Println("Host seleccionado: ", host.Nombre)

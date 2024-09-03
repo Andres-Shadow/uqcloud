@@ -125,7 +125,7 @@
                     <!-- Card Fedora -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="osVM" value="fedora" selected checked class="card-input-element" />
+                        <input type="radio" name="osVM" value="Fedora" selected checked class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Fedora</p>
@@ -138,7 +138,7 @@
                     <!-- Card Ubuntu -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="osVM" value="ubuntu" class="card-input-element" />
+                        <input type="radio" name="osVM" value="Ubuntu" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Ubuntu</p>
@@ -151,7 +151,7 @@
                     <!-- Card Alpine -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="osVM" value="alpine" class="card-input-element" />
+                        <input type="radio" name="osVM" value="Alpine" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Alpine</p>
@@ -164,7 +164,7 @@
                     <!-- Card Debian -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
                       <label>
-                        <input type="radio" name="osVM" value="debian" class="card-input-element" />
+                        <input type="radio" name="osVM" value="Debian" class="card-input-element" />
                         <div class="card card-input">
                           <div class="card-body text-center">
                             <p class="card-title">Debian</p>
@@ -300,7 +300,7 @@
                             <div class="card card-default host-card-input">
                               <div class="host-card-body text-center">
                                 <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
-                                <p>Aleatorio</p>
+                                <p><strong>Aleatorio</strong></p>
                               </div>
                             </div>
 
@@ -404,12 +404,12 @@
             // Aqui se tiene que mandar la 'KEY' de acuerdo a "Models.VirtualMachine"
             //    * Nombre del json tags (que especifica como se Encode y Decode)
             //    * Tipo de dato (que está definido en el modelo)
-            name: nameVM.toString(),
-            person_email: "{{.email}}", // este email es mandado desde handler jijiji
-            distribucion_SO: osVM.toString(),
-            ram: parseInt(ramVM),
-            cpu: parseInt(cpuVM),
-            host_id: parseInt(hostVM),
+            vm_name: nameVM.toString(),
+            vm_usr_email: "{{.email}}", // este email es mandado desde handler jijiji
+            vm_so_distro: osVM.toString(),
+            vm_ram: parseInt(ramVM),
+            vm_cpu: parseInt(cpuVM),
+            vm_host_id: parseInt(hostVM),
           }
         ),
       }
