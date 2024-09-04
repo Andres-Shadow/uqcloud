@@ -81,5 +81,9 @@ func GetHosts(c *gin.Context) {
 		return
 	}
 
+	for _, host := range hosts {
+		log.Println("HOST GETHOSTS: ", host)
+	}
+
 	c.JSON(http.StatusOK, hosts)
 }

@@ -46,7 +46,7 @@
 
         <!-- FORMULARIO CON LOS DATOS DE LA MAQUINA -->
         <!-- <form method="post" action="/api/createMachine" id="formCreateMachine"> -->
-        <form id="formCreateMachine">
+        <form id="formCreateMachine" onsubmit="createMachine(event)">
 
           <!-- Breadcrumb -->
           <div class="breadcrumb-instance">
@@ -84,8 +84,12 @@
                   <div class="mb-3">
                     <label for="nameVM" class="form-label">Nombre</label>
                     <!-- <div class="form-text">Nombre</div> -->
-                    <input type="text" class="form-control" id="nameVM" required
-                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
+                    <input type="text" class="form-control" id="nameVM"
+                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual" required="true">
+
+                    <!-- TODO: Por que no se muestra???? usar .class en <form> -->
+                    <!-- <div class="invalid-feedback">Pongale nombre a la máquina, por favor</div> -->
+
                   </div>
 
                   <!-- <div class="mb-3">
@@ -361,7 +365,7 @@
           <!-- Fin  Accordion: Detalles avanzados -->
 
           <div class="d-flex justify-content-end">
-            <button type="submit" onclick="createMachine(event)" class="btn btn-success" fill="rgb(255, 255, 255)">
+            <button type="submit" class="btn btn-success" fill="rgb(255, 255, 255)">
               CREAR MÁQUINA
             </button>
           </div>

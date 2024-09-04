@@ -181,7 +181,7 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachine, error) {
 
 	// Decodificar JSON desde el cuerpo de la solicitud
 	if err := json.NewDecoder(c.Request.Body).Decode(&newVM); err != nil {
-		log.Println("Error al decoficar el JSON para crear la maquina virutal", err.Error())
+		log.Println("Error al decoficar el JSON para crear la maquina virtual", err.Error())
 		return Models.VirtualMachine{}, err
 	}
 
@@ -197,14 +197,24 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachine, error) {
 
 	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
 	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
+	hosts, _ := Utilities.CheckAvaibleHost()
 	if newVM.Host_id == 0 {
-		hosts, _ := Utilities.CheckAvaibleHost()
-
 		rand.Seed(time.Now().UnixNano())
-		randomHost := rand.Intn(len(hosts)) + 1
-		log.Println("RANDOM hostId: ", randomHost)
+		randomHost := rand.Intn(len(hosts))
+		log.Println("RANDOM host: ", hosts[randomHost])
 
-		newVM.Host_id = randomHost
+		newVM.Host_id = hosts[randomHost].Id
+		newVM.Hostname = hosts[randomHost].Name
+		log.Println("RANDOM host name: ", hosts[randomHost].Name)
+
+	} else {
+		// Al servidor se le envia "vm_hostname", el cual lo necesita para usar "GetHostByName"
+		for _, host := range hosts {
+			if host.Id == newVM.Host_id {
+				newVM.Hostname = host.Name
+				continue
+			}
+		}
 	}
 
 	// Asignar valores predeterminados si es necesario
