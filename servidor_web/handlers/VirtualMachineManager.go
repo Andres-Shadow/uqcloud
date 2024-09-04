@@ -6,10 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -176,51 +174,63 @@ func MainSend(c *gin.Context) {
 }
 
 // Función para crear máquina virtual decodificando sus atributos desde un json
-func createVirtualMachine(c *gin.Context) (Models.VirtualMachine, error) {
-	var newVM Models.VirtualMachine
+func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
+	var arrivedVM Models.VirtualMachine
+	var newVM Models.VirtualMachineTemp
 
 	// Decodificar JSON desde el cuerpo de la solicitud
-	if err := json.NewDecoder(c.Request.Body).Decode(&newVM); err != nil {
+	if err := json.NewDecoder(c.Request.Body).Decode(&arrivedVM); err != nil {
 		log.Println("Error al decoficar el JSON para crear la maquina virtual", err.Error())
-		return Models.VirtualMachine{}, err
+		return Models.VirtualMachineTemp{}, err
 	}
 
 	// verifiquemos pues si si es como estoy diciendo con el tag del struct de la vm
-	log.Println("New Virtual Machine: ", newVM)
+	log.Println("New Virtual Machine: ", arrivedVM)
 
 	// Validar campos necesarios
-	log.Printf("%+v\n", newVM)
-	if newVM.Name == "" || newVM.Person_Email == "" || newVM.Ram == 0 || newVM.Cpu == 0 || newVM.Distribucion_SO == "" {
+	log.Printf("%+v\n", arrivedVM)
+	if arrivedVM.Name == "" || arrivedVM.Person_Email == "" || arrivedVM.Ram == 0 || arrivedVM.Cpu == 0 || arrivedVM.Distribucion_SO == "" {
 		log.Println("Error: Hay campos vacios")
-		return Models.VirtualMachine{}, errors.New("missing required fields")
+		return Models.VirtualMachineTemp{}, errors.New("missing required fields")
 	}
 
 	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
 	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
 	hosts, _ := Utilities.CheckAvaibleHost()
-	if newVM.Host_id == 0 {
-		rand.Seed(time.Now().UnixNano())
-		randomHost := rand.Intn(len(hosts))
-		log.Println("RANDOM host: ", hosts[randomHost])
+	if arrivedVM.Host_id == 0 {
+		// rand.Seed(time.Now().UnixNano())
+		// randomHost := rand.Intn(len(hosts))
+		// log.Println("RANDOM host: ", hosts[randomHost])
 
-		newVM.Host_id = hosts[randomHost].Id
-		newVM.Hostname = hosts[randomHost].Name
-		log.Println("RANDOM host name: ", hosts[randomHost].Name)
+		// newVM.Host_id = hosts[randomHost].Id
+		// newVM.Hostname = hosts[randomHost].Name
+		// log.Println("RANDOM host name: ", hosts[randomHost].Name)
+
+		arrivedVM.Hostname = "aleatorio"
 
 	} else {
 		// Al servidor se le envia "vm_hostname", el cual lo necesita para usar "GetHostByName"
 		for _, host := range hosts {
-			if host.Id == newVM.Host_id {
-				newVM.Hostname = host.Name
+			if host.Id == arrivedVM.Host_id {
+				arrivedVM.Hostname = host.Name
 				continue
 			}
 		}
 	}
 
 	// Asignar valores predeterminados si es necesario
-	if newVM.Sistema_operativo == "" {
-		newVM.Sistema_operativo = "linux" // o cualquiera si sae
+	if arrivedVM.Sistema_operativo == "" {
+		arrivedVM.Sistema_operativo = "linux" // o cualquiera si sae
 	}
+
+	// Mapeado de Maquina a MaquinaTemp
+	newVM.Name = arrivedVM.Name
+	newVM.Ram = arrivedVM.Ram
+	newVM.Cpu = arrivedVM.Cpu
+	newVM.Hostname = arrivedVM.Hostname
+	newVM.Person_Email = arrivedVM.Person_Email
+	newVM.Sistema_operativo = arrivedVM.Sistema_operativo
+	newVM.Distribucion_SO = arrivedVM.Distribucion_SO
 
 	return newVM, nil
 }

@@ -6,10 +6,11 @@ Utilizar de manera que mejor convenga, es decir solo utilizar los campo que se c
 La función
 */
 type VirtualMachineTemp struct {
-	VMName string `json:"vmname"`
-	OS     string `json:"os"`
-	CPU    string `json:"cpu"`
-	Memory string `json:"memory"`
-	Email  string `json:"email"`
-	Ram    string `json:"ram"`
+	Name              string `json:"vm_name"`
+	Ram               int    `json:"vm_ram"`
+	Cpu               int    `json:"vm_cpu"`
+	Hostname          string `json:"vm_hostname"`
+	Person_Email      string `json:"vm_usr_email"`
+	Sistema_operativo string `json:"vm_so"`
+	Distribucion_SO   string `json:"vm_so_distro"`
 }

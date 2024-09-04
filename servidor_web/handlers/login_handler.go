@@ -78,7 +78,7 @@ func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CREATE_GUEST_VM_URL)
 
-	clientIP := c.ClientIP()
+	clientIP := c.ClientIP() // TODO: CAMBIAR POR IP DEL HOST QUE SE SELECCIONÓ
 	distribucion := c.PostForm("osCreate")
 
 	//Crea un mapa con la dirección IP del cliente
