@@ -76,7 +76,7 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 }
 
 // Enviar creación de la VM al servidor
-func CreateMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
+func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
 
 	payload := map[string]interface{}{

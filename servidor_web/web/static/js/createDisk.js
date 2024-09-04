@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
             data.forEach(host => {
                 const option = document.createElement('option');
                 option.value = host.id;  // Usar ID como valor
-                option.text = `${host.id} - ${host.nombre}`
+                option.text = `${host.id} - ${host.hst_name}`
                 selectHost.appendChild(option);
             });
         })

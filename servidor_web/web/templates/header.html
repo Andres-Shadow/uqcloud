@@ -1,7 +1,9 @@
 {{define "header.html"}}
+
 <head>
-    <link href="/web/static/css/header.css" rel="stylesheet">
-    <script src="/web/static/js/header.js"></script>
+  <link href="/web/static/css/header.css" rel="stylesheet">
+  <script src="/web/static/js/header.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="index-page">
@@ -18,31 +20,56 @@
         <ul>
           <li><a href="/#" class="active">Inicio</a></li>
           <li><a href="/#services">Servicios</a></li>
-          <li><a href="/#instances">Instancias</a></li>          
+          <li><a href="/#instances">Instancias</a></li>
           <li><a href="/aboutus#">Cónocenos</a></li>
-          <li class="dropdown"><a href="/docs"><span>Documentación</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+          <li class="dropdown"><a href="/docs"><span>Documentación</span> <i
+                class="bi bi-chevron-down toggle-dropdown"></i></a>
             <ul>
               <li><a href="/docs#">Estructura Base de datos</a></li>
               <li><a href="/docs#">Estado de ejecuciones</a></li>
               <li><a href="/docs#">Despliegue</a></li>
-              <li class="dropdown"><a href="/docs#"><span>Arquitectura</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+              <li class="dropdown"><a href="/docs#"><span>Arquitectura</span> <i
+                    class="bi bi-chevron-down toggle-dropdown"></i></a>
                 <ul>
                   <li><a href="/docs#">Arquitectura General</a></li>
                   <li><a href="/docs#">Servidor de Procesamiento</a></li>
                   <li><a href="/docs#">Servidor Web</a></li>
                 </ul>
-              </li>                          
+              </li>
             </ul>
-          </li>          
+          </li>
         </ul>
         <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
       </nav>
 
-      <!-- TODO: Darle una acción a este boton de crear maquina (o escoger alguna opcion de las maquina de la seccion "instancias") -->
-      <a class="btn-getstarted" href="/">Crear Máquina Personalizada</a>
+      <a class="btn-getstarted" style="cursor: pointer;" id="createMachine">Crear Máquina Personalizada</a>
 
     </div>
   </header>
+  
+  <script>
+    $(document).ready(function () {
+      $("#createMachine").on("click", function () {
+        // Obtener el valor seleccionado del campo "osCreate"
+        var distribucion = "fedora" // TODO: CAMBIAR LUEGO QUE ESTO YA NO MANDE OS A LOGINTEMP Y CAMBIAR LOGINTEMP
+
+        $.ajax({
+          type: "POST",
+          url: "/api/loginTemp",
+          data: { osCreate: distribucion }, // Incluir el valor en los datos de la solicitud
+          success: function (response) {
+            console.log("Inicio de sesión como invitado exitoso");
+            window.location.href = "/mainpage/control-machine";
+          },
+          error: function (error) {
+            console.error("Error al iniciar sesión como invitado", error);
+          }
+        });
+      });
+    });
+  </script>
+
+
 </body>
 
 {{end}}

@@ -81,6 +81,12 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return "Error al obtener el host por nombre " + specs.Hostname
 		}
 
+		// host, err = GetHostById(specs.Host_id)
+		// if err != nil {
+		// 	log.Println("Error al obtener el host por id:", err)
+		// 	return "Error al obtener el host por id " + specs.Hostname
+		// }
+
 		log.Println("Host seleccionado: ", host.Nombre)
 
 		//se verifica el ssh de la maquina fisica con el marcapasos
@@ -142,12 +148,14 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 		"VBoxManage modifyvm \"" + nameVM + "\" --nic1 bridged --bridgeadapter1 \"" + host.Adaptador_red + "\"",
 	}
 
+	log.Println("ESTOY POR ACÁ EN LA LINEA 151")
 	for _, command := range commands {
+		log.Println("ESTOY POR ACÁ EN LA LINEA 153: ", command)
 		if _, err := SendSSHCommand(host.Ip, command, config); err != nil {
-
 			log.Println("Error al ejecutar comando:", err)
 			return false
 		}
+		log.Println("ESTOY POR ACÁ EN LA LINEA 158")
 	}
 
 	return true

@@ -1,0 +1,150 @@
+/* --- Breadcrumb Style --- */
+.breadcrumb-instance nav {
+  background-color: color-mix(in srgb, --bs-dark, transparent 95%);
+  padding: 10px 0;
+}
+
+.breadcrumb-instance nav ol {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.breadcrumb-instance nav ol li + li {
+  padding-left: 10px;
+}
+
+/* --- Accordion --- */
+/* En esta pagina están las especificaciones de cada cosito del acordeon */
+/* https://templatebootstrap.com/docs/bootstrap/bootstrap-accordion/ */
+.accordion {
+  --bs-accordion-btn-bg: #fafafa !important;
+  --bs-accordion-btn-color: #000 !important;
+  --bs-accordion-active-color: #000 !important;
+  --bs-accordion-active-bg: #fafafa !important;
+  --bs-accordion-bg: #fff !important;
+  --bs-accordion-color: #333 !important;
+  --bs-accordion-btn-focus-box-shadow: none !important;
+  --bs-accordion-btn-padding-y: 1.5rem !important;
+  padding-bottom: 20px;
+}
+
+.accordion-button:after {
+  order: -1;
+  margin-left: 0 !important; 
+  margin-right:0.5em;
+}
+
+
+/* Cards for "Sistema Operativo" */
+
+label {
+  width: 100%;
+}
+
+.card img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: baseline !important;
+  flex-grow: 1;
+}
+
+.card-body i {
+  font-size: 20px !important;
+}
+
+.card-input-element {
+  display: none;
+}
+
+.card-input {
+  cursor: pointer;
+  margin: 10px 0;
+  height: 130px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+}
+
+.card-input img {
+  max-width: 60px;
+  max-height: 60px;
+  margin-bottom: 10px;
+}
+
+.card-input:hover {
+  cursor: pointer;
+}
+
+.card-input-element:checked + .card-input {
+  box-shadow: 0 0 1px 1px #2ecc71;
+}
+
+/* podria usar este en lugar del de arriba */
+/* .card-input-element:checked + .card {
+  border: 2px solid #007bff;
+} */
+
+
+/* Cards for "Detalles Avanzados" > Selecciona Host */
+
+/* TODO: POR QUE NO PUEDO CAMBIAR EL TAMAÑO DEL <i> CON CSS? SOLO PUEDO EN EL HTML */
+/* .host-card-body i {
+  font-size: 80px !important;
+} */
+
+/* TOCA QUE PONERLE EL HIJUEPUTA !IMPORATNTE PORQUE SINO NO SE MUESTRA EN LA PAGINA DIOSMIO*/
+.host-card-body label {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: 100%;
+}
+
+.host-card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center !important;
+  flex-grow: 1;
+}
+
+.host-card-body p {
+  margin: 0;
+}
+
+.host-card-input-element {
+  display: none;
+}
+
+.host-card-input {
+  cursor: pointer;
+  height: 100px !important;
+  width: 150px !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #ddd;
+}
+
+.host-card-input:hover {
+  cursor: pointer;
+}
+
+.host-card-input-element:checked + .host-card-input {
+  box-shadow: 0 0 1px 1px #2ecc71;
+}
