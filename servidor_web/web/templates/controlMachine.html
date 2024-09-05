@@ -8,9 +8,12 @@
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
   <link rel="stylesheet" type="text/css" href="/web/static/css/styleControlMachine.css">
 
+  <!-- JQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- JS propios (como estos usan JQuery deben estar despues de importar JQuery) -->
   <script src="/web/static/js/mainpage.js"></script>
   <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
@@ -210,7 +213,7 @@
                 </div>
               </div>
               <div class="form-group" style="position: relative;">
-                <label for="os">Distribución</label>
+                <label for="osConfig">Distribución</label>
                 <div style="position: relative;">
                   <input type="text" class="form-control" id="osConfig" name="osConfig" required disabled
                     style="background-color: #f2f2f2; cursor: not-allowed;">
@@ -220,7 +223,7 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="memory">Cantidad de Memoria</label>
+                <label for="memoryConfig">Cantidad de Memoria</label>
                 <select class="form-control" id="memoryConfig" name="memoryConfig" required>
                   <option value="1024">1 GB</option>
                   <option value="2048">2 GB</option>

@@ -119,30 +119,37 @@ var ventanaConfiguracionAbierta = false;
                 $("#machine-table tbody").empty();
                 // Itera a través de los datos y agrega filas a la tabla
                 data.forEach(function(machine) {
-                    switch (machine.Estado) {
+                    // console.log("machineestado: ", machine.vm_state);
+                    // RECORDAR: el JSON que llega con los machine, viene con el modelo Models.VirtualMachine, como este modelo
+                    //           usa 'TAGS' de tipo JSON para codificar y decodificar, para acceder a esos valores se debe usar 
+                    //           su tag respectivo. Ej: 
+                    //              * machine.Name         | NO SIRVE 
+                    //              * machine.vm_name      | SIRVE  (porque en el modelo está asi: `json:"vm_name"`)
+                    switch (machine.vm_state) {
                         case "Apagado":
+                            console.log("LLegó aqui-----------------1");
                             backgroundColor = "#e06666ff"; // Rojo
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
-                                <td>${machine.Nombre}</td>
-                                <td>${machine.Ip === "" ? "No asignada" : machine.Ip}</td>
-                                <td>${machine.Distribucion_sistema_operativo}</td>
-                                <td>${machine.Estado}</td>
+                                <td>${machine.vm_name}</td>
+                                <td>${machine.vm_ip === "" ? "No asignada" : machine.vm_ip}</td>
+                                <td>${machine.vm_so_distro}</td>
+                                <td>${machine.vm_state}</td>
                                 
                                 <td class="button-column">
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
+                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
                                     <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Distribucion_sistema_operativo}','${machine.Ram}','${machine.Cpu}')">
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so_distro}','${machine.vm_ram}','${machine.vm_cpu}')">
                                         <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
                                     </button>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}')">
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
                                     </button>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteEliminacion('${machine.Nombre}')">
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteEliminacion('${machine.vm_name}')">
                                         <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 3">
                                     </button>
                                 </td>
@@ -151,39 +158,40 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         case "Encendido":
+                            console.log("LLegó aqui-----------------2");
                             backgroundColor = "#93c47dff"; // Verde
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
-                                <td>${machine.Nombre}</td>
+                                <td>${machine.vm_name}</td>
                                 <td style="position: relative;">
-                                    ${machine.Ip === "" ? "No asignada" : machine.Ip}
+                                    ${machine.vm_ip === "" ? "No asignada" : machine.vm_ip}
                                     
                                     <!-- Muestra el botón solo si la IP está asignada -->
-                                    ${machine.Ip !== "" ? `
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="copiarText('${machine.Ip}')">
+                                    ${machine.vm_ip !== "" ? `
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="copiarText('${machine.vm_ip}')">
                                         <img style="width: 30px;" src="/web/static/img/icons/copy.png" alt="Botón 5">
                                     </button>
                                     ` : ''}
                                 </td>
 
-                                <td>${machine.Distribucion_sistema_operativo}</td>
-                                <td>${machine.Estado}</td>
+                                <td>${machine.vm_so_distro}</td>
+                                <td>${machine.vm_state}</td>
                                 
                                 <td class="button-column">
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
+                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
                                     <button type="submit" class="btn btn-link"" style="padding: 0; margin: 0;">
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Distribucion_sistema_operativo}','${machine.Ram}','${machine.Cpu}')" disabled>
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so_distro}','${machine.vm_ram}','${machine.vm_cpu}')" disabled>
                                         <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
                                     </button>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}', '${machine.Hostname}')">
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 3">
                                     </button>
                                     <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                        <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
+                                        <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
                                         <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
                                             <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 4">
                                         </button>
@@ -193,29 +201,30 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         case "Procesando":
+                            console.log("LLegó aqui-----------------3");
                             backgroundColor = "#83DEE3"; // Azul
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
-                                <td>${machine.Nombre}</td>
-                                <td>${machine.Ip === "" ? "No asignada" : machine.Ip}</td>
-                                <td>${machine.Distribucion_sistema_operativo}</td>
-                                <td>${machine.Estado}</td>
+                                <td>${machine.vm_name}</td>
+                                <td>${machine.vm_ip === "" ? "No asignada" : machine.vm_ip}</td>
+                                <td>${machine.vm_so_distro}</td>
+                                <td>${machine.vm_state}</td>
                             
                                 <td class="button-column">
                                     <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
+                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
                                     <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Memoria}','${machine.Cpu}')" disabled>
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so}','${machine.vm_ram}','${machine.vm_cpu}')" disabled>
                                         <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
                                     </button>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.Nombre}','${machine.Sistema_operativo}','${machine.Distribucion_sistema_operativo}', '${machine.Ip}','${machine.Ram}','${machine.Cpu}', '${machine.Estado}', '${machine.Hostname}')">
+                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
                                     </button>
                                     <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                        <input type="hidden" name="nombreMaquina" value="${machine.Nombre}">
+                                        <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
                                         <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
                                             <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 3">
                                         </button>
@@ -225,6 +234,7 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         default:
+                            console.log("LLegó aqui-----------------4");
                             backgroundColor = ""; // Puedes proporcionar un valor predeterminado si es necesario
                     }
      
