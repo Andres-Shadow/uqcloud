@@ -3,7 +3,6 @@ package Utilities
 import (
 	"AppWeb/Config"
 	"AppWeb/Models"
-	"bytes"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -15,17 +14,18 @@ import (
 
 // Consultat maquinas virtuales asociadas a un email
 func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL+"/"+email)
 
-	persona := Models.Person{Email: email}
-	jsonData, err := json.Marshal(persona)
-	if err != nil {
-		log.Println("Error al deccodificar la estrcutura peronsa como json", err.Error())
-		return nil, err
-	}
+	// persona := Models.Person{Email: email}
+	// jsonData, err := json.Marshal(persona)
+	// if err != nil {
+	// 	log.Println("Error al deccodificar la estrcutura peronsa como json", err.Error())
+	// 	return nil, err
+	// }
 
 	// Crea una solicitud HTTP POST con el JSON como cuerpo
-	req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData))
+	// req, err := http.NewRequest("GET", serverURL, bytes.NewBuffer(jsonData)) ESTO MANDA EL EMAIL POR BODY NO POR URL
+	req, err := http.NewRequest("GET", serverURL, nil)
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return nil, err

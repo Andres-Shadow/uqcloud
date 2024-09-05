@@ -148,14 +148,11 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 		"VBoxManage modifyvm \"" + nameVM + "\" --nic1 bridged --bridgeadapter1 \"" + host.Adaptador_red + "\"",
 	}
 
-	log.Println("ESTOY POR ACÁ EN LA LINEA 151")
 	for _, command := range commands {
-		log.Println("ESTOY POR ACÁ EN LA LINEA 153: ", command)
 		if _, err := SendSSHCommand(host.Ip, command, config); err != nil {
 			log.Println("Error al ejecutar comando:", err)
 			return false
 		}
-		log.Println("ESTOY POR ACÁ EN LA LINEA 158")
 	}
 
 	return true
