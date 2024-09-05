@@ -92,12 +92,6 @@
 
                   </div>
 
-                  <!-- <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                  </div> -->
-
                 </div>
               </div>
             </div>
@@ -122,9 +116,6 @@
 
                   <!-- RadioButton-Cards con los Sistemas Operativos -->
                   <div class="row" id="osVM">
-
-                    <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
-                    <!-- var osVM = $('#osVM input:radio:checked').val(); -->
 
                     <!-- Card Ubuntu -->
                     <div class="col-6 col-sm-4 col-md-3 col-lg-2">
@@ -200,7 +191,62 @@
 
                   <div class="row">
 
+                    <!-- INPUT RANGE para RAM -->
                     <div class="mb-3 col-6">
+                      <label for="ramVM" class="form-label">
+                        <i class="fa-solid fa-memory"></i>
+                        Memoria RAM:
+                        <strong><span id="ramVMValue">2048 MB</span></strong>
+                      </label>
+
+                      <input type="range" id="ramVM" min="1024" max="4096" step="64" value="2048" list="ramList">
+                      <!-- Datalist para poner las liniesitas -->
+                      <datalist id="ramList">
+                        <option value="1024"></option>
+                        <option value="2048"></option>
+                        <option value="3072"></option>
+                        <option value="4096"></option>
+                      </datalist>
+                      
+                      <!-- Y ese div de span para poner los valores de cada liniesita -->
+                      <div class="range-marks">
+                        <span>1024 MB</span>
+                        <span>2048 MB</span>
+                        <span>3072 MB</span>
+                        <span>4096 MB</span>
+                      </div>
+
+                      <!-- Hay diversas formas de hacerlo. Como solo usar el datalist con texto pero
+                           eso solo funciona en algunos navegadores y/o versiones de bootstrap.
+                           Esta manera creo que es la mejor. Pone los textos y las lineas en la posicion perfecta
+                      -->
+                    </div>
+
+                    <!-- INPUT RANGE para CPU -->
+                    <div class="mb-3 col-6">
+                      <label for="cpuVM" class="form-label">
+                        <i class="fa-solid fa-microchip"></i>
+                        Núcleos de procesamiento:
+                        <strong><span id="cpuVMValue">1 Núcleo</span></strong>
+                      </label>
+
+                      <input type="range" class="" id="cpuVM" min="1" max="3" step="1" value="1" list="cpuList">
+                      <datalist id="cpuList">
+                        <option value="1">1 Núcleo</option>
+                        <option value="2">2 Núcleos</option>
+                        <option value="3">3 Núcleos</option>
+                      </datalist>
+
+                      <div class="range-marks">
+                        <span>1 Núcleo</span>
+                        <span>2 Núcleos</span>
+                        <span>3 Núcleos</span>
+                      </div>
+                    </div>
+
+
+                    <!-- VERSION SELECT -->
+                    <!-- <div class="mb-3 col-6">
                       <label class="form-label">
                         <i class="fa-solid fa-memory"></i>
                         Memoria RAM
@@ -222,7 +268,7 @@
                         <option value="2">2 Núcleos</option>
                         <option value="3">3 Núcleos</option>
                       </select>
-                    </div>
+                    </div> -->
 
                   </div>
 
@@ -451,6 +497,17 @@
       showAlert(errorMessage, "danger");
     }
 
+
+  </script>
+
+  <script>
+    document.getElementById('ramVM').addEventListener('input', function () {
+      document.getElementById('ramVMValue').textContent = this.value + ' MB';
+    });
+
+    document.getElementById('cpuVM').addEventListener('input', function () {
+      document.getElementById('cpuVMValue').textContent = this.value + ' Núcleo/s';
+    });
   </script>
 
 </body>
