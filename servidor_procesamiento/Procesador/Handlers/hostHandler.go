@@ -22,6 +22,9 @@ atienden las consultas sobre estos
 // Funcion que responde al endpoint encargado de consultar las maquinas virtuales
 func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
 	hosts, err := database.ConsultHosts()
+
+	log.Println("Hosts from servidor_procesamiento > hostHandler.GO: ", hosts)
+
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
 		log.Println("Error al consultar los host, no se encontraron máquinas host registradas en la base de datos")

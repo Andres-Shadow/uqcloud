@@ -77,6 +77,53 @@ func ControlMachine(c *gin.Context) {
 	})
 }
 
+func CreateMachinePage(c *gin.Context) {
+	// Acceder a la sesión
+	session := sessions.Default(c)
+	email := session.Get("email")
+
+	//TODO: Se debe adaptar para las sesiones de usuarios temporales
+	/*TODO: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
+	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
+	 */
+	log.Println(email)
+	if email == nil {
+		log.Println("Error: Email vacio/invalido")
+		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
+		c.Redirect(http.StatusFound, "/login")
+		return
+	}
+
+	hosts, _ := Utilities.CheckAvaibleHost()
+
+	// for _, host := range hosts {
+	// 	log.Println("---hostName: ", host.Name)
+	// 	log.Println("---host: ", host)
+	// }
+
+	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
+	session.Set("machinesChange", true)
+	session.Save()
+
+	machinesChange := session.Get("machinesChange")
+	clientIP := c.ClientIP()
+	showNewButton := false
+	for _, host := range hosts {
+		// Depuración
+		if host.Ip == clientIP {
+			showNewButton = true
+			break
+		}
+	}
+	c.HTML(http.StatusOK, "create-machine.html", gin.H{
+		"email":          email,
+		"machinesChange": machinesChange, // TODO: Esta si será necesaria?
+		"hosts":          hosts,
+		"showNewButton":  showNewButton,
+		"clientIP":       clientIP,
+	})
+}
+
 // Metodo que se encarga de crear y enviar la maquina virtual para su creación en el servidor
 func MainSend(c *gin.Context) {
 	// Acceder a la sesión
@@ -92,7 +139,7 @@ func MainSend(c *gin.Context) {
 		return
 	}
 
-	maquina_virtual, err := createVirualMachine(c)
+	maquina_virtual, err := createVirtualMachine(c)
 	clientIP := c.ClientIP()
 
 	log.Printf("%+v\n", maquina_virtual)
@@ -100,8 +147,8 @@ func MainSend(c *gin.Context) {
 
 	//Se podría hacer una función para manjejar este tipo de errores ¿?
 	if err != nil {
-		log.Println("No es posible crear la maquina virutal, debido a alguen parametro invalido", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquinva virutal" + err.Error()})
+		log.Println("No es posible crear la maquina virtual, debido a alguen parametro invalido", err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No es posible crear maquina virtual" + err.Error()})
 		return
 	}
 
@@ -127,26 +174,63 @@ func MainSend(c *gin.Context) {
 }
 
 // Función para crear máquina virtual decodificando sus atributos desde un json
-func createVirualMachine(c *gin.Context) (Models.VirtualMachine, error) {
-	var newVM Models.VirtualMachine
+func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
+	var arrivedVM Models.VirtualMachine
+	var newVM Models.VirtualMachineTemp
 
 	// Decodificar JSON desde el cuerpo de la solicitud
-	if err := json.NewDecoder(c.Request.Body).Decode(&newVM); err != nil {
-		log.Println("Erro al decoficar el JSON para crear la maquina virutal", err.Error())
-		return Models.VirtualMachine{}, err
+	if err := json.NewDecoder(c.Request.Body).Decode(&arrivedVM); err != nil {
+		log.Println("Error al decoficar el JSON para crear la maquina virtual", err.Error())
+		return Models.VirtualMachineTemp{}, err
 	}
 
+	// verifiquemos pues si si es como estoy diciendo con el tag del struct de la vm
+	log.Println("New Virtual Machine: ", arrivedVM)
+
 	// Validar campos necesarios
-	log.Printf("%+v\n", newVM)
-	if newVM.Name == "" || newVM.Person_Email == "" || newVM.Ram == 0 || newVM.Cpu == 0 || newVM.Host_id == 0 {
+	log.Printf("%+v\n", arrivedVM)
+	if arrivedVM.Name == "" || arrivedVM.Person_Email == "" || arrivedVM.Ram == 0 || arrivedVM.Cpu == 0 || arrivedVM.Distribucion_SO == "" {
 		log.Println("Error: Hay campos vacios")
-		return Models.VirtualMachine{}, errors.New("missing required fields")
+		return Models.VirtualMachineTemp{}, errors.New("missing required fields")
+	}
+
+	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
+	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
+	hosts, _ := Utilities.CheckAvaibleHost()
+	if arrivedVM.Host_id == 0 {
+		// rand.Seed(time.Now().UnixNano())
+		// randomHost := rand.Intn(len(hosts))
+		// log.Println("RANDOM host: ", hosts[randomHost])
+
+		// newVM.Host_id = hosts[randomHost].Id
+		// newVM.Hostname = hosts[randomHost].Name
+		// log.Println("RANDOM host name: ", hosts[randomHost].Name)
+
+		arrivedVM.Hostname = "aleatorio"
+
+	} else {
+		// Al servidor se le envia "vm_hostname", el cual lo necesita para usar "GetHostByName"
+		for _, host := range hosts {
+			if host.Id == arrivedVM.Host_id {
+				arrivedVM.Hostname = host.Name
+				continue
+			}
+		}
 	}
 
 	// Asignar valores predeterminados si es necesario
-	if newVM.Sistema_operativo == "" {
-		newVM.Sistema_operativo = "Linux"
+	if arrivedVM.Sistema_operativo == "" {
+		arrivedVM.Sistema_operativo = "linux" // o cualquiera si sae
 	}
+
+	// Mapeado de Maquina a MaquinaTemp
+	newVM.Name = arrivedVM.Name
+	newVM.Ram = arrivedVM.Ram
+	newVM.Cpu = arrivedVM.Cpu
+	newVM.Hostname = arrivedVM.Hostname
+	newVM.Person_Email = arrivedVM.Person_Email
+	newVM.Sistema_operativo = arrivedVM.Sistema_operativo
+	newVM.Distribucion_SO = arrivedVM.Distribucion_SO
 
 	return newVM, nil
 }
