@@ -16,6 +16,7 @@ import (
 )
 
 func CreateDiskPage(c *gin.Context) {
+	// Acceder a la sesión
 	session := sessions.Default(c)
 
 	c.HTML(http.StatusOK, "createDisk.html", gin.H{
