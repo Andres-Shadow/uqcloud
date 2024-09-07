@@ -155,20 +155,20 @@ func MainSend(c *gin.Context) {
 	confirmacion, err := Utilities.CreateMachineFromServer(maquina_virtual, clientIP)
 
 	if err != nil {
-		log.Println("No es posible crear la maquina virutal, desde el servidor", err.Error())
+		log.Println("No es posible crear la maquina virtual, desde el servidor", err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No se posible crear maquina " + err.Error()})
 		return
 	}
 
 	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
-		log.Println("Maquina virutal creada exitosamente", maquina_virtual)
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
+		log.Println("Maquina virtual creada exitosamente", maquina_virtual)
+		c.HTML(http.StatusOK, "create-machine.html", gin.H{
 			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito."})
 	} else {
 		log.Println("Error al enviar la soliciutd para crear maquina virtual")
 		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+		c.HTML(http.StatusInternalServerError, "create-machine.html", gin.H{
 			"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo"})
 	}
 }
