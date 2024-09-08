@@ -64,10 +64,6 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 		return nil, err
 	}
 
-	// TODO: ELIMINAR
-	log.Println("-------RESPONSEBODY::::: ", string(responseBody))
-	log.Println("-------RESPONSEBODY2::::: ", responseBody)
-
 	var machines []Models.VirtualMachine
 
 	// Decodifica los datos de respuesta en la variable machines.
@@ -75,10 +71,6 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 		// Maneja el error de decodificación aquí
 		log.Println("error al decodifcar el JSON", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
-	}
-
-	for _, machine := range machines {
-		log.Println("------------MACHINE S_W>UT>MAQ.GO>CONSUT MACHINE: ", machine)
 	}
 
 	return machines, nil
@@ -121,47 +113,6 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	return confirmacion, nil
 }
 
-// TODO: BORRAR DESPUES DE ALMACENAR los datos de esta func en un commit
-// func verifyMachineCreated_DEPRECATED(vmName, email string) (bool, error) {
-// 	// TODO: Cambiar esto, porque acá se obtienen todas las mquinas y se verifica si existe para este user
-// 	//		 pero deberia ser (en el servidor de procesamiento) que se obtenga solo un bool, de si existe
-// 	//       un registro en la bd donde clienteEmail 'x' tiene una vm con nombre 'y'
-
-// 	// Esto puede ser un poco lento, hablando de rendimiento y consultas y llamados de API, porque se
-// 	// podria obtener solo un bool (EXISTE VM) que todo un JSON con todas las vm del user.
-
-// 	// Aquí se pone a esperar esto mientras se crea la vm en el servidor de procesamiento
-// 	time.Sleep(7 * time.Second)
-// 	machines, err := ConsultMachineFromServer(email)
-// 	if err != nil {
-
-// 		// Si hubo un error, quizas no se ha creado la vm, se espera un momento y
-// 		// Se vuelve a generar la peticion
-// 		time.Sleep(7 * time.Second)
-// 		machines_2, err2 := ConsultMachineFromServer(email)
-// 		if err2 != nil {
-// 			log.Println("Error al consultar si la maquina fue creada", err.Error())
-// 			return false, err
-// 		}
-
-// 		for _, machine := range machines_2 {
-// 			if vmName == machine.Name {
-// 				log.Println("Máquina encontrada | vmName: ", vmName, " machine.Name: ", machine.Name)
-// 				return true, nil
-// 			}
-// 		}
-// 	}
-
-// 	for _, machine := range machines {
-// 		if vmName == machine.Name {
-// 			log.Println("Máquina encontrada | vmName: ", vmName, " machine.Name: ", machine.Name)
-// 			return true, nil
-// 		}
-// 	}
-
-// 	return false, err
-// }
-
 func verifyMachineCreated(vmName, email string) (bool, error) {
 	// TODO: Cambiar esto, porque acá se obtienen todas las mquinas y se verifica si existe para este user
 	//		 pero deberia ser (en el servidor de procesamiento) que se obtenga solo un bool, de si existe
@@ -193,28 +144,17 @@ func verifyMachineCreated(vmName, email string) (bool, error) {
 		}
 
 		for _, machine := range machines {
-			// TODO: ELIMINAR
-			log.Println("--------------------machine: ", machine)
-			log.Println("--------------------machineName: ", machine.Name)
-			log.Println("--------------------VMName: ", vmName)
-			log.Println("--------------------machineFecha: ", machine.Fecha_creacion)
-
 			nombreSinAleatorios := machine.Name[:len(machine.Name)-5]
-			log.Println("--------------------machineNameNoAleatorios: ", nombreSinAleatorios)
 
 			// Esto se hace por si el usuario, le da por crear otra vm con el mismo nombre y pues eso lo debe
 			// dejar hacer el servidor. Para eso se verifica las fechas de creacion a la hora de crear una vm
 			if vmName == nombreSinAleatorios {
 
+				// TODO: Si aparecen errores raros, implementar los log.print del commit de [web 508e559].
+				// tambien pueden darse errores si la duracion es negativa.
 				duracion := machine.Fecha_creacion.Sub(tiempoActual)
 
 				intervaloMaximo := 20 * time.Second //TODO: AJUSTAR TIEMPO EXACTO-APROX | primero 30 segundos pa probar
-
-				log.Println("--------------------fechaCreacion UTC: ", machine.Fecha_creacion.UTC())
-				log.Println("--------------------fechaCreacion: ", machine.Fecha_creacion)
-				log.Println("--------------------duracion: ", duracion)
-				log.Println("--------------------intervalo: ", intervaloMaximo)
-				log.Println("--------------------tiempoActual: ", tiempoActual)
 
 				if duracion < intervaloMaximo {
 					log.Println("Máquina encontrada | vmName: ", vmName, " machine.Name: ", machine.Name)
