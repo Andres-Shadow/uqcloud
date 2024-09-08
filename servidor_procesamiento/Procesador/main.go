@@ -42,15 +42,15 @@ func main() {
 		fmt.Println("Iniciando servidor con llave privada: ", *privateKeyPath)
 	}
 
-	// Verifica si se ingresò el paràmetro para precargar los hosts
-	if *preregisteredHosts {
-		registerHostData()
-	}
-
 	r := mux.NewRouter()
 
 	// Inicializa la ruta de la llave privada SSH
 	config.InitPrivateKeyPath(*privateKeyPath)
+
+	// Verifica si se ingresò el paràmetro para precargar los hosts
+	if *preregisteredHosts {
+		registerHostData()
+	}
 
 	// Configura un manejador de solicitud para la ruta "/json".
 	manageServer(r)
@@ -106,6 +106,7 @@ func registerHostData() {
 		log.Println("Error al contar los hosts registrados:", err)
 		return
 	}
+
 	// Verificar que no hayan hosts registrados
 	if count == 0 {
 		fmt.Println("Preregistrando datos de hosts...")

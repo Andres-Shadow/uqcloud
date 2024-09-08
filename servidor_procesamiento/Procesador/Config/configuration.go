@@ -27,10 +27,10 @@ var (
 
 // Funcion que inicializa la ruta del archivo de clave privada
 // @param path: string
-func InitPrivateKeyPath(path string){
+func InitPrivateKeyPath(path string) {
 	if path != "" {
 		privateKeyPath = path
-	}else{
+	} else {
 		fmt.Println("No se ha especificado la ruta del archivo de clave privada")
 	}
 }
@@ -56,7 +56,7 @@ func GetMaquina_virtualQueue() *models.Maquina_virtualQueue {
 
 func GetManagementQueue() *models.ManagementQueue {
 	return &managementQueue
-}	
+}
 
 func GetDocker_imagesQueue() *models.Docker_imagesQueue {
 	return &docker_imagesQueue
