@@ -161,15 +161,11 @@ func MainSend(c *gin.Context) {
 	}
 
 	if confirmacion {
-		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		log.Println("Maquina virtual creada exitosamente", maquina_virtual)
-		c.HTML(http.StatusOK, "create-machine.html", gin.H{
-			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito."})
+		c.JSON(http.StatusOK, gin.H{"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito."})
 	} else {
 		log.Println("Error al enviar la soliciutd para crear maquina virtual")
-		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusInternalServerError, "create-machine.html", gin.H{
-			"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo"})
+		c.JSON(http.StatusInternalServerError, gin.H{"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo"})
 	}
 }
 
@@ -253,6 +249,9 @@ func PowerMachine(c *gin.Context) {
 	}
 	if confirmacion {
 		log.Println("la maquina virtual ha sido encendida con exito ")
+
+		// TODO: CAMBIAR POR c.JSON, no hay necesidad de enviar el html, porque eso genera errores de lectura
+		// (REVISAR: MainSend(), ASÍ SE ARREGLARON los errores de lectura desde el fetch del html)
 		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "La máquina " + nombre + "Se esta encendiendo. Por favor espere"})
 	} else { // Registro erróneo, muestra un mensaje de error en el HTML
 		log.Println("Error al encender la maquina virtual")

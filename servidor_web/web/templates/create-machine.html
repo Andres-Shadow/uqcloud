@@ -12,9 +12,8 @@
   <!-- Este CSS es para lo que está dentro del <main> (principalmente lo de create-machine.html) -->
   <link rel="stylesheet" type="text/css" href="/web/static/css/create-machine.css">
 
-  <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/web/static/js/mainpage.js"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
@@ -30,7 +29,7 @@
 <body style="background-color: #d9d9d9ff;">
 
   <!-- NAVBAR -->
-  {{template "mainpage-navbar.html"}}
+  {{template "mainpage-navbar.html"}}  
 
   <div id="layoutSidenav">
 
@@ -38,9 +37,19 @@
     <!-- Nota: Cuando se le pone el '.' al final de este llamado del template sidebar es para -->
     <!--       mandar los datos-variables que son asignados a este html a traves del handler -->
     <!--       En este caso: email, machines, rol-->
-    {{template "mainpage-sidebar.html" .}}
+    {{template "mainpage-sidebar.html" .}}    
 
-    <div id="layoutSidenav_content">
+    <div id="layoutSidenav_content">      
+      
+      <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+        {{ .message }}
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div id="alert-container" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+        <div id="alert-message" class="alert" role="alert">
+        </div>
+      </div>
 
       <main>
 
@@ -464,6 +473,12 @@
 
       console.log("name: ", nameVM, " osVM: ", osVM, " ramVM: ", ramVM, " cpuVM: ", cpuVM, " hostVM: ", hostVM);
 
+      // Con esto se oculta el formulario y se muestra la tarjetica con la info de se ha creado la vm
+      const form = document.getElementById("formCreateMachine");
+      form.style.display = "none";
+      const machineDiv = document.getElementById("machineCreatedSuccessful");
+      machineDiv.style.display = "block";
+
       fetch('/api/createMachine', {
         method: 'POST', // Método POST
         headers: {
@@ -485,24 +500,30 @@
       })
         .then(response => {
           if (response.status === 200) {
-            // Con esto se oculta el formulario y se muestra la tarjetica con la info de se ha creado la vm
-            const form = document.getElementById("formCreateMachine");
-            form.style.display = "none";
-
-            const machineDiv = document.getElementById("machineCreatedSuccessful");
-            machineDiv.style.display = "block";
             notifyCreateMachine()
+            return response.json();
           }
-          else { console.error('Error: ' + response.status); }
+          else {             
+            // showAlert("No se pudo crear la maquina. Error: " + response.status+ " | "+ response.text(), "danger");
+            // console.log("response text: ", response.text())
 
-          return response.json(); // Con esto se retorna la respuesta JSON al otro .then()
+            const form = document.getElementById("formCreateMachine");
+            form.style.display = "block";
+            const machineDiv = document.getElementById("machineCreatedSuccessful");
+            machineDiv.style.display = "none";
+
+            response.text().then(errorText => {
+              console.error("Error: " + response.status + " | " + errorText);
+              showAlert("No se pudo crear la maquina. Error: " + response.status + " | " + errorText, "danger");
+            });
+          }          
         })
         .then(data => {
-          console.log('Respuesta:', data); // Mostrar respuesta    
+          console.log('Respuesta:', data);
         })
         .catch(error => {
-          showAlert("No se pudo crear la maquina. Error: " + error, "danger");
-          console.error('Error:', error); // Manejar errores
+          showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+          console.error('Error: '+ error);
         })
 
       // anterior iteracion 2 
@@ -525,7 +546,7 @@
       document.getElementById('cpuVMValue').textContent = this.value + ' Núcleo/s';
     });
 
-    // TODO: ARREGLARLO, porque esas alertas no se ponen para ver en toda el web, sino por allá arriba quedan escondidas
+    // TODO: CUAL USAR? showMessage o show Alert
     function showAlert(message, alertType) {
       var alertBox = document.getElementById("alert-message");
       alertBox.innerText = "" + message;
@@ -553,26 +574,24 @@
     // Con esta funcion se le cambia la tarjetica que muestra que se está creando la vm
     // por un tarjetica que dice que ya se creó la vm
     function notifyCreateMachine() {
-      setTimeout(function () {
-        const machineDiv = document.getElementById("machineCreatedSuccessful");
-        machineDiv.classList.add("successful-createVM");
+      const machineDiv = document.getElementById("machineCreatedSuccessful");
+      machineDiv.classList.add("successful-createVM");
 
-        const accordionBody = document.querySelector("#panelSuccessful .accordion-body");
-        accordionBody.innerHTML = `
-          <div class="d-flex align-items-center">
-            <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 2rem;"></i>
-            <h5 class="mb-0">¡Máquina creada exitosamente!</h5>
-            <div class="ms-auto">
-              <a class="btn btn-success" href="/mainpage/control-machine">
-                <strong>Ver máquinas virtuales</strong>
-              </a>
-            </div>
+      const accordionBody = document.querySelector("#panelSuccessful .accordion-body");
+      accordionBody.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 2rem;"></i>
+          <h5 class="mb-0">¡Máquina creada exitosamente!</h5>
+          <div class="ms-auto">
+            <a class="btn btn-success" href="/mainpage/control-machine">
+              <strong>Ver máquinas virtuales</strong>
+            </a>
           </div>
-        `;
-      }, 3500);
+        </div>
+      `;
     }
 
-    // TODO: ARREGLARLO, porque esas alertas no se ponen para ver en toda el web, sino por allá arriba quedan escondidas
+// TODO: CUAL USAR? showMessage o show Alert
     function showMessage(message, type) {
       const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
       messageBox.textContent = "" + message;
@@ -584,12 +603,12 @@
       }, 5000);
     }
 
-
-    // TODO: Arreglar con las alertas
-    setTimeout(function () {
-      showAlert("No se pudo crear la maquina. Error: ", "danger");
-      showMessage('No se pudo crear la maquina. Error: ', 'errorMessage');
-    }, 3500);
+    
+    // TESTS
+    // setTimeout(function () {
+    //   showAlert("No se pudo crear la maquina. Error: ", "danger");
+    //   // showMessage('No se pudo crear la maquina. Error: ', 'errorMessage');
+    // }, 2500);
 
 
   </script>
