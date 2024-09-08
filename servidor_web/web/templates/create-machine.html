@@ -12,9 +12,8 @@
   <!-- Este CSS es para lo que está dentro del <main> (principalmente lo de create-machine.html) -->
   <link rel="stylesheet" type="text/css" href="/web/static/css/create-machine.css">
 
-  <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="/web/static/js/mainpage.js"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
@@ -30,7 +29,7 @@
 <body style="background-color: #d9d9d9ff;">
 
   <!-- NAVBAR -->
-  {{template "mainpage-navbar.html"}}
+  {{template "mainpage-navbar.html"}}  
 
   <div id="layoutSidenav">
 
@@ -38,16 +37,23 @@
     <!-- Nota: Cuando se le pone el '.' al final de este llamado del template sidebar es para -->
     <!--       mandar los datos-variables que son asignados a este html a traves del handler -->
     <!--       En este caso: email, machines, rol-->
-    {{template "mainpage-sidebar.html" .}}
+    {{template "mainpage-sidebar.html" .}}    
 
-    <div id="layoutSidenav_content">
+    <div id="layoutSidenav_content">      
+      
+      <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+        {{ .message }}
+        <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+
+      <div id="alert-container" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+        <div id="alert-message" class="alert" role="alert">
+        </div>
+      </div>
 
       <main>
 
-        <!-- FORMULARIO CON LOS DATOS DE LA MAQUINA -->
-        <!-- <form method="post" action="/api/createMachine" id="formCreateMachine"> -->
-        <form id="formCreateMachine" onsubmit="createMachine(event)">
-
+        <div class="px-4">
           <!-- Breadcrumb -->
           <div class="breadcrumb-instance">
             <nav aria-label="breadcrumb">
@@ -68,6 +74,55 @@
               campos que están abajo.
             </p>
           </div>
+        </div>
+
+
+        <!-- ACCORDION PARA MOSTRAR SE ESTÁ CREANDO LA VM -->
+        <div class="px-4" id="machineCreatedSuccessful" style="display: none;">
+
+          <div class="accordion">
+            <div class="accordion-item">
+              <!-- <h2 class="accordion-header">                
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelSuccessful"
+                  aria-expanded="true" aria-controls="panelSuccessful-collapseOne">
+                  <strong>Nombre de la máquina</strong>
+                </button>
+              </h2> -->
+              <div id="panelSuccessful" class="accordion-collapse collapse show">
+                <div class="accordion-body">
+
+                  <div class="row mx-2">
+                    <div class="spinner-border col-6" role="status">
+                      <span class="visually-hidden">Creando la vm...</span>
+                    </div>
+
+                    <div class="col-6 align-self-center">
+                      <h5 class="my-0">Creando tu máquina virtual . . .</h5>
+                    </div>
+                  </div>
+
+                  <!-- TEST afuera dels scrí JS -->
+                  <!-- <div class="d-flex align-items-center">
+                    <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 2rem;"></i>
+                    <h5 class="mb-0">¡Máquina creada exitosamente!</h5>
+                    <div class="ms-auto">
+                      <a class="btn btn-success" href="/mainpage/control-machine">
+                        <strong>Ver máquinas virtuales</strong>
+                      </a>
+                    </div>
+                  </div> -->
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- FORMULARIO CON LOS DATOS DE LA MAQUINA -->
+        <!-- <form method="post" action="/api/createMachine" id="formCreateMachine"> -->
+        <form id="formCreateMachine" onsubmit="createMachine(event)">
 
           <!-- Accordion: NOMBRE DE LA MAQUINA -->
           <div class="accordion">
@@ -207,8 +262,8 @@
                         <option value="3072"></option>
                         <option value="4096"></option>
                       </datalist>
-                      
-                      <!-- Y ese div de span para poner los valores de cada liniesita -->
+
+                      <!-- Y este div de span para poner los valores de cada liniesita -->
                       <div class="range-marks">
                         <span>1024 MB</span>
                         <span>2048 MB</span>
@@ -243,32 +298,6 @@
                         <span>3 Núcleos</span>
                       </div>
                     </div>
-
-
-                    <!-- VERSION SELECT -->
-                    <!-- <div class="mb-3 col-6">
-                      <label class="form-label">
-                        <i class="fa-solid fa-memory"></i>
-                        Memoria RAM
-                      </label>
-                      <select class="form-select" id="ramVM" name="ramVM" required>
-                        <option value="1">1 GB</option>
-                        <option value="2">2 GB</option>
-                        <option value="3">3 GB</option>
-                      </select>
-                    </div>
-
-                    <div class="mb-3 col-6">
-                      <label class="form-label">
-                        <i class="fa-solid fa-microchip"></i>
-                        Núcleos de procesamiento
-                      </label>
-                      <select class="form-select" id="cpuVM" name="cpuVM" required>
-                        <option value="1">1 Núcleo</option>
-                        <option value="2">2 Núcleos</option>
-                        <option value="3">3 Núcleos</option>
-                      </select>
-                    </div> -->
 
                   </div>
 
@@ -444,6 +473,12 @@
 
       console.log("name: ", nameVM, " osVM: ", osVM, " ramVM: ", ramVM, " cpuVM: ", cpuVM, " hostVM: ", hostVM);
 
+      // Con esto se oculta el formulario y se muestra la tarjetica con la info de se ha creado la vm
+      const form = document.getElementById("formCreateMachine");
+      form.style.display = "none";
+      const machineDiv = document.getElementById("machineCreatedSuccessful");
+      machineDiv.style.display = "block";
+
       fetch('/api/createMachine', {
         method: 'POST', // Método POST
         headers: {
@@ -462,42 +497,44 @@
             vm_host_id: parseInt(hostVM),
           }
         ),
-      }
-      )
-        .then(response => response.json()) // Procesar respuesta
+      })
+        .then(response => {
+          if (response.status === 200) {
+            notifyCreateMachine()
+            return response.json();
+          }
+          else {             
+            // showAlert("No se pudo crear la maquina. Error: " + response.status+ " | "+ response.text(), "danger");
+            // console.log("response text: ", response.text())
+
+            const form = document.getElementById("formCreateMachine");
+            form.style.display = "block";
+            const machineDiv = document.getElementById("machineCreatedSuccessful");
+            machineDiv.style.display = "none";
+
+            response.text().then(errorText => {
+              console.error("Error: " + response.status + " | " + errorText);
+              showAlert("No se pudo crear la maquina. Error: " + response.status + " | " + errorText, "danger");
+            });
+          }          
+        })
         .then(data => {
-          console.log('Respuesta:', data); // Mostrar respuesta
+          console.log('Respuesta:', data);
         })
         .catch(error => {
-          console.error('Error:', error); // Manejar errores
-        });
+          showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+          console.error('Error: '+ error);
+        })
+
+      // anterior iteracion 2 
+      // .then(response => response.json()) // Procesar respuesta
+      // .then(data => {
+      //   console.log('Respuesta:', data); // Mostrar respuesta
+      // })
+      // .catch(error => {
+      //   console.error('Error:', error); // Manejar errores
+      // });
     }
-
-
-    function showAlert(message, alertType) {
-      var alertBox = document.getElementById("alert-message");
-      alertBox.innerText = message;
-      alertBox.className = "alert alert-" + alertType;
-      var alertContainer = document.getElementById("alert-container");
-      alertContainer.style.display = "block";
-
-      // Ocultar la alerta después de 5 segundos (5000 milisegundos)
-      setTimeout(function () {
-        alertContainer.style.display = "none";
-      }, 5000);
-    }
-
-    var successMessage = "{{ .SuccessMessage }}";
-    if (successMessage !== "") {
-      showAlert(successMessage, "success");
-    }
-
-    var errorMessage = "{{ .ErrorMessage }}";
-    if (errorMessage !== "") {
-      showAlert(errorMessage, "danger");
-    }
-
-
   </script>
 
   <script>
@@ -508,6 +545,72 @@
     document.getElementById('cpuVM').addEventListener('input', function () {
       document.getElementById('cpuVMValue').textContent = this.value + ' Núcleo/s';
     });
+
+    // TODO: CUAL USAR? showMessage o show Alert
+    function showAlert(message, alertType) {
+      var alertBox = document.getElementById("alert-message");
+      alertBox.innerText = "" + message;
+      alertBox.className = "alert alert-" + alertType;
+      var alertContainer = document.getElementById("alert-container");
+      alertContainer.style.display = "block";
+
+      // Ocultar la alerta después de 5 segundos (5000 milisegundos)
+      setTimeout(function () {
+        alertContainer.style.display = "none";
+      }, 5000);
+    }
+
+    // TODO: Estas variables que? no se usan pa na
+    var successMessage = "{{ .SuccessMessage }}";
+    if (successMessage !== "") {
+      showAlert(successMessage, "success");
+    }
+
+    var errorMessage = "{{ .ErrorMessage }}";
+    if (errorMessage !== "") {
+      showAlert(errorMessage, "danger");
+    }
+
+    // Con esta funcion se le cambia la tarjetica que muestra que se está creando la vm
+    // por un tarjetica que dice que ya se creó la vm
+    function notifyCreateMachine() {
+      const machineDiv = document.getElementById("machineCreatedSuccessful");
+      machineDiv.classList.add("successful-createVM");
+
+      const accordionBody = document.querySelector("#panelSuccessful .accordion-body");
+      accordionBody.innerHTML = `
+        <div class="d-flex align-items-center">
+          <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 2rem;"></i>
+          <h5 class="mb-0">¡Máquina creada exitosamente!</h5>
+          <div class="ms-auto">
+            <a class="btn btn-success" href="/mainpage/control-machine">
+              <strong>Ver máquinas virtuales</strong>
+            </a>
+          </div>
+        </div>
+      `;
+    }
+
+// TODO: CUAL USAR? showMessage o show Alert
+    function showMessage(message, type) {
+      const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
+      messageBox.textContent = "" + message;
+      messageBox.style.display = 'block'; // Muestra el mensaje
+
+      // Oculta el mensaje después de 5 segundos
+      setTimeout(() => {
+        messageBox.style.display = 'none';
+      }, 5000);
+    }
+
+    
+    // TESTS
+    // setTimeout(function () {
+    //   showAlert("No se pudo crear la maquina. Error: ", "danger");
+    //   // showMessage('No se pudo crear la maquina. Error: ', 'errorMessage');
+    // }, 2500);
+
+
   </script>
 
 </body>
