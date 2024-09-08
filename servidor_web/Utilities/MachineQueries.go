@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/goccy/go-json"
 )
@@ -85,13 +86,90 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	}
 
 	confirmacion, err := SendRequest("POST", serverURL, payload)
-
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err
 	}
 
+	// Esta confirmacion es digamos, del servidor web. Todo fue bien en la creación, pero no sabemos
+	// si todo fue bien en el servidor de procesamiento, por lo que se debe verificar la existencia de la VM
+	if confirmacion {
+		maquinaCreada, err := verifyMachineCreated(VM.Name, VM.Person_Email)
+		if err != nil {
+			log.Println("Error al consultar si la maquina fue creada: ", err.Error())
+			return false, err
+		}
+
+		if !maquinaCreada {
+			log.Println("La máquina no fue creada")
+			return false, err
+		}
+
+		// Y este ya verifica por completo de que la vm efectivamente si existe :y:
+		return maquinaCreada, nil
+	}
+
+	// Claro, si el web dice que algo ocurrió mal, mande false
 	return confirmacion, nil
+}
+
+func verifyMachineCreated(vmName, email string) (bool, error) {
+	// TODO: Cambiar esto, porque acá se obtienen todas las mquinas y se verifica si existe para este user
+	//		 pero deberia ser (en el servidor de procesamiento) que se obtenga solo un bool, de si existe
+	//       un registro en la bd donde clienteEmail 'x' tiene una vm con nombre 'y'
+
+	// Esto puede ser un poco lento, hablando de rendimiento y consultas y llamados API, porque se
+	// podria obtener solo un bool (EXISTE VM) que todo un JSON con todas las vm del user. y verificarlos aquí
+
+	const intentos = 3
+	const tiempoEspera = 4 * time.Second
+
+	// Como no se puede verificar el nombre exacto (por que el servidor de procesamiento le agrega chars aleatorios)
+	// entonces se verifica si la vm con el nombre (sin las chars aleatorios) fue creada en un intervalo de unos 10 segundos
+	tiempoActual := time.Now()
+
+	for intento := 1; intento <= intentos; intento++ {
+
+		// Se trae todas las vm del user y se verifica si ya se le creó la vm en la BD
+		machines, err := ConsultMachineFromServer(email)
+		if err != nil {
+			log.Printf("Intento %d: Error al consultar si la máquina fue creada: %v", intento, err)
+
+			if intento == intentos {
+				return false, err
+			}
+
+			// Como hubo un error entonces esperemos un momento, por si el servidor de procesamiento se está demorando
+			time.Sleep(tiempoEspera)
+		}
+
+		for _, machine := range machines {
+			nombreSinAleatorios := machine.Name[:len(machine.Name)-5]
+
+			// Esto se hace por si el usuario, le da por crear otra vm con el mismo nombre y pues eso lo debe
+			// dejar hacer el servidor. Para eso se verifica las fechas de creacion a la hora de crear una vm
+			if vmName == nombreSinAleatorios {
+
+				// TODO: Si aparecen errores raros, implementar los log.print del commit de [web 508e559].
+				// tambien pueden darse errores si la duracion es negativa.
+				duracion := machine.Fecha_creacion.Sub(tiempoActual)
+
+				intervaloMaximo := 20 * time.Second //TODO: AJUSTAR TIEMPO EXACTO-APROX | primero 30 segundos pa probar
+
+				if duracion < intervaloMaximo {
+					log.Println("Máquina encontrada | vmName: ", vmName, " machine.Name: ", machine.Name)
+					return true, nil
+				}
+			}
+		}
+
+		log.Printf("Máquina no encontrada en el intento %d", intento)
+		if intento < intentos {
+			time.Sleep(tiempoEspera) // Se espera por si el servidor de procesamiento se está demorando
+		}
+	}
+
+	return false, nil
 }
 
 // Encender Maquina virtual

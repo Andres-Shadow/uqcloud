@@ -83,7 +83,7 @@ func ConsultMachines(persona models.Persona) ([]models.Maquina_virtual, error) {
 			Scan(&machines).Error
 
 	} else {
-		err = DATABASE.Table("(?) AS m", DATABASE.Model(&models.Maquina_virtual{})).Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname").
+		err = DATABASE.Table("(?) AS m", DATABASE.Model(&models.Maquina_virtual{})).Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname, m.fecha_creacion").
 			Joins("INNER JOIN disco as d on m.disco_id = d.id").
 			Where("m.persona_email = ?", persona.Email).
 			Scan(&machines).Error
