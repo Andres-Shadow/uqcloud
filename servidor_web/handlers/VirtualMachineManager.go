@@ -28,7 +28,7 @@ func ControlMachine(c *gin.Context) {
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusFound, "/admin")
 		return
 	}
 
@@ -67,8 +67,10 @@ func ControlMachine(c *gin.Context) {
 			break
 		}
 	}
+
 	c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-		"email":          email,
+		"email":          session.Get("email").(string),
+		"rol":            session.Get("rol").(uint8),
 		"machines":       machines,
 		"machinesChange": machinesChange,
 		"hosts":          hosts,
@@ -90,7 +92,7 @@ func CreateMachinePage(c *gin.Context) {
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusFound, "/admin")
 		return
 	}
 
@@ -116,7 +118,8 @@ func CreateMachinePage(c *gin.Context) {
 		}
 	}
 	c.HTML(http.StatusOK, "create-machine.html", gin.H{
-		"email":          email,
+		"email":          session.Get("email").(string),
+		"rol":            session.Get("rol").(uint8),
 		"machinesChange": machinesChange, // TODO: Esta si será necesaria?
 		"hosts":          hosts,
 		"showNewButton":  showNewButton,
@@ -250,9 +253,17 @@ func PowerMachine(c *gin.Context) {
 	if confirmacion {
 		log.Println("la maquina virtual ha sido encendida con exito ")
 
+		session := sessions.Default(c)
+
 		// TODO: CAMBIAR POR c.JSON, no hay necesidad de enviar el html, porque eso genera errores de lectura
 		// (REVISAR: MainSend(), ASÍ SE ARREGLARON los errores de lectura desde el fetch del html)
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "La máquina " + nombre + "Se esta encendiendo. Por favor espere"})
+
+		// TODO: SI ESTABA ENCENDIDA, MOSTRAR QUE SE ESTÁ APAGANDO
+		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
+			"SuccessMessage": "La máquina " + nombre + " Se esta encendiendo. Por favor espere",
+			"email":          session.Get("email").(string),
+			"rol":            session.Get("rol").(uint8),
+		})
 	} else { // Registro erróneo, muestra un mensaje de error en el HTML
 		log.Println("Error al encender la maquina virtual")
 		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
