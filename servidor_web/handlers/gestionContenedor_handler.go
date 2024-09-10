@@ -30,7 +30,7 @@ func GestionContenedores(c *gin.Context) {
 
 	if email == nil {
 		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusFound, "/admin")
 		return
 	}
 
@@ -39,6 +39,9 @@ func GestionContenedores(c *gin.Context) {
 
 	c.HTML(http.StatusOK, "gestionContenedores.html", gin.H{
 		"email":    email,
+		"nombre":   session.Get("nombre").(string),
+		"apellido": session.Get("apellido").(string),
+		"rol":      session.Get("rol").(uint8),
 		"machines": machines,
 	})
 }

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
+	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 )
@@ -85,12 +86,20 @@ func PreregisterHostJsonData() {
 			continue
 		}
 
-		// Guardar el host en la base de datos usando GORM
-		if err := database.DATABASE.Create(&host).Error; err != nil {
-			log.Printf("Error al guardar el host en la base de datos: %v", err)
-		} else {
-			log.Printf("Host registrado: %s", host.Nombre)
-		}
+		// Crear una rutina de go para el siguiente fragmento de codigo
+		go func() {
+			// Verificar si el host se encuentra disponible utilizando Pacemaker mandando la ruta de la llave privada y la info del host
+			if !Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
+				log.Printf("Host no disponible: %s", host.Nombre)
+			} else {
+				// Guardar el host en la base de datos usando GORM
+				if err := database.DATABASE.Create(&host).Error; err != nil {
+					log.Printf("Error al guardar el host en la base de datos: %v", err)
+				} else {
+					log.Printf("Host registrado: %s", host.Nombre)
+				}
+			}
+		}()
 	}
 }
 
