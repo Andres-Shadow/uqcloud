@@ -263,4 +263,4 @@ var ventanaConfiguracionAbierta = false;
 
     // Llama a actualizarTabla al cargar la página y periódicamente para mantener los datos actualizados
     actualizarTabla();
-    setInterval(actualizarTabla, 10000);
+    setInterval(actualizarTabla, 4000);
