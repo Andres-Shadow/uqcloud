@@ -47,7 +47,7 @@ func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
 	ip = ip + ":22"
 	conn, err := ssh.Dial("tcp", ip, config)
 	if err != nil {
-		logger.Println("Error al establecer la conexión SSH:", err, ip)
+		logger.Println("Error al establecer la conexión SSH:", ip)
 		return salida
 	}
 

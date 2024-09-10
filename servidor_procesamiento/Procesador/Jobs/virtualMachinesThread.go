@@ -62,8 +62,6 @@ func CheckVirtualMachinesQueueChanges() {
 				continue
 			}
 
-			fmt.Println(specifications)
-
 			clientIP, ok := data["clientIP"].(string)
 			if !ok {
 				log.Println("Error: La IP del cliente no está presente o no es de tipo string")
@@ -75,7 +73,6 @@ func CheckVirtualMachinesQueueChanges() {
 
 			fmt.Println(clientIP)
 
-			// Llama a la función CreateVM en una goroutine.
 			go func(specifications models.Maquina_virtual, clientIP string) {
 				defer func() {
 					if r := recover(); r != nil {

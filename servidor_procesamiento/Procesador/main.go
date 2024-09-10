@@ -108,7 +108,7 @@ func registerHostData() {
 	}
 
 	// Verificar que no hayan hosts registrados
-	if count == 0 {
+	if count >= 0 {
 		fmt.Println("Preregistrando datos de hosts...")
 		utilities.PreregisterHostJsonData()
 	} else {
