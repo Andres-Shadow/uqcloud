@@ -28,7 +28,7 @@
   --bs-accordion-bg: #fff !important;
   --bs-accordion-color: #333 !important;
   --bs-accordion-btn-focus-box-shadow: none !important;
-  --bs-accordion-btn-padding-y: 1.5rem !important;
+  --bs-accordion-btn-padding-y: 1.5rem !important;  
   padding-bottom: 20px;
 }
 
@@ -36,6 +36,14 @@
   order: -1;
   margin-left: 0 !important; 
   margin-right:0.5em;
+}
+
+/* Class for "machineCreatedSuccessful" */
+.successful-createVM .accordion{
+  --bs-accordion-border-color: #00C851;
+  --bs-accordion-border-width: 1.3px;
+  /* --bs-accordion-bg: rgba(0, 200, 80, 0.05) !important; */
+  --bs-accordion-bg: #d2ecd5 !important;
 }
 
 
