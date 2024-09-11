@@ -117,6 +117,7 @@ func CreateMachinePage(c *gin.Context) {
 			break
 		}
 	}
+
 	c.HTML(http.StatusOK, "create-machine.html", gin.H{
 		"email":          session.Get("email").(string),
 		"rol":            session.Get("rol").(uint8),
