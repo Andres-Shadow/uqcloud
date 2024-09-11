@@ -110,7 +110,6 @@ func main() {
 	//TODO: Mirar después
 	router.POST("/powerMachine", handlers.PowerMachine)
 	router.POST("/deleteMachine", handlers.DeleteMachine)
-	router.POST("/configMachine", handlers.ConfigMachine)
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
 	router.POST("/DockerHub", handlers.CrearImagen)

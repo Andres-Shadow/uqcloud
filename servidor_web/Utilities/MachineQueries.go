@@ -211,25 +211,6 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 	return confirmacion, nil
 }
 
-// Modifica las maquinas virtuales
-func ConfigMachienFromServer(specifications Models.VirtualMachineTemp) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
-
-	payload := map[string]interface{}{
-		"tipo_solicitud": "modify",
-		"specifications": specifications,
-	}
-
-	confirmacion, err := SendRequest("PUT", serverURL, payload)
-
-	if err != nil {
-		log.Println("Error al crear la solicitud HTTP", err.Error())
-		return false, err
-	}
-
-	return confirmacion, nil
-}
-
 // Consultar estado de la maquina virtual
 func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CHECK_HOST_URL)
