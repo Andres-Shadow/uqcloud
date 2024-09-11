@@ -7,20 +7,6 @@ var ventanaConfiguracionAbierta = false;
         ventanaEmergente.style.display = "block";
     }
 
-    function abrirVentanaEmergenteConfiguracion(Nombre, Sistema_operativo, Memoria, Cpu) {
-        ventanaConfiguracionAbierta = true;
-
-        var ventanaEmergente = document.getElementById("VentanaEmergenteConfiguracion");
-        ventanaEmergente.style.display = "block";
-
-        // Asigna los valores de los parámetros a los campos del formulario
-        document.getElementById("vmnameConfig").value = Nombre;
-        document.getElementById("osConfig").value = Sistema_operativo;
-        document.getElementById("memoryConfig").value = Memoria;
-        document.getElementById("cpuConfig").value = Cpu;
-        document.getElementById("nombreMaquina").value = Nombre;
-    }
-
     function abrirVentanaEmergenteEliminacion( nombre ){
         ventanaConfiguracionAbierta = true;
 
@@ -63,9 +49,9 @@ var ventanaConfiguracionAbierta = false;
         // Estado de la Máquina
         document.getElementById("estadoSpan").textContent = estado;
 
-        document.getElementById("hostnameSpan").textContent = hostname;
+        document.getElementById("hostnameSpan").textContent = "uqcloud";
 
-        document.getElementById("passwordSpan").textContent = hostname;
+        document.getElementById("passwordSpan").textContent = "uqcloud1234";
 
         // IP de la Máquina
         if  ( ip != ""){
@@ -127,7 +113,7 @@ var ventanaConfiguracionAbierta = false;
                     //              * machine.vm_name      | SIRVE  (porque en el modelo está asi: `json:"vm_name"`)
                     switch (machine.vm_state) {
                         case "Apagado":
-                            console.log("LLegó aqui-----------------1");
+                            // console.log("LLegó aqui-----------------1");
                             backgroundColor = "#e06666ff"; // Rojo
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
@@ -143,9 +129,6 @@ var ventanaConfiguracionAbierta = false;
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so_distro}','${machine.vm_ram}','${machine.vm_cpu}')">
-                                        <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
-                                    </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
                                     </button>
@@ -158,7 +141,7 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         case "Encendido":
-                            console.log("LLegó aqui-----------------2");
+                            // console.log("LLegó aqui-----------------2");
                             backgroundColor = "#93c47dff"; // Verde
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
@@ -184,9 +167,6 @@ var ventanaConfiguracionAbierta = false;
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so_distro}','${machine.vm_ram}','${machine.vm_cpu}')" disabled>
-                                        <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
-                                    </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 3">
                                     </button>
@@ -201,7 +181,7 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         case "Procesando":
-                            console.log("LLegó aqui-----------------3");
+                            // console.log("LLegó aqui-----------------3");
                             backgroundColor = "#83DEE3"; // Azul
                             $("#machine-table tbody").append(
                             `<tr style="background-color: ${backgroundColor}">
@@ -217,9 +197,6 @@ var ventanaConfiguracionAbierta = false;
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
                                     </form>
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteConfiguracion('${machine.vm_name}','${machine.vm_so}','${machine.vm_ram}','${machine.vm_cpu}')" disabled>
-                                        <img style="width: 30px;" src="/web/static/img/icons/config.png" alt="Botón 2">
-                                    </button>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
                                     </button>
@@ -234,7 +211,7 @@ var ventanaConfiguracionAbierta = false;
                             );
                             break;
                         default:
-                            console.log("LLegó aqui-----------------4");
+                            // console.log("LLegó aqui-----------------4");
                             backgroundColor = ""; // Puedes proporcionar un valor predeterminado si es necesario
                     }
      
