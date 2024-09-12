@@ -1,11 +1,8 @@
 package utilities
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"math/rand"
-	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 	"time"
@@ -23,7 +20,7 @@ Cuando se crea la cuenta e ingresa a la base de datos, se encarga de invocar la 
 @clientIP Paràmetro que contiene la direcciòn IP desde la cual se està realizando la solicitud de crear la cuenta temporal
 */
 
-func CreateTempAccount(clientIP string, distribucionSO string) string {
+func CreateTempAccount() string {
 
 	persona := models.Persona{
 		Nombre:   "Usuario",
@@ -44,8 +41,6 @@ func CreateTempAccount(clientIP string, distribucionSO string) string {
 		log.Printf("Error al crear la cuenta temporal para el usuario invitado: %s - %s\n", persona.Email, persona.Nombre)
 		return ""
 	}
-
-	CreateTempVM(persona.Email, clientIP, distribucionSO)
 
 	return persona.Email
 }
@@ -89,32 +84,18 @@ finalmente encola la solicitud de creaciòn
 
 func CreateTempVM(email string, clientIP string, distribucion_SO string) {
 
-	maquina_virtual := models.Maquina_virtual{
-		Nombre:                         "Guest",
-		Sistema_operativo:              "Linux",
-		Distribucion_sistema_operativo: distribucion_SO,
-		Ram:                            1024,
-		Cpu:                            2,
-		Persona_email:                  email,
-	}
+	// maquina_virtual := models.Maquina_virtual{
+	// 	Nombre:                         "Guest",
+	// 	Sistema_operativo:              "Linux",
+	// 	Distribucion_sistema_operativo: distribucion_SO,
+	// 	Ram:                            1024,
+	// 	Cpu:                            2,
+	// 	Persona_email:                  email,
+	// }
 
-	payload := map[string]interface{}{
-		"specifications": maquina_virtual,
-		"clientIP":       clientIP,
-	}
+	// payload := map[string]interface{}{
+	// 	"specifications": maquina_virtual,
+	// 	"clientIP":       clientIP,
+	// }
 
-	jsonData, _ := json.Marshal(payload) //Se codifica en formato JSON
-
-	var decodedPayload map[string]interface{}
-	err := json.Unmarshal(jsonData, &decodedPayload) //Se decodifica para meterlo en la cola
-	if err != nil {
-		fmt.Println("Error al decodificar el JSON:", err)
-		// Manejar el error según tus necesidades
-		return
-	}
-
-	// Encola la peticiòn
-	config.GetMu().Lock()
-	config.GetMaquina_virtualQueue().Queue.PushBack(decodedPayload)
-	config.GetMu().Unlock()
 }

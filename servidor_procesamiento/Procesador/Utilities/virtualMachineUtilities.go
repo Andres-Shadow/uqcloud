@@ -18,6 +18,23 @@ import (
 Clase encargada de contener las funciones relacionadas con la gestion de maquinas virtuales
 */
 
+func CreateVirtualMachineFromSpecifications(specs map[string]interface{}) {
+	// jsonData, _ := json.Marshal(specs) //Se codifica en formato JSON
+
+	// var decodedPayload map[string]interface{}
+	// err := json.Unmarshal(jsonData, &decodedPayload) //Se decodifica para meterlo en la cola
+	// if err != nil {
+	// 	fmt.Println("Error al decodificar el JSON:", err)
+	// 	// Manejar el error según tus necesidades
+	// 	return
+	// }
+
+	// Encola la peticiòn
+	config.GetMu().Lock()
+	config.GetMaquina_virtualQueue().Queue.PushBack(specs)
+	config.GetMu().Unlock()
+}
+
 /*
 Funciòn que verifica el tiempo de creaciòn de las màquinas de los usuarios invitados con el fin de determinar si se ha pasado o no del tiempo lìmite (2.5horas)
 En caso de que una màquina se haya pasado del tiempo, se procederà a eliminarla.

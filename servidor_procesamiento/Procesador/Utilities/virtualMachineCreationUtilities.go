@@ -81,12 +81,6 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			return "Error al obtener el host por nombre " + specs.Hostname
 		}
 
-		// host, err = GetHostById(specs.Host_id)
-		// if err != nil {
-		// 	log.Println("Error al obtener el host por id:", err)
-		// 	return "Error al obtener el host por id " + specs.Hostname
-		// }
-
 		log.Println("Host seleccionado: ", host.Nombre)
 
 		//se verifica el ssh de la maquina fisica con el marcapasos

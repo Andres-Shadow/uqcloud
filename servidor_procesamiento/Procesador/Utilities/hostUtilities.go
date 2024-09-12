@@ -3,12 +3,13 @@ package utilities
 import (
 	"bytes"
 	"encoding/json"
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+	"strconv"
 )
 
 /*
@@ -64,12 +65,10 @@ func PreregisterHostJsonData() {
 		return
 	}
 
-	log.Printf("Archivos JSON encontrados: %v", files)
-
 	// Procesar cada archivo JSON
 	for _, file := range files {
 		// Leer el archivo JSON
-		data, err := ioutil.ReadFile(file)
+		data, err := os.ReadFile(file)
 		if err != nil {
 			log.Printf("Error al leer el archivo %s: %v", file, err)
 			continue
@@ -92,15 +91,40 @@ func PreregisterHostJsonData() {
 			if !Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
 				log.Printf("Host no disponible: %s", host.Nombre)
 			} else {
-				// Guardar el host en la base de datos usando GORM
-				if err := database.DATABASE.Create(&host).Error; err != nil {
-					log.Printf("Error al guardar el host en la base de datos: %v", err)
-				} else {
-					log.Printf("Host registrado: %s", host.Nombre)
-				}
+				SetUpHostAndDisk(host)
 			}
 		}()
 	}
+}
+
+func SetUpHostAndDisk(host models.Host) {
+
+	var diskNames []string = []string{"Alpine", "Febora", "ubuntu", "debian"}
+	var auxDisk models.Disco = models.Disco{}
+	const diskPath = "c:\\uqcloud"
+
+	// Guardar el host en la base de datos usando GORM
+	if err := database.DATABASE.Create(&host).Error; err != nil {
+		log.Printf("Error al guardar el host en la base de datos: %v", err)
+	} else {
+		log.Printf("Host pre-registrado exitosamente: %s", host.Nombre)
+		auxDisk.Arquitectura = 64
+		auxDisk.Sistema_operativo = "linux"
+		auxDisk.Host_id = host.Id
+
+		for _, diskName := range diskNames {
+			auxDisk.Nombre = diskName
+			auxDisk.Distribucion_sistema_operativo = "" + diskName + "-" + strconv.Itoa(auxDisk.Arquitectura)
+			auxDisk.Ruta_ubicacion = diskPath + "\\" + diskName + ".vdi"
+			err := database.CreateDisck(auxDisk)
+			if err != nil {
+				log.Printf("Error al pre-registrar el disco en el host: %v", err)
+			} else {
+				log.Printf("Disco pre-registrado exitosamente: %s", auxDisk.Nombre)
+			}
+		}
+	}
+
 }
 
 /*
