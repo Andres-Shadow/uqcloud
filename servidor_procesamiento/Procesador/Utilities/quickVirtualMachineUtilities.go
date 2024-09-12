@@ -54,6 +54,5 @@ func generateQuickVirtualMachine(email string, clientIP string, distro string) {
 		"specifications": maquina_virtual,
 		"clientIP":       clientIP,
 	}
-
 	CreateVirtualMachineFromSpecifications(payload)
 }

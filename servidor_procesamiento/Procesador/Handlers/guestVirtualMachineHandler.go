@@ -12,7 +12,7 @@ para invitados
 */
 
 // Funcion que responde al endpoint encargado de crear maquinas virtuales para invitados
-func CreateGuestVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
+func CreateTempUserHandler(w http.ResponseWriter, r *http.Request) {
 	// retorna el correo temporal
 	email := utilities.CreateTempAccount()
 
