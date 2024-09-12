@@ -92,11 +92,6 @@ func CreateImageDockerFile(nombreArchivo, nombreImagen, ip, hostname string) str
 
 	fmt.Println(hostname)
 
-	if err != nil {
-		log.Println("Error al configurar SSH:", err)
-		return "Error al configurar la conexiòn SSH"
-	}
-
 	respuesta, err3 := SendSSHCommand(ip, sctlCommand, config)
 
 	if err3 != nil {

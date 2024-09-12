@@ -6,13 +6,8 @@ import (
 	utilities "servidor_procesamiento/Procesador/Utilities"
 )
 
-/*
-Clase encargada de contener las funciones que responen hacía los endpoints de las máquinas virtuales
-para invitados
-*/
+func CreateQuickVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
-// Funcion que responde al endpoint encargado de crear maquinas virtuales para invitados
-func CreateGuestVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	var datos map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
@@ -21,11 +16,10 @@ func CreateGuestVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//ip del localhost ->
 	clientIP := datos["ip"].(string)
-	distribucion_SO := datos["distribucion"].(string)
-	email := utilities.CreateTempAccount(clientIP, distribucion_SO)
+	email := utilities.CreateQuickVirtualMachine(clientIP)
 
-	// Envía una respuesta al cliente.
 	response := map[string]string{"mensaje": email}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)

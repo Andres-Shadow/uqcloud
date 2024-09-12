@@ -82,7 +82,7 @@ Estructura de datos tipo JSON que contiene los campos de un host
 type Host struct {
 	gorm.Model
 	Id                             int    `json:"hst_id"`
-	Nombre                         string `json:"hst_name" gorm:"unique"`
+	Nombre                         string `json:"hst_name" gorm:"not null"`
 	Mac                            string `json:"hst_mac" gorm:"unique, not null"`
 	Ip                             string `json:"hst_ip" gorm:"unique, not null"`
 	Hostname                       string `json:"hst_hostname" gorm:"not null"`
