@@ -182,10 +182,8 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
 
 	// Endpoint para crear un usuario nuevo tempral
-	r.HandleFunc(apiPrefix+"temp-user", handlers.CreateGuestVirtualMachineHandler).Methods("POST") //TODO cambiar handler
+	r.HandleFunc(apiPrefix+"temp-user", handlers.CreateTempUserHandler).Methods("POST") 
 
-	//Endpoint para peticiones de inicio de sesiòn
-	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)
 
 	/*
 		-----------------------
