@@ -90,9 +90,6 @@ func setDatabase() {
 		&models.Contenedor{},
 		&models.CatalogoDisco{})
 
-	// Creación de los triggers en la base de datos
-	database.CreateTriggers()
-
 	// Precarga del usuario administrador
 	database.CreateAdmin()
 
