@@ -29,8 +29,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
 	var virtualMachineName string = specs.Nombre + "_" + caracteres
 	var availableResources bool = false
-	var estadossh bool = false
-	var validation = false
+	var estadossh bool = true
+	var validation bool = false
 
 	// Verifica la disponibilidad del nombre de la MV
 	dispoible, mensaje := verifyVirtualMachineExistence(virtualMachineName) //Verifica si existe una MV con ese nombre
@@ -47,14 +47,23 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			log.Println("Error al contar los host que hay en la base de datos: " + err.Error())
 			return "Error al contar los host que hay en la base de datos"
 		}
-		count += 5 //Para dar n+5 iteraciones en busca de hosts con recursos disponibles, donde n es el total de hosts guardados en la bse de datos
 
-		log.Println(estadossh)
-		for !estadossh && !availableResources && count > 0 {
-			//Selecciona un host al azar
-			host, _ = database.SelectHost()
-			estadossh = Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
-			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
+		// Bucle para seleccionar un host con recursos disponibles
+		for !availableResources && count > 0 {
+			aux, _ := database.SelectHost()
+			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+
+			// Si el estado de SSH es falso, rompe el bucle
+			if !estadossh {
+				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
+			} else {
+				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				if availableResources {
+					host = aux
+					break
+				}
+			}
+
 			count--
 		}
 
