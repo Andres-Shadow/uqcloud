@@ -117,6 +117,7 @@ func CreateMachinePage(c *gin.Context) {
 			break
 		}
 	}
+
 	c.HTML(http.StatusOK, "create-machine.html", gin.H{
 		"email":          session.Get("email").(string),
 		"rol":            session.Get("rol").(uint8),
@@ -296,49 +297,6 @@ func DeleteMachine(c *gin.Context) {
 	}
 }
 
-// Metodo para configuarar una maqquina virtual
-func ConfigMachine(c *gin.Context) {
-	// Acceder a la sesión
-	session := sessions.Default(c)
-	email := session.Get("email").(string)
-
-	log.Println(email)
-	if email == " " {
-		log.Println("Error: Email vacio")
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-	var specifications Models.VirtualMachineTemp
-
-	// Obtener los datos del formulario
-	if err := c.BindJSON(&specifications); err != nil {
-		// Manejar el error si el JSON no es válido o no coincide con la estructura
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-
-		log.Printf("%+v\n", specifications)
-
-		confirmacion, err := Utilities.ConfigMachienFromServer(specifications)
-
-		if err != nil {
-			log.Println("Error al configuracion de la VM", err.Error())
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
-		}
-		if confirmacion {
-			log.Println("Maquina virtual modificada con exito")
-			// Registro exitoso, muestra un mensaje de éxito en el HTML
-			c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-				"SuccessMessage": "Solicitud para modificar la màquina virtual enviada con èxito"})
-		} else {
-			// Registro erróneo, muestra un mensaje de error en el HTML
-			log.Println("Error al configuracion de la VM")
-			c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
-				"ErrorMessage": "La solicitud para modificar la màquina virtual no tuvo èxito. Intente de nuevo"})
-		}
-	}
-}
-
-// No se utiliza jajaja
 func GetMachines(c *gin.Context) {
 	// Acceder a la sesión para obtener el email del usuario
 	session := sessions.Default(c)

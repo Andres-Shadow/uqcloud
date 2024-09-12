@@ -138,7 +138,7 @@ func LoginTemp(c *gin.Context) {
 		session.Set("email", mensaje)
 		session.Set("nombre", "Usuario")
 		session.Set("apellido", "Temporal")
-		session.Set("rol", "Invitado")
+		session.Set("rol", uint8(0))
 		session.Save()
 
 		c.Redirect(http.StatusSeeOther, "/mainpage/control-machine/create-machine")
