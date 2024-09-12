@@ -132,13 +132,13 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Obtener el nombre de la máquina virtual a partir del path param.
 	vars := mux.Vars(r)
 	virtualMachineName := vars["name"]
-	
+
 	// verificar que el path param no esté vacío
 	if virtualMachineName == "" {
 		http.Error(w, "El nombre de la máquina virtual es obligatorio", http.StatusBadRequest)
 		return
 	}
-	
+
 	payload := make(map[string]interface{})
 	payload["tipo_solicitud"] = "delete"
 	payload["nombreVM"] = virtualMachineName
