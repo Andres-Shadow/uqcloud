@@ -10,6 +10,7 @@ import (
 
 func CreateQuickVirtualMachine(clientIP string) string {
 
+	//TODO poner nombre en el .env
 	distro := "Alpine"
 
 	persona := models.Persona{

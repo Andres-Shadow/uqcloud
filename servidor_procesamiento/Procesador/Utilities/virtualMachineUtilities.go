@@ -1,7 +1,6 @@
 package utilities
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"regexp"
@@ -20,19 +19,19 @@ Clase encargada de contener las funciones relacionadas con la gestion de maquina
 */
 
 func CreateVirtualMachineFromSpecifications(specs map[string]interface{}) {
-	jsonData, _ := json.Marshal(specs) //Se codifica en formato JSON
+	// jsonData, _ := json.Marshal(specs) //Se codifica en formato JSON
 
-	var decodedPayload map[string]interface{}
-	err := json.Unmarshal(jsonData, &decodedPayload) //Se decodifica para meterlo en la cola
-	if err != nil {
-		fmt.Println("Error al decodificar el JSON:", err)
-		// Manejar el error según tus necesidades
-		return
-	}
+	// var decodedPayload map[string]interface{}
+	// err := json.Unmarshal(jsonData, &decodedPayload) //Se decodifica para meterlo en la cola
+	// if err != nil {
+	// 	fmt.Println("Error al decodificar el JSON:", err)
+	// 	// Manejar el error según tus necesidades
+	// 	return
+	// }
 
 	// Encola la peticiòn
 	config.GetMu().Lock()
-	config.GetMaquina_virtualQueue().Queue.PushBack(decodedPayload)
+	config.GetMaquina_virtualQueue().Queue.PushBack(specs)
 	config.GetMu().Unlock()
 }
 

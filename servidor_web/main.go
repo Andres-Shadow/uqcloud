@@ -125,6 +125,8 @@ func main() {
 	router.POST("/eliminarContenedores", handlers.EliminarContenedores)
 
 	// API ROUTES
+	router.POST("/api/quick-machine", handlers.QuickMachine)
+
 	router.GET("/api/machines", handlers.GetMachines)
 
 	router.POST("/api/createMachine", handlers.MainSend)
