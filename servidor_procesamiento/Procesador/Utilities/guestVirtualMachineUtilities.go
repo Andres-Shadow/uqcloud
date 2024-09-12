@@ -50,6 +50,33 @@ func CreateTempAccount(clientIP string, distribucionSO string) string {
 	return persona.Email
 }
 
+func CreateQuickVirtualMachine(clientIP string, distribucionSO string) string {
+
+	persona := models.Persona{
+		Nombre:   "Usuario",
+		Apellido: "Invitado",
+		Email:    generateRandomEmail(),
+		Rol:      0,
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("guestuqcloud"), bcrypt.DefaultCost)
+	if err != nil {
+		log.Printf("Error al encriptar la contraseña: %v\n", err)
+		return ""
+	}
+
+	persona.Contrasenia = string(hashedPassword)
+
+	if !database.CreateNewUser(persona) {
+		log.Printf("Error al crear la cuenta temporal para el usuario invitado: %s - %s\n", persona.Email, persona.Nombre)
+		return ""
+	}
+
+	CreateTempVM(persona.Email, clientIP, distribucionSO)
+
+	return persona.Email
+}
+
 /*
 Funciòn que se encarga de generar un correo aleatorio para las cuentas de lo sinvitados las cuales son temporales
 */

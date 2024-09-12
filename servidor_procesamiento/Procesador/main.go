@@ -108,7 +108,7 @@ func registerHostData() {
 	}
 
 	// Verificar que no hayan hosts registrados
-	if count >= 0 {
+	if count == 0 {
 		fmt.Println("Preregistrando datos de hosts...")
 		utilities.PreregisterHostJsonData()
 	} else {
@@ -153,6 +153,9 @@ func manageServer(r *mux.Router) {
 
 	//End point para crear maquinas virtuales para invitados
 	r.HandleFunc(apiPrefix+"guest_virtual_machine", handlers.CreateGuestVirtualMachineHandler).Methods("POST")
+
+	//End point para crear una máquina rápida
+	r.HandleFunc(apiPrefix+"quick_virtual_machine", handlers.CreateQuickVirtualMachineHandler).Methods("POST")
 
 	/*
 		--------------------
