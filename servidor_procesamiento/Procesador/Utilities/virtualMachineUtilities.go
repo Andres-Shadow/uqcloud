@@ -226,7 +226,7 @@ func ExistVM(virtualMachineName string) (bool, error) {
 
 	//err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
 	existe, err := database.ExistVirtualMachine(virtualMachineName)
-	if err != nil && existe == true {
+	if err != nil && existe {
 		log.Println("Error al realizar la consulta: ", err)
 		return existe, err
 	}

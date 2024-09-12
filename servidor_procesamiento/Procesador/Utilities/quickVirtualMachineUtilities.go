@@ -2,6 +2,7 @@ package utilities
 
 import (
 	"log"
+	"os"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 
@@ -10,8 +11,7 @@ import (
 
 func CreateQuickVirtualMachine(clientIP string) string {
 
-	//TODO poner nombre en el .env
-	distro := "Alpine"
+	distro := os.Getenv("DEFAULT_QUICK_VM_DISTRO")
 
 	persona := models.Persona{
 		Nombre:   "Usuario",
