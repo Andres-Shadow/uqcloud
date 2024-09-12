@@ -16,10 +16,9 @@ func CreateQuickVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//ip del localhost
+	//ip del localhost ->
 	clientIP := datos["ip"].(string)
-	soDistro := "Alpine"
-	email := utilities.CreateTempAccount(clientIP, soDistro)
+	email := utilities.CreateQuickVirtualMachine(clientIP)
 
 	response := map[string]string{"mensaje": email}
 	w.Header().Set("Content-Type", "application/json")

@@ -21,9 +21,7 @@ func CreateGuestVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	clientIP := datos["ip"].(string)
-	distribucion_SO := datos["distribucion"].(string)
-	email := utilities.CreateTempAccount(clientIP, distribucion_SO)
+	email := utilities.CreateTempAccount()
 
 	// Envía una respuesta al cliente.
 	response := map[string]string{"mensaje": email}

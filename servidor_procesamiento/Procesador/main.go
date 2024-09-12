@@ -152,7 +152,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"stop_virtual_machine", handlers.StopVirtualMachineHandler).Methods("POST")
 
 	//End point para crear maquinas virtuales para invitados
-	r.HandleFunc(apiPrefix+"guest_virtual_machine", handlers.CreateGuestVirtualMachineHandler).Methods("POST")
+	r.HandleFunc(apiPrefix+"guest_virtual_machine", handlers.CreateGuestVirtualMachineHandler).Methods("POST") //TODO cambiar la ruta
 
 	//End point para crear una máquina rápida
 	r.HandleFunc(apiPrefix+"quick_virtual_machine", handlers.CreateQuickVirtualMachineHandler).Methods("POST")
