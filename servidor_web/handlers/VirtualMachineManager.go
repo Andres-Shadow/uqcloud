@@ -280,8 +280,8 @@ func DeleteMachine(c *gin.Context) {
 
 	log.Println("Nombre de la VM a elimianr: ", nombre)
 	if err != nil {
-		log.Println("Error al eliminar la maquina virtual", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al eliminar la maquina" + err.Error()})
+		log.Println("Error al eliminar la maquina virtual: ", err.Error())
+		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{"error": "Error al eliminar la maquina" + err.Error()})
 		return
 	}
 	if confirmacion {

@@ -194,8 +194,9 @@ func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
 
 // Eliminar una Maquina virtual
 func DeleteMachineFromServer(nombre string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
+	serverURL := fmt.Sprintf("http://%s:%s%s/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, nombre)
 
+	// ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
 	payload := map[string]interface{}{
 		"tipo_solicitud": "delete",
 		"nombreVM":       nombre,
@@ -215,6 +216,7 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CHECK_HOST_URL)
 
+	// ESTO NO SE DEBE MANDAR, ES UN METODO GET NO PERMITE PAYLOAD
 	// Crear el objeto JSON con los datos del cliente
 	payload := map[string]interface{}{
 		"clientIP":       clienteIp,

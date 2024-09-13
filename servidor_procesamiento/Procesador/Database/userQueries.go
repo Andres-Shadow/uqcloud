@@ -72,6 +72,10 @@ func CreateNewUser(persona models.Persona) bool {
 		log.Println("Error al insertar el nuevo registro de persona en la base de datos: ", err)
 		return false
 	}
+
+	// Eliminar usuarios invitados antiguos (que tengan mas de 6 horas desde su creación)
+	DATABASE.Exec("DELETE FROM persona WHERE rol = 0 AND TIMESTAMPDIFF(HOUR, created_at, NOW()) > 6")
+
 	return true
 }
 
