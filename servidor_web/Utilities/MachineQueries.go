@@ -94,7 +94,7 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	// Esta confirmacion es digamos, del servidor web. Todo fue bien en la creación, pero no sabemos
 	// si todo fue bien en el servidor de procesamiento, por lo que se debe verificar la existencia de la VM
 	if confirmacion {
-		maquinaCreada, err := verifyMachineCreated(VM.Name, VM.Person_Email)
+		maquinaCreada, err := VerifyMachineCreated(VM.Name, VM.Person_Email)
 		if err != nil {
 			log.Println("Error al consultar si la maquina fue creada: ", err.Error())
 			return false, err
@@ -113,7 +113,7 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	return confirmacion, nil
 }
 
-func verifyMachineCreated(vmName, email string) (bool, error) {
+func VerifyMachineCreated(vmName, email string) (bool, error) {
 	// TODO: Cambiar esto, porque acá se obtienen todas las mquinas y se verifica si existe para este user
 	//		 pero deberia ser (en el servidor de procesamiento) que se obtenga solo un bool, de si existe
 	//       un registro en la bd donde clienteEmail 'x' tiene una vm con nombre 'y'

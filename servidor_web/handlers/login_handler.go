@@ -196,6 +196,14 @@ func QuickMachine(c *gin.Context) {
 		session.Set("rol", uint8(0))
 		session.Save()
 
+		confirmacion, _ := Utilities.VerifyMachineCreated("Guest", mensaje)
+
+		if !confirmacion {
+			log.Println("No fue posible crear la maquina")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor, no se pudo crear la máquina rápida"})
+			return
+		}
+
 		// c.Redirect(http.StatusSeeOther, "/mainpage/control-machine")
 		c.JSON(http.StatusOK, gin.H{"mensaje": mensaje})
 
