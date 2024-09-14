@@ -194,6 +194,10 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
 		return Models.VirtualMachineTemp{}, errors.New("missing required fields")
 	}
 
+	// TODO: Quemar la estrategia para la asignación del host, por defecto es "roundrobin" y despues
+	// se verifica si seleccionó otra estrategía
+	// arrivedVM.Hostname = "roundrobin"
+
 	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
 	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
 	hosts, _ := Utilities.CheckAvaibleHost()

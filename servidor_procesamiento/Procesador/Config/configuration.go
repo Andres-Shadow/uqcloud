@@ -25,6 +25,30 @@ var (
 	LastQueueSize          int
 )
 
+// Estructura que contiene los hosts y el host actual
+// para la asignación mediante round robin
+type RoundRobin struct {
+	Hosts       []models.Host
+	CurrentHost int
+}
+
+var RoundRobinManager *RoundRobin = nil
+
+// // Constructor para la estructura RoundRobin
+func NewRoundRobin(hosts []models.Host) *RoundRobin {
+	return &RoundRobin{
+		Hosts:       hosts,
+		CurrentHost: -1, // Inicializamos en -1 para que la primera vez sea 0
+	}
+}
+
+// // Función para obtener el siguiente host
+func (rr *RoundRobin) GetNextHost() models.Host {
+	// Avanzamos al siguiente host en la lista
+	rr.CurrentHost = (rr.CurrentHost + 1) % len(rr.Hosts)
+	return rr.Hosts[rr.CurrentHost]
+}
+
 // Funcion que inicializa la ruta del archivo de clave privada
 // @param path: string
 func InitPrivateKeyPath(path string) {

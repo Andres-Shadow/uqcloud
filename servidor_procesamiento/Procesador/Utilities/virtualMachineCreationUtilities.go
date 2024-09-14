@@ -75,7 +75,39 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
 		if err != nil {
 			log.Println("Error al obtener el disco:", err)
+			return "Error al obtener el disco"
+		}
 
+	} else if specs.Hostname == "roundrobin" {
+
+		// Bucle para seleccionar un host con recursos disponibles
+		for !availableResources {
+
+			fmt.Println("Obteniendo el host siguiente: " + config.RoundRobinManager.GetNextHost().Nombre)
+			aux := config.RoundRobinManager.GetNextHost()
+			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+
+			// Si el estado de SSH es falso, rompe el bucle
+			if !estadossh {
+				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
+			} else {
+				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				if availableResources {
+					host = aux
+					break
+				}
+			}
+		}
+
+		if !availableResources {
+			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
+		}
+
+		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
+
+		if err != nil {
+			log.Println("Error al obtener el disco:", err)
 			return "Error al obtener el disco"
 		}
 
