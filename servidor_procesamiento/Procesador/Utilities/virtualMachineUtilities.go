@@ -197,7 +197,7 @@ func DeleteVM(virtualMachineName string) string {
 			return "Error al eliminar la MV"
 		}
 		//Elimina la màquina virtual de la base de datos
-		// err6 := database.DB.QueryRow("DELETE FROM maquina_virtual WHERE NOMBRE = ?", nameVM)
+
 		err6 := database.DeleteVirtualMachine(virtualMachineName)
 		if err6 == nil {
 			log.Println("Error al eliminar el registro de la base de datos: ", err6)
