@@ -35,7 +35,7 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 
 	if len(results) == 0 {
 		log.Println("No se encontraron máquinas registradas en la base de datos")
-		return nil, errors.New("No Machines Found")
+		return nil, errors.New("no Machines Found")
 	}
 
 	// ESO ERAAAAAAAA JASJSAJASJASJ DOS DIAS PAARA SACAR EL NOMBRE DEL HOST, DIOSMIO AJSJSAJJSJ SOY ELMOEJR JULIOPROYT777 REPORTANDO
@@ -149,4 +149,13 @@ func UpdateHostUsedRam(hostId int, newUserRam int) error {
 		return err
 	}
 	return nil
+}
+
+func GetHosts() []models.Host {
+	var hosts []models.Host
+	err := DATABASE.Find(&hosts).Error
+	if err != nil {
+		log.Println("Error al obtener los hosts: ", err)
+	}
+	return hosts
 }
