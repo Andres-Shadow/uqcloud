@@ -27,6 +27,20 @@
     {{template "header.html"}}
 
     <main class="main">
+      <div
+        id="alert-container"
+        style="
+          display: none;
+          position: fixed;
+          top: 10px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 9999;
+          width: 80%;
+        "
+      >
+        <div id="alert-message" class="alert" role="alert"></div>
+      </div>
       <!-- Hero Section -->
       <section
         class="gradient-bg position-relative min-vh-100 overflow-hidden pt-5 align-items-center"
@@ -180,6 +194,10 @@
               //redireccionar
               window.location.href = "/mainpage/control-machine";
             } else {
+              response.text().then(errorText => {
+              console.error("Error: " + response.status + " | " + errorText);
+              showAlert("No se pudo crear la maquina. Error: " + response.status + " | " + errorText, "danger");
+            });
             }
             return response.json();
           })
@@ -187,8 +205,22 @@
             console.log("Respuesta:", data);
           })
           .catch((error) => {
+            showAlert("Error al crear la máquina virtual" + error, "danger");
             console.error("Error: " + error);
           });
+      }
+
+      function showAlert(message, alertType) {
+        var alertBox = document.getElementById("alert-message");
+        alertBox.innerText = "" + message;
+        alertBox.className = "alert alert-" + alertType;
+        var alertContainer = document.getElementById("alert-container");
+        alertContainer.style.display = "block";
+
+        // Ocultar la alerta después de 5 segundos (5000 milisegundos)
+        setTimeout(function () {
+          alertContainer.style.display = "none";
+        }, 5000);
       }
     </script>
   </body>
