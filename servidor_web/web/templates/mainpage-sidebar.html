@@ -2,6 +2,7 @@
 
 <!-- RECORDAR: Los importes y todo lo que se hace en <head> y que necesita este template, -->
 <!--           son importados desde el html que llama este html  -->
+
 <body class="sb-nav-fixed">
 
   <!-- Sidebar -->
@@ -52,14 +53,15 @@
             <div class="sb-sidenav-collapse-arrow">
               <i class="fas fa-angle-down"></i>
             </div>
-          </a>            
+          </a>
           <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-            <nav class="sb-sidenav-menu-nested nav">
-              <a class="nav-link" href="#">Máquina-1</a>
-              <a class="nav-link" href="#">Máquina-2</a>
+            <nav id="listaVMEncendidas" class="sb-sidenav-menu-nested nav">              
+
+              <div id="NoMachinesPlaceholder"><i>NO tiene maquinas encendidas</i></div>
+
             </nav>
           </div>
-                      
+
 
           <!---- SECCIÓN DOCKER ---->
           <div class="sb-sidenav-menu-heading">Docker</div>
@@ -82,9 +84,51 @@
         <div class="small">Usuario conectado: </div>
         {{.email}}
       </div>
-      
+
     </nav>
   </div>
+
+  <script>
+    function getMachines() {
+      
+      $.ajax({
+        url: "/api/machines", // Reemplaza con la URL correcta
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+          data.forEach(function (machine) {
+            if (machine.vm_state === "Encendido") {
+              listaVMs = document.getElementById("listaVMEncendidas");
+
+              listaVMs.innerHTML = `
+                <button class="nav-link" onclick="machineConnection('`+ machine.vm_ip+ `', '`+ machine.vm_name+ `')">`+ machine.vm_name+ `</button>
+              `;          
+              
+              // <a class="nav-link"><button onclick="machineConnection(`+machine.vm_ip+`)">`+machine.vm_name+`</button></a>
+              // Esto es pa que oculte ese placeholder que hay en la seccion Conexiones>
+              if (placeholderVM = document.getElementById("NoMachinesPlaceholder")) {
+                placeholderVM.style.display = "none";
+              }
+              
+            }
+                        
+          });
+
+        },
+        error: function (error) {
+          console.error("Error al obtener datos: " + error);
+        }
+      });
+
+    }
+    setInterval(getMachines, 5000);
+
+    function machineConnection(vm_ip, vm_name) {
+      window.location.href = "/mainpage/connection-machine?machineIP="+vm_ip+"&machineName="+vm_name;
+    }
+    
+  </script>
+
 
 </body>
 
