@@ -1,227 +1,222 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
-    <title>DesktopCloud - Inicio</title>
 
-    <!-- Bootstrap icons-->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="/web/static/css/styles.css" rel="stylesheet" />
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
+  <title>DesktopCloud - Inicio</title>
 
-    <link href="/web/static/css/index.css" rel="stylesheet" />
-    <script src="/web/static/js/index.js"></script>
-  </head>
+  <!-- Bootstrap icons-->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
+  <!-- Core theme CSS (includes Bootstrap)-->
+  <link href="/web/static/css/styles.css" rel="stylesheet" />
 
-  <body>
-    {{template "header.html"}}
+  <link href="/web/static/css/index.css" rel="stylesheet" />
+  <script src="/web/static/js/index.js"></script>
+</head>
 
-    <main class="main">
-      <div
-        id="alert-container"
-        style="
-          display: none;
-          position: fixed;
-          top: 10px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 9999;
-          width: 80%;
-        "
-      >
+<body>
+  {{template "header.html"}}
+
+  <main class="main">
+
+    <div id="alert-container" style=" display: none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+      <div id="alert-message" class="alert" role="alert"></div>
+    </div>
+
+    <!-- <div id="alert-container-spinner" style=" display: block; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
         <div id="alert-message" class="alert" role="alert"></div>
+
+        <div class="spinner-border"></div>
+          <span class="visually-hidden">Creando la vm...</span>
+        </div>
+    </div> -->
+
+    <!-- Hero Section -->
+    <section class="gradient-bg position-relative min-vh-100 overflow-hidden pt-5 align-items-center">
+      <div class="text-secondary px-4 py-5 mt-5 text-center">
+        <div class="py-5">
+          <h1 class="display-5 fw-bold text-white">
+            Máquinas virtuales al instante <br />
+            con Desktop Cloud
+          </h1>
+          <div class="col-lg-6 mx-auto">
+            <p class="fs-5 mb-4 text-white">
+              Crea, gestiona y accede a máquinas virtuales con un solo clic.
+              <br />Simplifica tu experiencia con Desktop Cloud.
+            </p>
+          </div>
+        </div>
       </div>
-      <!-- Hero Section -->
-      <section
-        class="gradient-bg position-relative min-vh-100 overflow-hidden pt-5 align-items-center"
-      >
-        <div class="text-secondary px-4 py-5 mt-5 text-center">
-          <div class="py-5">
-            <h1 class="display-5 fw-bold text-white">
-              Máquinas virtuales al instante <br />
-              con Desktop Cloud
-            </h1>
-            <div class="col-lg-6 mx-auto">
-              <p class="fs-5 mb-4 text-white">
-                Crea, gestiona y accede a máquinas virtuales con un solo clic.
-                <br />Simplifica tu experiencia con Desktop Cloud.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-          <!-- TODO: Darle una acción a este boton de crear maquina (o escoger alguna opcion de las maquina de la seccion "instancias") -->
-          <a
-            ><button
-              type="button"
-              class="btn btn- btn-light btn-lg px-4 me-sm-3 fw-bold"
-              onclick="createQuickMachine()"
-            >
-              Lanzar Máquina Ahora
-            </button></a
-          >
-        </div>
-      </section>
-      <!-- /Hero Section -->
+      <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+        <a><button id="btnLanzarMaquina" type="button" class="btn btn- btn-light btn-lg px-4 me-sm-3 fw-bold" onclick="createQuickMachine()">
+            Lanzar Máquina Ahora
+          </button></a>
+      </div>
+    </section>
+    <!-- /Hero Section -->
 
-      <!-- Services Section -->
-      <section id="services" class="services section">
-        <!-- Section Title -->
-        <div class="container section-title">
-          <h2>Servicios</h2>
-          <p>
-            Descubre todas las caracteristicas y servicios que ofrece Desktop
-            Cloud
-          </p>
-        </div>
-        <!-- End Section Title -->
+    <!-- Services Section -->
+    <section id="services" class="services section">
+      <!-- Section Title -->
+      <div class="container section-title">
+        <h2>Servicios</h2>
+        <p>
+          Descubre todas las caracteristicas y servicios que ofrece Desktop
+          Cloud
+        </p>
+      </div>
+      <!-- End Section Title -->
 
-        <div class="container">
-          <div class="row row-cols-2 gy-4 align-items-center">
-            <img
-              class="col-3-5 offset-md-1 offset-xs-5"
-              src="/web/static/img/maquina-volatil.png"
-              alt=""
-            />
-            <div class="col-6 offset-md-1">
-              <div class="service-item d-flex">
-                <div>
-                  <h4 class="title">Máquinas efímeras</h4>
-                  <p class="description">
-                    Crea máquinas virtuales de corta duración en un entorno
-                    totalmente limpio. Toda información almacenada será
-                    eliminada una vez la Máquina Virtual sea detenida.
-                  </p>
-                </div>
+      <div class="container">
+        <div class="row row-cols-2 gy-4 align-items-center">
+          <img class="col-3-5 offset-md-1 offset-xs-5" src="/web/static/img/maquina-volatil.png" alt="" />
+          <div class="col-6 offset-md-1">
+            <div class="service-item d-flex">
+              <div>
+                <h4 class="title">Máquinas efímeras</h4>
+                <p class="description">Crea máquinas virtuales de corta duración. Toda información almacenada será
+                  eliminada la sesión temporal sea terminada.</p>
               </div>
             </div>
+          </div>
 
-            <img
-              class="col-3-5 offset-md-1 offset-xs-5 mb-3"
-              src="/web/static/img/usuario-invitado.png"
-              alt=""
-            />
-            <div class="col-6 offset-md-1 offset-xs-5 mb-3">
-              <div class="service-item d-flex">
-                <div>
-                  <h4 class="title">Uso sin registro</h4>
-                  <p class="description">
-                    Para usar los servicios de Desktop Cloud no necesita
-                    registrarse.
-                  </p>
-                </div>
+          <img class="col-3-5 offset-md-1 offset-xs-5 mb-3" src="/web/static/img/usuario-invitado.png" alt="" />
+          <div class="col-6 offset-md-1 offset-xs-5 mb-3">
+            <div class="service-item d-flex">
+              <div>
+                <h4 class="title">Uso sin registro</h4>
+                <p class="description">
+                  Para usar los servicios de Desktop Cloud no necesita
+                  registrarse.
+                </p>
               </div>
             </div>
+          </div>
 
-            <img
-              class="col-3-5 offset-md-1 offset-xs-5"
-              src="/web/static/img/distroSO.png"
-              alt=""
-            />
-            <div class="col-6 offset-md-1 offset-xs-5">
-              <div class="service-item d-flex">
-                <div>
-                  <h4 class="title">Múltiples distribuciones</h4>
-                  <p class="description">
-                    Crea máquinas virtuales con diversas distribuciones de
-                    Linux, como Fedora, Ubuntu, Alpine o Debian.
-                  </p>
-                </div>
+          <img class="col-3-5 offset-md-1 offset-xs-5" src="/web/static/img/distroSO.png" alt="" />
+          <div class="col-6 offset-md-1 offset-xs-5">
+            <div class="service-item d-flex">
+              <div>
+                <h4 class="title">Múltiples distribuciones</h4>
+                <p class="description">
+                  Crea máquinas virtuales con diversas distribuciones de
+                  Linux, como Fedora, Ubuntu, Alpine o Debian.
+                </p>
               </div>
             </div>
-
-            <!-- TODO: Agreguar más caracteristicas de Desktop Cloud si se le ocurren yeye -->
-            <!--       Como agregar lo de las instancias de docker-->
-          </div>
-        </div>
-      </section>
-      <!-- /Services Section -->
-
-      <!-- TODO: Faq Section -->
-      <!-- Esta sección podria ser interesante incluirla, agregar las-->
-      <!-- preguntas y respuestas más cómunes en esta pagina web-->
-
-      <!-- TODO: Call To Action Section -->
-      <!-- Esta sección tambien me parece interesante, pero no se que -->
-      <!-- se podría agregar ahí, o que img usar -->
-    </main>
-
-    <!-- Clients Section -->
-    <section id="clients" class="clients section bg-light">
-      <div class="container justify-content-center">
-        <div class="row gy-4 justify-content-center">
-          <div class="col-xl-2 col-md-3 col-6 client-logo">
-            <img src="/web/static/img/uniquindio-logo.png" alt="" />
           </div>
 
-          <div class="col-xl-2 col-md-3 col-6 client-logo">
-            <img src="/web/static/img/grid-logo.png" alt="" />
-          </div>
+          <!-- TODO: Agreguar más caracteristicas de Desktop Cloud si se le ocurren yeye -->
+          <!--       Como agregar lo de las instancias de docker-->
         </div>
       </div>
     </section>
-    <!-- /Clients Section -->
+    <!-- /Services Section -->
 
-    {{template "footer.html"}}
+    <!-- TODO: Faq Section -->
+    <!-- Esta sección podria ser interesante incluirla, agregar las-->
+    <!-- preguntas y respuestas más cómunes en esta pagina web-->
 
-    <script>
-      // Función para crear una máquina virtual de manera rápida
-      function createQuickMachine() {
-        // Se redirige a la página de creación de máquinas virtuales
-        // Esto es pa que no me manden los datos por la URL (porque pa que sioque)
-        event.preventDefault();
+    <!-- TODO: Call To Action Section -->
+    <!-- Esta sección tambien me parece interesante, pero no se que -->
+    <!-- se podría agregar ahí, o que img usar -->
+  </main>
 
-        fetch("/api/quick-machine", {
-          method: "POST", // Método POST
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({}),
-        })
-          .then((response) => {
-            if (response.status === 200) {
-              //redireccionar
-              window.location.href = "/mainpage/control-machine";
-            } else {
-              response.text().then(errorText => {
+  <!-- Clients Section -->
+  <section id="clients" class="clients section bg-light">
+    <div class="container justify-content-center">
+      <div class="row gy-4 justify-content-center">
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="/web/static/img/uniquindio-logo.png" alt="" />
+        </div>
+
+        <div class="col-xl-2 col-md-3 col-6 client-logo">
+          <img src="/web/static/img/grid-logo.png" alt="" />
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /Clients Section -->
+
+  {{template "footer.html"}}
+
+  <script>
+    // Función para crear una máquina virtual de manera rápida
+    function createQuickMachine() {
+      // Se redirige a la página de creación de máquinas virtuales
+      // Esto es pa que no me manden los datos por la URL (porque pa que sioque)
+      event.preventDefault();
+
+      // Para que no haya una sobrecarga de creacion de vms (el usuario le de muchas veces click al boton)
+      // se deshabilita el boton y se muestra una alerta
+      document.getElementById("btnLanzarMaquina").classList.add("disabled"); // desactivado pero con bootrap (visual)
+      document.getElementById("btnLanzarMaquina").setAttribute("disabled", true); // desactivado nativo (funcional, ya no se le puededar cli)
+      showAlert("Creando y lanzando la máquina virtual instantanea. . .", "info");
+
+
+      fetch("/api/quick-machine", {
+        method: "POST", // Método POST
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({}),
+      })
+        .then((response) => {
+          document.getElementById("btnLanzarMaquina").classList.remove("disabled");
+          document.getElementById("btnLanzarMaquina").removeAttribute("disabled");
+
+          if (response.status === 200) {
+            //redireccionar
+            window.location.href = "/mainpage/control-machine";
+          } else {
+            response.text().then(errorText => {
               console.error("Error: " + response.status + " | " + errorText);
               showAlert("No se pudo crear la maquina. Error: " + response.status + " | " + errorText, "danger");
             });
-            }
-            return response.json();
-          })
-          .then((data) => {
-            console.log("Respuesta:", data);
-          })
-          .catch((error) => {
-            showAlert("Error al crear la máquina virtual" + error, "danger");
-            console.error("Error: " + error);
-          });
-      }
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Respuesta:", data);
+        })
+        .catch((error) => {
+          showAlert("Error al crear la máquina virtual" + error, "danger");
+          console.error("Error: " + error);
+        });
+    }
 
-      function showAlert(message, alertType) {
-        var alertBox = document.getElementById("alert-message");
-        alertBox.innerText = "" + message;
-        alertBox.className = "alert alert-" + alertType;
-        var alertContainer = document.getElementById("alert-container");
-        alertContainer.style.display = "block";
+    function showAlert(message, alertType) {
+      var alertBox = document.getElementById("alert-message");
+      alertBox.innerText = "" + message;
+      alertBox.className = "alert alert-" + alertType;
+      var alertContainer;
+            
+      alertContainer = document.getElementById("alert-container");
+      alertContainer.style.display = "block";        
 
-        // Ocultar la alerta después de 5 segundos (5000 milisegundos)
-        setTimeout(function () {
-          alertContainer.style.display = "none";
-        }, 5000);
+      // Si la alerta es "info", es porque se está creando una vm, entonces se muestra un spinner con el msg
+      if (alertType === "info") {
+        alertBox.innerHTML = `
+          <div class="d-flex align-items-center mx-2">
+            <div class="spinner-border me-3" role="status">
+              <span class="visually-hidden">Creando la vm...</span>
+            </div>
+            <h5 class="my-0 flex-grow-1">` + message + `</h5>
+          </div>
+        `;
       }
-    </script>
-  </body>
+      
+      // Ocultar la alerta después de 5 segundos (5000 milisegundos)
+      setTimeout(function () {
+        alertContainer.style.display = "none";
+      }, 10000);
+    }
+  </script>
+</body>
+
 </html>

@@ -373,7 +373,64 @@ func Checkhost(c *gin.Context) {
 	}
 }
 
-/* ToDo: Mira para que se utiliza esta función
+func ConnectionMachine(c *gin.Context) {
+
+	// Acceder a la sesión
+	session := sessions.Default(c)
+	email := session.Get("email")
+	machineIP := c.Query("machineIP")
+	machineName := c.Query("machineName")
+
+	// Recuperar o inicializar un arreglo de máquinas virtuales en la sesión del usuario
+	log.Println("Se ha envidado el email para consultar sus host")
+	machines, _ := Utilities.ConsultMachineFromServer(email.(string))
+
+	log.Println("Se ha procesado la solicitud")
+	hosts, _ := Utilities.CheckAvaibleHost()
+
+	if sessionMachines, ok := session.Get("machines").([]Models.VirtualMachine); ok {
+		log.Println("Se han encontrado las maquinas asociadas al usuario")
+		machines = sessionMachines
+	} else {
+		// Inicializa un nuevo arreglo de máquinas si no existe en la sesión
+		log.Println("No se han encontrado las maquinas asociadas al usuario")
+		machines = []Models.VirtualMachine{}
+	}
+
+	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
+	session.Set("machinesChange", true)
+	session.Save()
+
+	machinesChange := session.Get("machinesChange")
+	clientIP := c.ClientIP()
+	showNewButton := false
+
+	if len(hosts) <= 0 {
+		log.Println("No existen host para realizar esta operación, se deben registrar los host")
+		return
+	}
+	for _, host := range hosts {
+		// Depuración
+		if host.Ip == clientIP {
+			showNewButton = true
+			break
+		}
+	}
+
+	c.HTML(http.StatusOK, "sshMachine.html", gin.H{
+		"email":          session.Get("email").(string),
+		"rol":            session.Get("rol").(uint8),
+		"machines":       machines,
+		"machinesChange": machinesChange,
+		"hosts":          hosts,
+		"showNewButton":  showNewButton,
+		"clientIP":       clientIP,
+		"machineIP":      machineIP,
+		"machineName":    machineName,
+	})
+}
+
+/* TODO: Mira para que se utiliza esta función
 func Mvtemp(c *gin.Context) {
 
 	// Deserializa el JSON recibido
