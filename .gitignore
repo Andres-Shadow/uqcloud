@@ -1,5 +1,4 @@
 # Environment files
-servidor_procesamiento/Procesador/Environment/**
 *.env
 *endpoints.txt
 *JSONS.txt
