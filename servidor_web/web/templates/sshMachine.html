@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Desktop Cloud Uniquindio</title>
+  <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
+  <link rel="stylesheet" type="text/css" href="/web/static/css/styleControlMachine.css">
+
+  <!-- JQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- JS propios (como estos usan JQuery deben estar despues de importar JQuery) -->
+  <script src="/web/static/js/mainpage.js"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
+  <link href="/web/static/css/styles.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- FontAwesome Icons -->
+  <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+</head>
+
+<body style="background-color: #fff;">
+
+  <!-- NAVBAR -->
+  {{template "mainpage-navbar.html"}}
+
+  <div id="layoutSidenav">
+
+    {{template "mainpage-sidebar.html" .}}
+
+    <div id="layoutSidenav_content">
+
+        <h4>Máquina Virtual: {{.machineName}}</h4>
+
+        <!-- <iframe src="https://{{.machineIP}}:4200" title="ConnectionMachine" sandbox></iframe> -->
+         <!-- SI NO SIRVE BIEN ES POR EL "HTTPS" O "HTTP" o porque no se puede acceder a una pagina insegura -->
+          <!-- creo que ya tocaria cambiar los permisos que da shellinabxo  -->
+        <iframe src="http://{{.machineIP}}:4200" 
+          title="ConnectionMachine" 
+          sandbox="allow-scripts allow-same-origin" 
+          width="100%" height="100%"></iframe>
+
+      
+
+      <!-- Footer -->
+      <div class="bg-light mt-auto">
+        {{template "mainpage-footer.html"}}
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>

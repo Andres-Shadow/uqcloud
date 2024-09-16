@@ -99,6 +99,7 @@ func main() {
 		userGroup.GET("/profile", handlers.ProfilePage)
 		userGroup.GET("/imagenes", handlers.GestionImagenes)
 		userGroup.GET("/contenedores", handlers.GestionContenedores)
+		userGroup.GET("/connection-machine", handlers.ConnectionMachine)
 		// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 		// router.GET("/helpCenter", handlers.HelpCenterPage)
 	}

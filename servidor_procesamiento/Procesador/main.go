@@ -42,6 +42,9 @@ func main() {
 		fmt.Println("Iniciando servidor con llave privada: ", *privateKeyPath)
 	}
 
+	// Inicializa el RoundRobinManager
+	setRoundRobinManager()
+
 	r := mux.NewRouter()
 
 	// Inicializa la ruta de la llave privada SSH
@@ -116,6 +119,11 @@ func registerHostData() {
 	}
 }
 
+func setRoundRobinManager() {
+	registeredHosts := database.GetHosts()
+	config.RoundRobinManager = config.NewRoundRobin(registeredHosts)
+}
+
 /*
 Funciòn que se encarga de configurar los endpoints, realizar las validaciones correspondientes a los JSON que llegan
 por solicitudes HTTP. Se encarga tambièn de ingresar las peticiones para gestiòn de MV a la cola.
@@ -182,8 +190,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
 
 	// Endpoint para crear un usuario nuevo tempral
-	r.HandleFunc(apiPrefix+"temp-user", handlers.CreateTempUserHandler).Methods("POST") 
-
+	r.HandleFunc(apiPrefix+"temp-user", handlers.CreateTempUserHandler).Methods("POST")
 
 	/*
 		-----------------------
