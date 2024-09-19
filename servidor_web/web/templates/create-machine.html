@@ -29,7 +29,7 @@
 <body style="background-color: #d9d9d9ff;">
 
   <!-- NAVBAR -->
-  {{template "mainpage-navbar.html"}}  
+  {{template "mainpage-navbar.html"}}
 
   <div id="layoutSidenav">
 
@@ -37,16 +37,18 @@
     <!-- Nota: Cuando se le pone el '.' al final de este llamado del template sidebar es para -->
     <!--       mandar los datos-variables que son asignados a este html a traves del handler -->
     <!--       En este caso: email, machines, rol-->
-    {{template "mainpage-sidebar.html" .}}    
+    {{template "mainpage-sidebar.html" .}}
 
-    <div id="layoutSidenav_content">      
-      
-      <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+    <div id="layoutSidenav_content">
+
+      <div id="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert"
+        style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
         {{ .message }}
         <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
 
-      <div id="alert-container" style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+      <div id="alert-container"
+        style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
         <div id="alert-message" class="alert" role="alert">
         </div>
       </div>
@@ -301,19 +303,6 @@
 
                   </div>
 
-
-                  <!-- <div class="mb-3">
-                    <label for="nameVM" class="form-label">Nombre</label>
-                    <input type="text" class="form-control" id="nameVM"
-                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
-                  </div> -->
-
-                  <!-- <div class="mb-3">
-                    <label for="exampleInputEmail1" class="form-label">Email address</label>
-                    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-                    <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
-                  </div> -->
-
                 </div>
               </div>
             </div>
@@ -331,24 +320,14 @@
               </h2>
               <div id="panelAdvDetailsVM" class="accordion-collapse collapse">
                 <div class="accordion-body">
-                  <!-- <h5 class="card-title">Selecciona un Host </h5> -->
-                  <h6 class="form-text">Selecciona en que Host quieres que esta máquina virtual quede
-                    almacenada. Por defecto, la máquina se almacena un lugar aleatorio.</h6>
-
-                  <!-- <div class="mb-3">
-                    <label for="nameVM" class="form-label">Host</label>
-                    <input type="text" class="form-control" id="nameVM"
-                      placeholder="Ej: VMproYT777 o Mi Maquina Virtual">
-                  </div> -->
+                  <h6 class="form-text">Selecciona en que Host (o algoritmo de asignación) estará la máquina 
+                    virtual almacenada. Por defecto, la máquina se almacenará en un Host elegido por el algoritmo
+                    RoundRobin.</h6>
 
 
-                  <!-- Seleccionar lugar de creación de vm -->
-
+                  <!-- Sección para seleccionar lugar de creación de vm -->
                   <div class="card bg-light">
                     <div class="host-card-body container-fluid">
-                      <!-- <form method="post" action="/api/checkhost" id="formulario2"> -->
-
-
 
                       <!-- START HOSTMACHINE-->
                       <div class="row justify-content-center mt-3" id="hostVM">
@@ -357,14 +336,22 @@
                         <!-- Para coger los valores de este grupo de radio botones: https://stackoverflow.com/questions/21673985/bootstrap-radio-button-get-selected-value-on-submitting-the-form -->
                         <!-- var OpSys = $('#OpSys input:radio:checked').val(); -->
 
-                        {{if and $.showNewButton (eq $.showNewButton true)}}
-                        <label>
-                          Estas en este momento en un Host por lo que cuando
-                          uses el Boton Aleatorio tendrá prioridad para este Host,
-                          si este host llegase a tener problemas se utilizara
-                          una seleccion aleatoria automaticamente
-                        </label>
-                        {{end}}
+                        <!-- Card RoundRobin -->
+                        <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
+                          <label>
+                            <input type="radio" name="hostVM" value="-1" selected checked
+                              class="host-card-input-element" />
+
+                            <div class="card card-default host-card-input">
+                              <div class="host-card-body text-center">
+                                <i class="fa-solid fa-group-arrows-rotate" style="font-size: 25px;"></i>
+                                <p><strong>Round Robin</strong></p>
+                              </div>
+                            </div>
+
+                          </label>
+                        </div>
+
 
                         <!-- Card Aleatorio -->
                         <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
@@ -373,18 +360,18 @@
                             SOLUCIONADO CON UN MARGIN X AUTO INCREIBLE. UN MARGIN???? COMO NO SE ME HABIA OCURRIDO
                             LA SOLUCION MAS SENCILLA ES LA QUE UNO PIENSA -->
                           <label>
-                            <input type="radio" name="hostVM" value="0" selected checked
-                              class="host-card-input-element" />
+                            <input type="radio" name="hostVM" value="0" class="host-card-input-element" />
 
                             <div class="card card-default host-card-input">
                               <div class="host-card-body text-center">
-                                <i class="fa-solid fa-desktop" style="font-size: 25px;"></i>
+                                <i class="fa-solid fa-shuffle" style="font-size: 25px;"></i>
                                 <p><strong>Aleatorio</strong></p>
                               </div>
                             </div>
 
                           </label>
-                        </div>
+                        </div>                        
+
 
                         {{range $index, $element := .hosts}}
 
@@ -403,8 +390,7 @@
                         </div>
 
                         {{end}}
-
-
+                        
                         <!-- ----------------------- TESTING ---------------------------- -->
 
                         <!-- <div class="col-md-3 col-lg-3 col-sm-3 pb-3 mx-auto">
@@ -439,17 +425,12 @@
           </div>
           <!-- Fin  Accordion: Detalles avanzados -->
 
-          <!-- <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-success" fill="rgb(255, 255, 255)">
-              CREAR MÁQUINA
-            </button>
-          </div> -->
-
           <div class="row">
             <div class="col-7">
               <p>
                 <em><small>
-                  <strong>Recuerda</strong> que las máquinas que creas son efímeras y <strong>una vez creadas no las puedes modificar</strong>. Asegúrate de elegir correctamente las características de tu máquina virtual.
+                  <strong>Recuerda</strong> que las máquinas que creas son efímeras y <strong>una vez creadas no las
+                    puedes modificar</strong>. Asegúrate de elegir correctamente las características de tu máquina virtual.
                 </small></em>
               </p>
             </div>
@@ -495,7 +476,7 @@
       machineDiv.style.display = "block";
 
       fetch('/api/createMachine', {
-        method: 'POST', // Método POST
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -518,9 +499,7 @@
             notifyCreateMachine()
             return response.json();
           }
-          else {             
-            // showAlert("No se pudo crear la maquina. Error: " + response.status+ " | "+ response.text(), "danger");
-            // console.log("response text: ", response.text())
+          else {
 
             const form = document.getElementById("formCreateMachine");
             form.style.display = "block";
@@ -531,24 +510,15 @@
               console.error("Error: " + response.status + " | " + errorText);
               showAlert("No se pudo crear la maquina. Error: " + response.status + " | " + errorText, "danger");
             });
-          }          
+          }
         })
         .then(data => {
           console.log('Respuesta:', data);
         })
         .catch(error => {
           showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
-          console.error('Error: '+ error);
+          console.error('Error: ' + error);
         })
-
-      // anterior iteracion 2 
-      // .then(response => response.json()) // Procesar respuesta
-      // .then(data => {
-      //   console.log('Respuesta:', data); // Mostrar respuesta
-      // })
-      // .catch(error => {
-      //   console.error('Error:', error); // Manejar errores
-      // });
     }
   </script>
 
@@ -561,7 +531,7 @@
       document.getElementById('cpuVMValue').textContent = this.value + ' Núcleo/s';
     });
 
-    
+
     function showAlert(message, alertType) {
       var alertBox = document.getElementById("alert-message");
       alertBox.innerText = "" + message;
@@ -573,17 +543,6 @@
       setTimeout(function () {
         alertContainer.style.display = "none";
       }, 5000);
-    }
-
-    // TODO: Estas variables que? no se usan pa na
-    var successMessage = "{{ .SuccessMessage }}";
-    if (successMessage !== "") {
-      showAlert(successMessage, "success");
-    }
-
-    var errorMessage = "{{ .ErrorMessage }}";
-    if (errorMessage !== "") {
-      showAlert(errorMessage, "danger");
     }
 
     // Con esta funcion se le cambia la tarjetica que muestra que se está creando la vm
@@ -606,23 +565,10 @@
       `;
     }
 
-// TODO: CUAL USAR? showMessage o show Alert
-    function showMessage(message, type) {
-      const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
-      messageBox.textContent = "" + message;
-      messageBox.style.display = 'block'; // Muestra el mensaje
 
-      // Oculta el mensaje después de 5 segundos
-      setTimeout(() => {
-        messageBox.style.display = 'none';
-      }, 5000);
-    }
-
-    
     // TESTS
     // setTimeout(function () {
     //   showAlert("No se pudo crear la maquina. Error: ", "danger");
-    //   // showMessage('No se pudo crear la maquina. Error: ', 'errorMessage');
     // }, 2500);
 
 
