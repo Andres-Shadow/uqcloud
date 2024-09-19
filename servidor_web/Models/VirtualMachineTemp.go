@@ -14,3 +14,7 @@ type VirtualMachineTemp struct {
 	Sistema_operativo string `json:"vm_so"`
 	Distribucion_SO   string `json:"vm_so_distro"`
 }
+
+type StateMachineRequest struct {
+	NombreMaquina string `json:"vm_name"`
+}

@@ -123,12 +123,9 @@ var ventanaConfiguracionAbierta = false;
                                 <td>${machine.vm_state}</td>
                                 
                                 <td class="button-column">
-                                    <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
-                                    <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;">
+                                    <button onclick="changeStateMachine('${machine.vm_name}', 'startMachine')" class="btn btn-link" style="padding: 0; margin: 0;">
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
-                                    </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
                                     </button>
@@ -151,9 +148,10 @@ var ventanaConfiguracionAbierta = false;
                                     
                                     <!-- Muestra el botón solo si la IP está asignada -->
                                     ${machine.vm_ip !== "" ? `
-                                    <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="copiarText('${machine.vm_ip}')">
-                                        <img style="width: 30px;" src="/web/static/img/icons/copy.png" alt="Botón 5">
-                                    </button>
+
+                                    <a href="http://${machine.vm_ip}:4200" target="_blank">
+                                        <i class="fa-solid fa-up-right-from-square"></i>
+                                    </a>                           
                                     ` : ''}
                                 </td>
 
@@ -161,21 +159,15 @@ var ventanaConfiguracionAbierta = false;
                                 <td>${machine.vm_state}</td>
                                 
                                 <td class="button-column">
-                                    <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
-                                    <button type="submit" class="btn btn-link"" style="padding: 0; margin: 0;">
+                                    <button onclick="changeStateMachine('${machine.vm_name}', 'stopMachine')" class="btn btn-link" style="padding: 0; margin: 0;">
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
-                                    </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 3">
-                                    </button>
-                                    <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                        <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
-                                        <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
-                                            <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 4">
-                                        </button>
-                                    </form>
+                                    </button>                                    
+                                    <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
+                                        <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 4">
+                                    </button>                                    
                                 </td>
                             </tr>`
                             );
@@ -191,21 +183,15 @@ var ventanaConfiguracionAbierta = false;
                                 <td>${machine.vm_state}</td>
                             
                                 <td class="button-column">
-                                    <form method="post" action="/powerMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                    <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
-                                    <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
+                                    <button onclick="changeStateMachine('${machine.vm_name}', 'startMachine')" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
                                         <img style="width: 35px;" src="/web/static/img/icons/power.png" alt="Botón 1">
                                     </button>
-                                    </form>
                                     <button type="button" class="btn btn-link" style="padding: 0; margin: 0;" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}','${machine.vm_so}','${machine.vm_so_distro}', '${machine.vm_ip}','${machine.vm_ram}','${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
                                         <img style="width: 35px;" src="/web/static/img/icons/info.png" alt="Botón 4">
+                                    </button>                                
+                                    <button class="btn btn-link" style="padding: 0; margin: 0;" disabled>
+                                        <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 3">
                                     </button>
-                                    <form method="post" action="/deleteMachine" style="display: inline-block; padding: 0; margin: 0; border: none;">
-                                        <input type="hidden" name="nombreMaquina" value="${machine.vm_name}">
-                                        <button type="submit" class="btn btn-link" style="padding: 0; margin: 0;" disabled>
-                                            <img style="width: 30px;" src="/web/static/img/icons/delete.png" alt="Botón 3">
-                                        </button>
-                                    </form>
                                 </td>
                             </tr>`
                             );
@@ -237,6 +223,37 @@ var ventanaConfiguracionAbierta = false;
         // Elimina el elemento de entrada temporal
         document.body.removeChild(tempInput);
     }    
+
+    function changeStateMachine(vm_name, state) {
+        fetch('/api/'+state, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', },
+            body: JSON.stringify({ vm_name: vm_name, }),
+        })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json(); 
+            } else if (response.status === 400 || response.status === 500) {
+                return response.json();
+            } else {
+                throw new Error('Error en el servidor web | response status raro');
+            }
+        })
+        .then(data => {
+            if (data.SuccessMessage) {
+                const successMessage = data.SuccessMessage;
+                showAlert(successMessage, "success");
+            } else if (data.ErrorMessage) {
+                const errorMessage = data.ErrorMessage;
+                showAlert(errorMessage, "danger");
+            }
+        })
+        .catch(error => {
+            showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+            console.error('Error: ' + error);
+        })
+    }
+    
 
     // Llama a actualizarTabla al cargar la página y periódicamente para mantener los datos actualizados
     actualizarTabla();
