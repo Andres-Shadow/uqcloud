@@ -286,24 +286,29 @@ func StopMachine(c *gin.Context) {
 
 // Metodo para eliminar una máquina virutal
 func DeleteMachine(c *gin.Context) {
-	nombre := c.PostForm("vmnameDelete")
+	var req Models.StateMachineRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request | Se envió mal el nombre de la vm"})
+		return
+	}
+	nombre := req.NombreMaquina
 	confirmacion, err := Utilities.DeleteMachineFromServer(nombre)
 
 	log.Println("Nombre de la VM a elimianr: ", nombre)
 	if err != nil {
 		log.Println("Error al eliminar la maquina virtual: ", err.Error())
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{"error": "Error al eliminar la maquina" + err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al eliminar la maquina" + err.Error()})
 		return
 	}
 	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		log.Println("La maquina virutal ha sido eliminada con exito")
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"SuccessMessage": "Solicitud para eliminar la màquina enviada con exito."})
 	} else {
 		// Registro erróneo, muestra un mensaje de error en el HTML
 		log.Println("Error al enviar la solicito para eliminar la maquina virtual")
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"ErrorMessage": "La solicitud para eliminar la màquina no fue exitosa. Intente de nuevo"})
 	}
 }
@@ -323,7 +328,7 @@ func GetMachines(c *gin.Context) {
 	// Obtener los datos de las máquinas utilizando el email del usuario
 	machines, err := Utilities.ConsultMachineFromServer(userEmail)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNoContent, gin.H{"error": err.Error()})
 		return
 	}
 

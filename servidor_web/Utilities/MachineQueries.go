@@ -52,6 +52,11 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	// }()
 
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
+	log.Println("Respuesta del servidor: ", resp.Status)
+	if resp.StatusCode == http.StatusNoContent {
+		log.Println("Informacion: No fue encontrada ninguna máquina virtual para este usuario, ", err)
+		return nil, errors.New("no fue encontrada ninguna máquina virtual")
+	}
 	if resp.StatusCode != http.StatusOK {
 		log.Println("Error: La solicitud no fue exitosa, ", err)
 		return nil, errors.New("la solicitud al servidor no fue exitosa")

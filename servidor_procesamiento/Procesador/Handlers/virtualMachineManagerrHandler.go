@@ -67,14 +67,14 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	machines, err := database.ConsultMachines(persona)
-	if err != nil && err.Error() != "No Machines Found" {
+	if err != nil && err.Error() != "no Machines Found" {
 		fmt.Println(err)
 		log.Println("Error al consultar las màquinas del usuario")
 		http.Error(w, "Error al consultar las màquinas del usuario", http.StatusBadRequest)
 		return
 	} else if err != nil {
 		fmt.Println(err)
-		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusBadRequest)
+		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusNoContent)
 		return
 	}
 
