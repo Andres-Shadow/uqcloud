@@ -99,7 +99,7 @@ func PreregisterHostJsonData() {
 
 func SetUpHostAndDisk(host models.Host) {
 
-	var diskNames []string = []string{"Alpine", "Febora", "ubuntu", "debian"}
+	var diskNames []string = []string{"Alpine", "fedora", "ubuntu", "Debian"}
 	var auxDisk models.Disco = models.Disco{}
 	const diskPath = "c:\\uqcloud"
 

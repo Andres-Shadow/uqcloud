@@ -194,21 +194,13 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
 		return Models.VirtualMachineTemp{}, errors.New("missing required fields")
 	}
 
-	// TODO: Quemar la estrategia para la asignación del host, por defecto es "roundrobin" y despues
-	// se verifica si seleccionó otra estrategía
-	// arrivedVM.Hostname = "roundrobin"
+	// TODO: Quemar un boton con el id -1 para que sea por defecto la opción roundrobin @Yantic
+		
 
 	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
 	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
 	hosts, _ := Utilities.CheckAvaibleHost()
 	if arrivedVM.Host_id == 0 {
-		// rand.Seed(time.Now().UnixNano())
-		// randomHost := rand.Intn(len(hosts))
-		// log.Println("RANDOM host: ", hosts[randomHost])
-
-		// newVM.Host_id = hosts[randomHost].Id
-		// newVM.Hostname = hosts[randomHost].Name
-		// log.Println("RANDOM host name: ", hosts[randomHost].Name)
 
 		arrivedVM.Hostname = "aleatorio"
 

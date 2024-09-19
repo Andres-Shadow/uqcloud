@@ -34,7 +34,7 @@ type RoundRobin struct {
 
 var RoundRobinManager *RoundRobin = nil
 
-// // Constructor para la estructura RoundRobin
+// Constructor para la estructura RoundRobin
 func NewRoundRobin(hosts []models.Host) *RoundRobin {
 	return &RoundRobin{
 		Hosts:       hosts,
