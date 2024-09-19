@@ -147,6 +147,14 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		return "Error al crear los registros de la máquina virtual en la base de datos"
 	}
 
+	// En caso de la solicitud sea desde el boton de "Lanzar Máquina Ahora"
+	if specs.Nombre == "QuickGuest" {
+		log.Println("Iniciando automáticamente la máquina virtual rápida en 3 segundos...")
+		// Iniciar la máquina virtual después de 3 segundos de forma asincrona
+		go StartVM(virtualMachineName, host.Hostname)
+		return "Máquina virtual creada y en proceso de inicio"
+	}
+
 	return "solicitud invalida"
 }
 
