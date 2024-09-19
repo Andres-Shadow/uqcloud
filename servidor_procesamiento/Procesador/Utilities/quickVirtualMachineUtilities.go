@@ -41,7 +41,7 @@ func CreateQuickVirtualMachine(clientIP string) string {
 func generateQuickVirtualMachine(email string, clientIP string, distro string) {
 
 	maquina_virtual := models.Maquina_virtual{
-		Nombre:                         "Guest",
+		Nombre:                         "QuickGuest",
 		Sistema_operativo:              "Linux",
 		Distribucion_sistema_operativo: distro,
 		Ram:                            1024,

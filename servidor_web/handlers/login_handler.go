@@ -196,7 +196,7 @@ func QuickMachine(c *gin.Context) {
 		session.Set("rol", uint8(0))
 		session.Save()
 
-		confirmacion, _ := Utilities.VerifyMachineCreated("Guest", mensaje)
+		confirmacion, _ := Utilities.VerifyMachineCreated("QuickGuest", mensaje)
 
 		if !confirmacion {
 			log.Println("No fue posible crear la maquina")
