@@ -52,6 +52,11 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	// }()
 
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
+	log.Println("Respuesta del servidor: ", resp.Status)
+	if resp.StatusCode == http.StatusNoContent {
+		log.Println("Informacion: No fue encontrada ninguna máquina virtual para este usuario, ", err)
+		return nil, errors.New("no fue encontrada ninguna máquina virtual")
+	}
 	if resp.StatusCode != http.StatusOK {
 		log.Println("Error: La solicitud no fue exitosa, ", err)
 		return nil, errors.New("la solicitud al servidor no fue exitosa")
@@ -173,10 +178,30 @@ func VerifyMachineCreated(vmName, email string) (bool, error) {
 }
 
 // Encender Maquina virtual
-func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
+func StartMachineFromServer(nombre string, clientIP string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.START_VM_URL)
 	payload := map[string]interface{}{
 		"tipo_solicitud": "start",
+		"nombreVM":       nombre,
+		"clientIP":       clientIP,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
+	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
+		return false, err
+	}
+
+	return confirmacion, nil
+
+}
+
+// Apagar Maquina virtual
+func StopMachineFromServer(nombre string, clientIP string) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.STOP_VM_URL)
+	payload := map[string]interface{}{
+		"tipo_solicitud": "stop",
 		"nombreVM":       nombre,
 		"clientIP":       clientIP,
 	}

@@ -9,11 +9,12 @@ var API_PREFIX = "/api/v1/"
 
 //URL LOGIN
 var LOGIN_URL = API_PREFIX + "login"
-var TEMP_USER_ACCOUNT = API_PREFIX + "temp-user" 
+var TEMP_USER_ACCOUNT = API_PREFIX + "temp-user"
 
 // URL asociadas a las maquinas virtuales
 var VIRTUAL_MACHINE_URL = API_PREFIX + "virtual-machine"
 var START_VM_URL = API_PREFIX + "start-virtual-machine"
+var STOP_VM_URL = API_PREFIX + "stop-virtual-machine"
 var QUICK_VM = API_PREFIX + "quick-virtual-machine"
 
 // URL asociadas a los host

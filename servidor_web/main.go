@@ -109,8 +109,7 @@ func main() {
 	router.GET("/GetHost", handlers.GetHosts)
 
 	//TODO: Mirar después
-	router.POST("/powerMachine", handlers.PowerMachine)
-	router.POST("/deleteMachine", handlers.DeleteMachine)
+
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
 	router.POST("/DockerHub", handlers.CrearImagen)
@@ -131,6 +130,10 @@ func main() {
 	router.GET("/api/machines", handlers.GetMachines)
 
 	router.POST("/api/createMachine", handlers.MainSend)
+	router.POST("/api/startMachine", handlers.StartMachine)
+	router.POST("/api/stopMachine", handlers.StopMachine)
+	router.POST("/api/deleteMachine", handlers.DeleteMachine)
+
 	router.POST("/api/loginTemp", handlers.LoginTemp)
 	router.POST("/api/contendores", handlers.GetContendores)
 	router.POST("/api/imagenes", handlers.GetImages)
