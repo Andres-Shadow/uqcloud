@@ -41,62 +41,51 @@
 
     <div id="layoutSidenav_content">
 
-      <!--  -->
       <main>
 
-        <div class="container">
-          <!-- Div para la alerta centrada -->
-          <div id="alert-container">
-            <div id="alert-message" class="alert" role="alert">
+        <div id="alert-container"
+          style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+          <div id="alert-message" class="alert" role="alert">
+          </div>
+        </div>
+
+        <div class="px-2 py-2">
+
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h1 style="font-family: 'Arial', sans-serif; color: #333;">Máquinas Virtuales</h1>
+            </div>
+            <div class="centrar-botones">
+              <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
+                style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
+                Crear Máquina Virtual
+                <i class="fa-solid fa-circle-plus"></i>
+              </a>
+
             </div>
           </div>
 
-          <div class="container">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <h1 style="font-family: 'Arial', sans-serif; color: #333;">TUS MÁQUINAS VIRTUALES</h1>
-              </div>
-              <div class="centrar-botones">
-                <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
-                  style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
-                  Crear Máquina Virtual
-                  <img src="/web/static/img/icons/add.png" alt="Icono"
-                    style="width: 16px; height: 16px; margin-left: 5px;">
-                </a>
-
-                <!--  BUTTON VERSION -->
-                <!-- <button onclick="abrirVentanaEmergente()" type="button" class="btn btn-primary"
-                style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
-                Crear Máquina Virtual
-                <img src="/web/static/img/icons/add.png" alt="Icono"
-                  style="width: 16px; height: 16px; margin-left: 5px;">
-                </button> -->
-
-
-              </div>
-            </div>
-            <div class="table">
-              <table id="machine-table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>IP</th>
-                    <th>Distribución</th>
-                    <th>Estado</th>
-                    <th>Control</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Los datos se cargarán aquí dinámicamente -->
-                </tbody>
-              </table>
-            </div>
+          <div class="table container">
+            <table id="machine-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>IP</th>
+                  <th>Distribución</th>
+                  <th>Estado</th>
+                  <th>Control</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Los datos se cargarán aquí dinámicamente -->
+              </tbody>
+            </table>
           </div>
 
           <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
             <button type="button" class="btn-close" aria-label="Cerrar ventana"
               onclick="cerrarVentanaEmergenteEliminar()"></button>
-            
+
             <h2 class="centre-tittle">CONFIRMACIÓN DE ELIMINACIÓN</h2>
             <div class="form-group" style="text-align: center;">
               <label for="vmnameCreate">¿Está seguro que desea eliminar la máquina virtual?</label>
@@ -191,47 +180,36 @@
       }, 5000);
     }
 
-    // var successMessage = "{{ .SuccessMessage }}";
-    // if (successMessage !== "") {
-    //   showAlert(successMessage, "success");
-    // }
-
-    // var errorMessage = "{{ .ErrorMessage }}";
-    // if (errorMessage !== "") {
-    //   showAlert(errorMessage, "danger");
-    // }
-
-
     function deleteMachine() {
       vm_name = document.getElementById("vmnameDelete").value;
 
       fetch('/api/deleteMachine', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', },
-          body: JSON.stringify({ vm_name: vm_name, }),
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ vm_name: vm_name, }),
       })
-      .then(response => {
+        .then(response => {
           if (response.status === 200) {
-              return response.json(); 
+            return response.json();
           } else if (response.status === 400 || response.status === 500) {
-              return response.json();
+            return response.json();
           } else {
-              throw new Error('Error en el servidor web | response status raro');
+            throw new Error('Error en el servidor web | response status raro');
           }
-      })
-      .then(data => {
+        })
+        .then(data => {
           if (data.SuccessMessage) {
-              const successMessage = data.SuccessMessage;
-              showAlert(successMessage, "success");
+            const successMessage = data.SuccessMessage;
+            showAlert(successMessage, "success");
           } else if (data.ErrorMessage) {
-              const errorMessage = data.ErrorMessage;
-              showAlert(errorMessage, "danger");
+            const errorMessage = data.ErrorMessage;
+            showAlert(errorMessage, "danger");
           }
-      })
-      .catch(error => {
+        })
+        .catch(error => {
           showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
           console.error('Error: ' + error);
-      })
+        })
       cerrarVentanaEmergenteEliminar();
     }
 
