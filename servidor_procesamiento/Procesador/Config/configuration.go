@@ -100,11 +100,31 @@ func GetLastQueueSize() int {
 }
 
 // Función para recargar la configuración de Prometheus al iniciar el servidor
+// ToDo: Hacer funcionar la función
 func ReloadPrometheusConfig() {
 	updateConfigPrometheusURL := "http://prometheus:9090/-/reload"
-	// Petición POST para recargar la configuración de Prometheus
-	_, err := http.Post(updateConfigPrometheusURL, "application/json", nil)
+
+	// Realiza la solicitud POST
+	req, err := http.NewRequest("POST", updateConfigPrometheusURL, nil)
 	if err != nil {
-		fmt.Println("Error al recargar la configuración de Prometheus")
+		fmt.Println("Error creando la solicitud:", err)
+		return
 	}
+
+	// Envía la solicitud
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error haciendo la solicitud:", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	// Verifica el estado de la respuesta
+	if resp.StatusCode != http.StatusOK {
+		fmt.Printf("Error: Prometheus devolvió el código de estado %d\n", resp.StatusCode)
+		return
+	}
+
+	fmt.Println("Configuración de Prometheus recargada exitosamente")
 }

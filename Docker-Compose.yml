@@ -90,8 +90,7 @@ services:
       - GF_SECURITY_ALLOW_EMBEDDING=true  # Permitir embebidos
     volumes:
       - grafana-data:/var/lib/grafana
-      - ./metrics_config/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
-      - ./metrics_config/dashboard.json:/etc/grafana/provisioning/dashboards/dashboard.json
+      - ./metrics_config/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped
     networks:
       - general
