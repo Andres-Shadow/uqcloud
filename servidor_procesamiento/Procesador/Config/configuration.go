@@ -3,6 +3,7 @@ package config
 import (
 	"container/list"
 	"fmt"
+	"net/http"
 	models "servidor_procesamiento/Procesador/Models"
 	"sync"
 )
@@ -96,4 +97,14 @@ func GetMu() *sync.Mutex {
 
 func GetLastQueueSize() int {
 	return LastQueueSize
+}
+
+// Función para recargar la configuración de Prometheus al iniciar el servidor
+func ReloadPrometheusConfig() {
+	updateConfigPrometheusURL := "http://prometheus:9090/-/reload"
+	// Petición POST para recargar la configuración de Prometheus
+	_, err := http.Post(updateConfigPrometheusURL, "application/json", nil)
+	if err != nil {
+		fmt.Println("Error al recargar la configuración de Prometheus")
+	}
 }
