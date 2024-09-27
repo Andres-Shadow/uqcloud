@@ -96,26 +96,24 @@
           <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
             <button type="button" class="btn-close" aria-label="Cerrar ventana"
               onclick="cerrarVentanaEmergenteEliminar()"></button>
-
-            <form method="post" action="/deleteMachine">
-              <h2 class="centre-tittle">CONFIRMACIÓN DE ELIMINACIÓN</h2>
-              <div class="form-group" style="text-align: center;">
-                <label for="vmnameCreate">¿Está seguro que desea eliminar la máquina virtual?</label>
-                <div style="text-align: center;">
-                  <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
-                    style="background-color: #f2f2f2; width: 100%;cursor: not-allowed; text-align: center; margin-top: 20px;">
-                </div>
+            
+            <h2 class="centre-tittle">CONFIRMACIÓN DE ELIMINACIÓN</h2>
+            <div class="form-group" style="text-align: center;">
+              <label for="vmnameCreate">¿Está seguro que desea eliminar la máquina virtual?</label>
+              <div style="text-align: center;">
+                <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
+                  style="background-color: #f2f2f2; width: 100%;cursor: not-allowed; text-align: center; margin-top: 20px;">
               </div>
+            </div>
 
-              <div class="centrar-botones" style="margin-top: 20px;">
-                <button type="submit" id="DeleteMachine"
-                  style="background-color: rgba(255, 0, 0, 0.687); width: 100px; margin-right: 10px;"
-                  class="btn btn-Succes">ELIMINAR</button>
-                <button type="button" onclick="cerrarVentanaEmergenteEliminar()"
-                  style="background-color: rgba(0, 128, 0, 0.723); width: 100px; margin-left: 10px;"
-                  class="btn btn-Succes">CANCELAR</button>
-              </div>
-            </form>
+            <div class="centrar-botones" style="margin-top: 20px;">
+              <button onclick="deleteMachine()"
+                style="background-color: rgba(255, 0, 0, 0.687); width: 100px; margin-right: 10px;"
+                class="btn btn-Succes">ELIMINAR</button>
+              <button type="button" onclick="cerrarVentanaEmergenteEliminar()"
+                style="background-color: rgba(73, 122, 73, 0.723); width: 100px; margin-left: 10px;"
+                class="btn btn-Succes">CANCELAR</button>
+            </div>
           </div>
 
           <div id="VentanaEmergenteInformacion" class="ventana-emergente">
@@ -193,15 +191,50 @@
       }, 5000);
     }
 
-    var successMessage = "{{ .SuccessMessage }}";
-    if (successMessage !== "") {
-      showAlert(successMessage, "success");
+    // var successMessage = "{{ .SuccessMessage }}";
+    // if (successMessage !== "") {
+    //   showAlert(successMessage, "success");
+    // }
+
+    // var errorMessage = "{{ .ErrorMessage }}";
+    // if (errorMessage !== "") {
+    //   showAlert(errorMessage, "danger");
+    // }
+
+
+    function deleteMachine() {
+      vm_name = document.getElementById("vmnameDelete").value;
+
+      fetch('/api/deleteMachine', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', },
+          body: JSON.stringify({ vm_name: vm_name, }),
+      })
+      .then(response => {
+          if (response.status === 200) {
+              return response.json(); 
+          } else if (response.status === 400 || response.status === 500) {
+              return response.json();
+          } else {
+              throw new Error('Error en el servidor web | response status raro');
+          }
+      })
+      .then(data => {
+          if (data.SuccessMessage) {
+              const successMessage = data.SuccessMessage;
+              showAlert(successMessage, "success");
+          } else if (data.ErrorMessage) {
+              const errorMessage = data.ErrorMessage;
+              showAlert(errorMessage, "danger");
+          }
+      })
+      .catch(error => {
+          showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+          console.error('Error: ' + error);
+      })
+      cerrarVentanaEmergenteEliminar();
     }
 
-    var errorMessage = "{{ .ErrorMessage }}";
-    if (errorMessage !== "") {
-      showAlert(errorMessage, "danger");
-    }
   </script>
 </body>
 

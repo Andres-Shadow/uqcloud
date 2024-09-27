@@ -49,9 +49,9 @@ func StartVM(nameVM string, clientIP string) string {
 		return "Error al obtener el estado de la MV"
 	}
 
-	if running {
-		TurnOffVM(nameVM, clientIP) //En caso de que la MV ya estè encendida, entonces se invoca el mètodo para apagar la MV
-		return ""
+	if running { //En caso de que la MV ya estè encendida, no haga nada
+		log.Println("La máquina ya está encendida")
+		return "La máquina ya está encendida"
 	} else {
 		fmt.Println("Encendiendo la màquina " + nameVM + "...")
 
@@ -196,8 +196,9 @@ func TurnOffVM(nameVM string, clientIP string) string {
 		return "Error al obtener el estado de la MV"
 	}
 
-	if !running { //En caso de que la MV estè apagada, entonces se invoca el mètodo para encenderla
-		StartVM(nameVM, clientIP)
+	if !running { //En caso de que la MV estè apagada, no haga nada
+		log.Println("La máquina ya está apagada")
+		return "La máquina ya está apagada"
 	} else {
 
 		//Comando para apagar la màquina virtual

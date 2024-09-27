@@ -123,6 +123,7 @@ func registerHostData() {
 }
 
 func setRoundRobinManager() {
+	//TODO actualizar la lista de host cuando se realicen acciones sobre los host
 	registeredHosts := database.GetHosts()
 	config.RoundRobinManager = config.NewRoundRobin(registeredHosts)
 }
