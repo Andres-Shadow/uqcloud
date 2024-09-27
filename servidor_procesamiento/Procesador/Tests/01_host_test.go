@@ -16,29 +16,29 @@ func TestConsultHosts(t *testing.T) {
 	assert.NotEmpty(t, ReadBody(resp))
 }
 
-func TestAddHost(t *testing.T) {
+func TestAddHostOK(t *testing.T) {
 	resp, err := http.Post(RootEndpointURL+"host", "application/json", strings.NewReader(`{
-		"Nombre": "pepe",
-		"Mac": "0A-00-27-00-00-0A",
-		"Ip":"192.168.1.4",
-		"Hostname": "test",
-		"Ram_total" : 12,
-		"Cpu_total" : 2,
-		"Almacenamiento_total": 2,
-		"Ram_usada": 2,
-		"Cpu_usada": 2,  
-		"Almacenamiento_usado" : 12,
-		"Adaptador_red": "test",
-		"Estado": "apagado",
-		"Ruta_llave_ssh_pub": "test",
-		"Sistema_operativo" : "test",
-		"Distribucion_sistema_operativo": "test"
+		"hst_name": "TestHost",
+		"hst_mac": "0A-00-27-00-00-0A",
+		"hst_ip":"192.168.1.5",
+		"hst_hostname": "Test",
+		"hst_ram" : 4,
+		"hst_cpu" : 2,
+		"hst_storage": 50,
+		"hst_used_ram": 2,
+		"hst_used_cpu": 1,  
+		"hst_used_storage" : 1,
+		"hst_network": "Realtek 8821CE Wireless LAN 802.11ac PCI-E NIC",
+		"hst_state": "Apagado",
+		"hst_sshroute": "c:\\users\\test\\.ssh\\id_rsa.pub",
+		"hst_so" : "windows",
+		"hst_so_distro": "64"
 	}`))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
-func TestConsultHost(t *testing.T) {
+func TestConsultHostBadRequest(t *testing.T) {
 	resp, err := http.Get(RootEndpointURL + "host/noexiste")
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
