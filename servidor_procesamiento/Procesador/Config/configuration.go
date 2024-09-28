@@ -6,6 +6,7 @@ import (
 	"net/http"
 	models "servidor_procesamiento/Procesador/Models"
 	"sync"
+	"time"
 )
 
 /*
@@ -100,7 +101,6 @@ func GetLastQueueSize() int {
 }
 
 // Función para recargar la configuración de Prometheus al iniciar el servidor
-// ToDo: Hacer funcionar la función
 func ReloadPrometheusConfig() {
 	updateConfigPrometheusURL := "http://prometheus:9090/-/reload"
 
@@ -111,20 +111,25 @@ func ReloadPrometheusConfig() {
 		return
 	}
 
-	// Envía la solicitud
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Error haciendo la solicitud:", err)
-		return
-	}
-	defer resp.Body.Close()
+	go func() {
+		// Esperar 4 segundos antes de enviar la solicitud
+		time.Sleep(4 * time.Second)
 
-	// Verifica el estado de la respuesta
-	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("Error: Prometheus devolvió el código de estado %d\n", resp.StatusCode)
-		return
-	}
+		// Envía la solicitud
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			fmt.Println("Error haciendo la solicitud:", err)
+			return
+		}
+		defer resp.Body.Close()
 
-	fmt.Println("Configuración de Prometheus recargada exitosamente")
+		// Verifica el estado de la respuesta
+		if resp.StatusCode != http.StatusOK {
+			fmt.Printf("Error: Prometheus devolvió el código de estado %d\n", resp.StatusCode)
+			return
+		}
+
+		fmt.Println("Configuración de Prometheus recargada exitosamente", resp)
+	}()
 }

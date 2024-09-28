@@ -56,13 +56,12 @@ services:
     image: docker.io/prom/prometheus:v2.54.1
     container_name: prometheus
     ports:
-      - 9090:9090
+      - "9090:9090"
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--web.enable-lifecycle'
     volumes:
       - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr 
-      - prometheus-data:/prometheus
     networks:
       - general
       - uqcloud
@@ -89,7 +88,6 @@ services:
     environment:
       - GF_SECURITY_ALLOW_EMBEDDING=true  # Permitir embebidos
     volumes:
-      - grafana-data:/var/lib/grafana
       - ./metrics_config/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped
     networks:
@@ -99,10 +97,6 @@ services:
 volumes:
   mysql-data:
     driver: local
-  prometheus-data:
-    driver: local
-  grafana-data:
-    driver: local  
 
 networks:
   uqcloud:

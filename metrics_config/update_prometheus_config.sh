@@ -43,6 +43,6 @@ while true; do
     update_prometheus_config
     echo "Prometheus ha recargado su configuración."
 
-    # Esperar 15 segundos antes de la próxima actualización
-    sleep 15
+    # Esperar 3 segundos antes de la próxima actualización
+    sleep 3
 done
