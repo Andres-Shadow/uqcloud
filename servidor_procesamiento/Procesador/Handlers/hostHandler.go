@@ -175,6 +175,9 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	// Recargar configuración de Prometheus
+	config.ReloadPrometheusConfig()
+
 	fmt.Println("Registro del host exitoso")
 	response := map[string]bool{"registroCorrecto": true}
 	w.Header().Set("Content-Type", "application/json")
