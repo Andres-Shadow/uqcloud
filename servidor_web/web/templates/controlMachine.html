@@ -6,14 +6,14 @@
   <title>Desktop Cloud Uniquindio</title>
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
-  <link rel="stylesheet" type="text/css" href="/web/static/css/styleControlMachine.css">
+  <link rel="stylesheet" type="text/css" href="/web/static/css/controlMachine.css">
 
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- JS propios (como estos usan JQuery deben estar despues de importar JQuery) -->
   <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
+  <script src="/web/static/js/controleMachineScripts.js"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
@@ -47,17 +47,17 @@
           style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
           <div id="alert-message" class="alert" role="alert">
           </div>
-        </div>
+        </div>        
 
-        <div class="px-2 py-2">
+        <div class="px-4 py-3">
 
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
-              <h1 style="font-family: 'Arial', sans-serif; color: #333;">Máquinas Virtuales</h1>
+              <h2 style="color: #333;">Máquinas Virtuales</h2>
             </div>
             <div class="centrar-botones">
               <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
-                style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
+                style="background-color: #337ab7; border-color: #2e6da4;">
                 Crear Máquina Virtual
                 <i class="fa-solid fa-circle-plus"></i>
               </a>
@@ -65,7 +65,7 @@
             </div>
           </div>
 
-          <div class="table container">
+          <div class="table mt-3" style="background-color: white; border-radius: 10px;">
             <table id="machine-table">
               <thead>
                 <tr>
@@ -104,14 +104,22 @@
                 class="btn btn-Succes">CANCELAR</button>
             </div>
           </div>
-
+          
+          <!-- VENTANA EMERGENTE INFORMACION DE VM -->
           <div id="VentanaEmergenteInformacion" class="ventana-emergente">
-            <button type="button" class="btn-close" aria-label="Cerrar ventana"
-              onclick="cerrarVentanaEmergenteInformacion()"></button>
+            <!-- <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;">
+              <h3 class="center-title" style="margin: 0; font-size: 1.5rem;">Información de la máquina</h3>
+              <button type="button" class="ml-3 btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
+            </div> -->
 
-            <form action="">
-              <h1 class="centre-tittle">INFORMACIÓN DE LA MÁQUINA</h1>
-              <ul style="margin-top: 30px;">
+            <button type="button" class="btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
+  
+            <div class="d-flex justify-content-between align-items-center header">
+              <h3 class="center-title">Información de la máquina</h3>
+            </div>
+          
+            <form>
+              <ul class="info-list">
                 <li>
                   <strong>Nombre:</strong>
                   <span id="nombreSpan"></span>
@@ -155,6 +163,69 @@
               </ul>
             </form>
           </div>
+          
+
+
+
+
+
+
+
+
+
+
+          <!-- <div id="VentanaEmergenteInformacion" class="ventana-emergente">
+
+            <div class="row">
+              <h3 class="col-auto center-title">Información de la máquina</h3>
+              <button type="button" class="col-auto btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
+            </div>
+
+            <form>              
+              <ul style="margin-top: 30px;">
+                <li>
+                  <strong>Nombre:</strong>
+                  <span id="nombreSpan"></span>
+                </li>
+                <li>
+                  <strong>Sistema Operativo:</strong>
+                  <span id="sistemaOperativoSpan"></span>
+                </li>
+                <li>
+                  <strong>Distribución:</strong>
+                  <span id="distribucionSpan"></span>
+                </li>
+                <li>
+                  <strong>CPU:</strong>
+                  <span id="cpuSpan"></span>
+                </li>
+                <li>
+                  <strong>Memoria:</strong>
+                  <span id="memoriaSpan"></span>
+                </li>
+                <li>
+                  <strong>Estado:</strong>
+                  <span id="estadoSpan"></span>
+                </li>
+                <li>
+                  <strong>IP:</strong>
+                  <span id="ipSpan"></span>
+                </li>
+                <li>
+                  <strong>Hostname:</strong>
+                  <span id="hostnameSpan"></span>
+                </li>
+                <li>
+                  <strong>Contraseña:</strong>
+                  <span id="passwordSpan"></span>
+                </li>
+                <li>
+                  <strong>Url de Conexión:</strong>
+                  <span id="urlSpan"></span>
+                </li>
+              </ul>
+            </form>
+          </div> -->
 
       </main>
 
@@ -167,6 +238,8 @@
   </div>
 
   <script>
+    actualizarTabla();
+
     function showAlert(message, alertType) {
       var alertBox = document.getElementById("alert-message");
       alertBox.innerText = message;
