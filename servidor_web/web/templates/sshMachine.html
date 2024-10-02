@@ -35,13 +35,15 @@
     {{template "mainpage-sidebar.html" .}}
 
     <div id="layoutSidenav_content">
-
-        <h4>Máquina Virtual: {{.machineName}}</h4>
-
-        <!-- <iframe src="https://{{.machineIP}}:4200" title="ConnectionMachine" sandbox></iframe> -->
-         <!-- SI NO SIRVE BIEN ES POR EL "HTTPS" O "HTTP" o porque no se puede acceder a una pagina insegura -->
+        
+      <h4 class="ps-3 pt-2">Máquina Virtual: {{.machineName}}</h4>
+      <hr>
+  
+      <!-- <iframe src="https://{{.machineIP}}:4200" title="ConnectionMachine" sandbox></iframe> -->
+          <!-- SI NO SIRVE BIEN ES POR EL "HTTPS" O "HTTP" o porque no se puede acceder a una pagina insegura -->
           <!-- creo que ya tocaria cambiar los permisos que da shellinabxo  -->
-        <iframe src="http://{{.machineIP}}:4200" 
+          <iframe class="ps-3"
+          src="http://{{.machineIP}}:4200" 
           title="ConnectionMachine" 
           sandbox="allow-scripts allow-same-origin" 
           width="100%" height="100%"></iframe>

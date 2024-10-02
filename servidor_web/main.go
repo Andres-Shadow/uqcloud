@@ -56,23 +56,6 @@ func main() {
 	//TODO: Revisar para que siver o eliminar si se puede
 	router.GET("/signin", handlers.SigninPage)
 
-	//TODO: Adaptar a los usuarios temporales
-	// router.GET("/mainPage", handlers.MainPage)
-
-	//TODO: RUTAS NO DEBERIAN SER RUTAS? Y VAN EN EL /mainpage
-	// Por como está hecho este proyecto, archivos .html llaman a otros .html
-	// ya sea usando JQuery o iframe, por lo cual el servidor debe exponer estas
-	// rutas para acceder a las templates.
-	// Se debe buscar una forma de reescribir esto, como no tener el scrollmenu.html
-	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
-	// deje acceder a estas rutas desde el navegador.
-
-	// TODO: Eliminar cuando esto ya no sirva del todo
-	// router.GET("/scrollmenu", handlers.Scrollmenu)
-
-	//TODO: ELIMINAR ¿?
-	router.GET("/welcome", handlers.WelcomePage)
-
 	// Explicación para julian de julian: no hay necesidad de asignarle el "adminGroup" al "router",
 	// porque directamente cuando se le asocia una variable con ":=" al "router", gin los junta directamente
 	// sin necesidad de escribir una funcion digamos: router.setGroups( []grupos ). ya tu sabe tu si entiendes

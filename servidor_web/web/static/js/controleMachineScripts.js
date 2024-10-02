@@ -212,21 +212,8 @@ function actualizarTabla() {
 
 }
 
-function copiarText(texto) {
-    // Crea un elemento de entrada temporal
-    const tempInput = document.createElement("input");
-    tempInput.value = texto;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-
-    // Intenta copiar el texto al portapapeles
-    document.execCommand("copy");
-
-    // Elimina el elemento de entrada temporal
-    document.body.removeChild(tempInput);
-}
-
 function changeStateMachine(vm_name, state) {
+    actualizarTabla();
     fetch('/api/' + state, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', },
@@ -256,7 +243,4 @@ function changeStateMachine(vm_name, state) {
         })
 }
 
-
-// Llama a actualizarTabla al cargar la página y periódicamente para mantener los datos actualizados
-actualizarTabla();
 setInterval(actualizarTabla, 4000);
