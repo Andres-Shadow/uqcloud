@@ -1,4 +1,12 @@
-# UQCLOUD
+<h1 align="center">UQCLOUD</h1>
+
+![Go](https://img.shields.io/badge/Go-1.21-blue)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+![GORM](https://img.shields.io/badge/GORM-ORM-red)
+![Gorilla Mux](https://img.shields.io/badge/Gorilla_Mux-Routing-green)
+![SSH Client](https://img.shields.io/badge/SSH-Client-blue)
+![GitHub contributors](https://img.shields.io/github/contributors/Andres-Shadow/uqcloud)
+
 **UQCloud** es un entorno de computadoras de escritorios que permite aprovechar de forma oportunista y mediante virtualización, recursos informáticos desde cualquier dispositivo conectado a la red.
 
 ## Servidor de Procesamiento
