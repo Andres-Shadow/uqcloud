@@ -213,6 +213,7 @@ function actualizarTabla() {
 }
 
 function changeStateMachine(vm_name, state) {
+    actualizarTabla();
     fetch('/api/' + state, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', },

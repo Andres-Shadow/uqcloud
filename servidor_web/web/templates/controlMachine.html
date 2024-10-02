@@ -82,7 +82,31 @@
             </table>
           </div>
 
+
+
+
           <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
+            <button type="button" class="btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteEliminar()"></button>
+          
+            <h2 class="centre-tittle" style="text-align: center; font-size: 24px; margin-bottom: 20px;">Eliminar máquina virtual</h2>
+          
+            <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+              <label for="vmnameDelete" style="font-size: 18px;">¿Está seguro de que desea eliminar la siguiente máquina virtual?</label>
+              <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
+                style="background-color: #f2f2f2; width: 80%; margin: 20px auto; cursor: not-allowed; text-align: center;">
+            </div>
+          
+            <div class="centrar-botones" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+              <button onclick="deleteMachine()" class="btn btn-danger" style="width: 120px;">Eliminar</button>
+              <button type="button" onclick="cerrarVentanaEmergenteEliminar()" class="btn btn-secondary" style="width: 120px;">Cancelar</button>
+            </div>
+          </div>
+          
+
+
+
+
+          <!-- <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
             <button type="button" class="btn-close" aria-label="Cerrar ventana"
               onclick="cerrarVentanaEmergenteEliminar()"></button>
 
@@ -103,19 +127,15 @@
                 style="background-color: rgba(73, 122, 73, 0.723); width: 100px; margin-left: 10px;"
                 class="btn btn-Succes">CANCELAR</button>
             </div>
-          </div>
+          </div> -->
           
           <!-- VENTANA EMERGENTE INFORMACION DE VM -->
           <div id="VentanaEmergenteInformacion" class="ventana-emergente">
-            <!-- <div class="d-flex justify-content-between align-items-center" style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 20px;">
-              <h3 class="center-title" style="margin: 0; font-size: 1.5rem;">Información de la máquina</h3>
-              <button type="button" class="ml-3 btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
-            </div> -->
 
             <button type="button" class="btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
   
-            <div class="d-flex justify-content-between align-items-center header">
-              <h3 class="center-title">Información de la máquina</h3>
+            <div class="d-flex justify-content-center align-items-center header">
+              <h4>Información de la máquina</h4>
             </div>
           
             <form>
@@ -162,70 +182,7 @@
                 </li>
               </ul>
             </form>
-          </div>
-          
-
-
-
-
-
-
-
-
-
-
-          <!-- <div id="VentanaEmergenteInformacion" class="ventana-emergente">
-
-            <div class="row">
-              <h3 class="col-auto center-title">Información de la máquina</h3>
-              <button type="button" class="col-auto btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
-            </div>
-
-            <form>              
-              <ul style="margin-top: 30px;">
-                <li>
-                  <strong>Nombre:</strong>
-                  <span id="nombreSpan"></span>
-                </li>
-                <li>
-                  <strong>Sistema Operativo:</strong>
-                  <span id="sistemaOperativoSpan"></span>
-                </li>
-                <li>
-                  <strong>Distribución:</strong>
-                  <span id="distribucionSpan"></span>
-                </li>
-                <li>
-                  <strong>CPU:</strong>
-                  <span id="cpuSpan"></span>
-                </li>
-                <li>
-                  <strong>Memoria:</strong>
-                  <span id="memoriaSpan"></span>
-                </li>
-                <li>
-                  <strong>Estado:</strong>
-                  <span id="estadoSpan"></span>
-                </li>
-                <li>
-                  <strong>IP:</strong>
-                  <span id="ipSpan"></span>
-                </li>
-                <li>
-                  <strong>Hostname:</strong>
-                  <span id="hostnameSpan"></span>
-                </li>
-                <li>
-                  <strong>Contraseña:</strong>
-                  <span id="passwordSpan"></span>
-                </li>
-                <li>
-                  <strong>Url de Conexión:</strong>
-                  <span id="urlSpan"></span>
-                </li>
-              </ul>
-            </form>
-          </div> -->
+          </div>        
 
       </main>
 
