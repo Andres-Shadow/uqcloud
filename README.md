@@ -1,4 +1,4 @@
-<h1 align="center">UQCLOUD</h1>
+<h1 align="center">QUICKCLOUD</h1>
 
 ![Go](https://img.shields.io/badge/Go-1.21-blue)
 ![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
@@ -7,7 +7,7 @@
 ![SSH Client](https://img.shields.io/badge/SSH-Client-blue)
 ![GitHub contributors](https://img.shields.io/github/contributors/Andres-Shadow/uqcloud)
 
-**UQCloud** es un entorno de computadoras de escritorios que permite aprovechar de forma oportunista y mediante virtualización, recursos informáticos desde cualquier dispositivo conectado a la red.
+**QuickCloud** es un entorno de computadoras de escritorios que permite aprovechar de forma oportunista y mediante virtualización, recursos informáticos desde cualquier dispositivo conectado a la red.
 
 ## Servidor de Procesamiento
 
