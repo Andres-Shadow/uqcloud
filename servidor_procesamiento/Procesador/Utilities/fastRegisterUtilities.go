@@ -2,11 +2,10 @@ package utilities
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
+	"time"
 
 	"os"
-	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
 	"strconv"
 )
@@ -32,17 +31,13 @@ func FastRegisterHosts(ips []string) {
 	quickHost.Distribucion_sistema_operativo = os.Getenv("QUICK_HOST_SO_DISTRO")
 
 	for _, ip := range ips {
-		//TODO hacer la implementación de la función
 		quickHost.Ip = ""
 		quickHost.Ip = ip
 		quickHost.Nombre = ""
 		quickHost.Nombre = generateRandomName()
-		//guardar el host en la base de datos
-		err := database.AddHost(quickHost)
-		if err != nil {
-			//TODO hacer la implementación de la función
-			log.Println("Error al registrar un host rapido en la base de datos -> " + ip)
-		}
+
+		fmt.Println("--------------------")
+		SetUpHostAndDisk(quickHost)
 
 	}
 }
@@ -70,7 +65,6 @@ func generateRandomName() string {
 }
 
 func generateRandonNumber() int {
-	min := 0
-	max := len(adjectives) - 1
-	return rand.Intn(max-min) + min
+	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
+	return seededRand.Intn(len(adjectives))
 }
