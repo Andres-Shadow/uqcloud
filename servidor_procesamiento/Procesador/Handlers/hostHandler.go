@@ -175,6 +175,8 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	config.RoundRobinManager.UpdateHosts(database.GetHosts())
+
 	// Recargar configuración de Prometheus
 	config.ReloadPrometheusConfig()
 
