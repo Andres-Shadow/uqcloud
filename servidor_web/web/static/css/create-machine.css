@@ -1,3 +1,9 @@
+form {
+  border: 1px solid #ccc; /* Borde del formulario */
+  padding: 20px; /* Espaciado interno del formulario */
+  border-radius: 10px; /* Borde redondeado */
+}
+
 /* --- Breadcrumb Style --- */
 .breadcrumb-instance nav {
   background-color: color-mix(in srgb, --bs-dark, transparent 95%);

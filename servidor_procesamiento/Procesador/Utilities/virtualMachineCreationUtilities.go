@@ -68,8 +68,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		}
 
 		if !availableResources {
-			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
-			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
+			fmt.Println("No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde"
 		}
 
 		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
@@ -100,8 +100,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		}
 
 		if !availableResources {
-			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
-			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
+			fmt.Println("No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde"
 		}
 
 		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)

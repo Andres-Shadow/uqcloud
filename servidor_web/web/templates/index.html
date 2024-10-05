@@ -7,15 +7,17 @@
   <meta name="description" content="" />
   <meta name="author" content="" />
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
-  <title>DesktopCloud - Inicio</title>
+  <title>Inicio</title>
 
   <!-- Bootstrap icons-->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
   <!-- Core theme CSS (includes Bootstrap)-->
   <link href="/web/static/css/styles.css" rel="stylesheet" />
-
+  
   <link href="/web/static/css/index.css" rel="stylesheet" />
   <script src="/web/static/js/index.js"></script>
+  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>  
+
 </head>
 
 <body>
@@ -33,21 +35,23 @@
         <div class="py-5">
           <h1 class="display-5 fw-bold text-white">
             Máquinas virtuales al instante <br />
-            con Desktop Cloud
+            con QuickCloud
           </h1>
           <div class="col-lg-6 mx-auto">
             <p class="fs-5 mb-4 text-white">
               Crea, gestiona y accede a máquinas virtuales con un solo clic.
-              <br />Simplifica tu experiencia con Desktop Cloud.
+              <br />Simplifica tu experiencia con QuickCloud.
             </p>
           </div>
         </div>
       </div>
 
       <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-        <a><button id="btnLanzarMaquina" type="button" class="btn btn- btn-light btn-lg px-4 me-sm-3 fw-bold" onclick="createQuickMachine()">
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="Crea y lanza una máquina virtual Alpine con 1024Mb de RAM y 1 núcleo de procesamiento">
+          <button id="btnLanzarMaquina" type="button" class="btn btn-light btn-lg px-4 me-sm-3 fw-bold" onclick="createQuickMachine()">
             Lanzar Máquina Ahora
-          </button></a>
+          </button>
+        </span>
       </div>
     </section>
     <!-- /Hero Section -->
@@ -58,8 +62,7 @@
       <div class="container section-title">
         <h2>Servicios</h2>
         <p>
-          Descubre todas las caracteristicas y servicios que ofrece Desktop
-          Cloud
+          Descubre todas las caracteristicas y servicios que ofrece QuickCloud
         </p>
       </div>
       <!-- End Section Title -->
@@ -83,8 +86,7 @@
               <div>
                 <h4 class="title">Uso sin registro</h4>
                 <p class="description">
-                  Para usar los servicios de Desktop Cloud no necesita
-                  registrarse.
+                  Para usar los servicios de QuickCloud no necesita registrarse.
                 </p>
               </div>
             </div>
@@ -103,7 +105,7 @@
             </div>
           </div>
 
-          <!-- TODO: Agreguar más caracteristicas de Desktop Cloud si se le ocurren yeye -->
+          <!-- TODO: Agregar más caracteristicas de QuickCloud si se le ocurren yeye -->
           <!--       Como agregar lo de las instancias de docker-->
         </div>
       </div>
@@ -208,6 +210,13 @@
         alertContainer.style.display = "none";
       }, 10000);
     }
+
+    // Para usar los popovers pues se tiene que inicializar el popover: "https://getbootstrap.com/docs/5.0/components/popovers/"
+    var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    });
+
   </script>
 </body>
 
