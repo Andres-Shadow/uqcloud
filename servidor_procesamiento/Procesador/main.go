@@ -184,6 +184,9 @@ func manageServer(r *mux.Router) {
 	//Endpoint para agregar un host
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")
 
+	//Endpoint para registro rapido de host
+	r.HandleFunc(apiPrefix+"host-fast-register", handlers.FastRegisterHostsHandler).Methods("POST")
+
 	/*
 		------------------
 		| USER ENDPOINTS |

@@ -51,6 +51,11 @@ func (rr *RoundRobin) GetNextHost() models.Host {
 	return rr.Hosts[rr.CurrentHost]
 }
 
+// Funcion para actualizar la lista de host en la estructura RoundRobin
+func (rr *RoundRobin) UpdateHosts(hosts []models.Host) {
+	rr.Hosts = hosts
+}
+
 // Funcion que inicializa la ruta del archivo de clave privada
 // @param path: string
 func InitPrivateKeyPath(path string) {
