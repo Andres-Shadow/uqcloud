@@ -186,3 +186,34 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
 }
+
+func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
+	// Mapa genérico para decodificar el JSON
+	var data map[string][]string
+	decoder := json.NewDecoder(r.Body)
+	if err := decoder.Decode(&data); err != nil {
+		log.Println("Error al decodificar JSON de IPs")
+		http.Error(w, "Error al decodificar JSON de IPs", http.StatusBadRequest)
+		return
+	}
+
+	// Obtenemos el slice de IPs del campo "ip"
+	ips, ok := data["ips"]
+	if !ok {
+		log.Println("El JSON no contiene el campo 'ip'")
+		http.Error(w, "El JSON no contiene el campo 'ip'", http.StatusBadRequest)
+		return
+	}
+
+	// Llamar a utilidades con las IPs
+	utilities.FastRegisterHosts(ips)
+
+	// Recargar configuración de Prometheus
+	config.ReloadPrometheusConfig()
+
+	fmt.Println("Registro de hosts exitoso")
+	response := map[string]bool{"registroCorrecto": true}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
