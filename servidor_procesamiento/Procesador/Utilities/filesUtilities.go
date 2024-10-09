@@ -1,7 +1,6 @@
 package utilities
 
 import (
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -17,7 +16,7 @@ gestion de archivos
 // Función para cargar la llave privada desde un archivo
 // @file Parámetro que contiene la ruta de la llave privada
 func PublicKeyFile(file string) ssh.AuthMethod {
-	buffer, err := ioutil.ReadFile(file)
+	buffer, err := os.ReadFile(file)
 	if err != nil {
 		log.Fatal("Error al leer la llave privada:", err)
 		return nil

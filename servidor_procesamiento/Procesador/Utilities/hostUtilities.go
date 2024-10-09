@@ -227,15 +227,8 @@ func SetUpHostAndDisk(host models.Host) {
 /*
 Función que dado el nombre de un host retorna el objeto
 */
-
 func GetHostByName(name string) (models.Host, error) {
 	var host models.Host
 	err := database.DATABASE.Where("nombre = ?", name).First(&host).Error
-	return host, err
-}
-
-func GetHostById(id int) (models.Host, error) {
-	var host models.Host
-	err := database.DATABASE.Where("id = ?", id).First(&host).Error
 	return host, err
 }
