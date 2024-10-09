@@ -50,9 +50,53 @@ services:
       MYSQL_DATABASE: uqcloud
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_TIME_ZONE: 'America/Bogota'
+  
+  # Servicio de Prometheus para monitoreo
+  prometheus:
+    image: docker.io/prom/prometheus:v2.54.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr 
+    networks:
+      - general
+      - uqcloud
+    restart: unless-stopped
+  
+  # Servicio del actualizador de configuración de Prometheus
+  prometheus-config:
+    build: ./metrics_config
+    volumes:
+      - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr  # Compartir archivo con Prometheus
+      - ./metrics_config/update_prometheus_config.sh:/etc/prometheus/update_prometheus_config.sh:x
+    depends_on:
+      - procesamiento
+    networks:
+      - general
+      - uqcloud
+
+  # Servicio de Grafana para visualización de métricas
+  grafana:
+    image: docker.io/grafana/grafana-oss:11.2.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true  # Permitir embebidos
+    volumes:
+      - ./metrics_config/grafana/provisioning:/etc/grafana/provisioning/
+    restart: unless-stopped
+    networks:
+      - general
+      - uqcloud
 
 volumes:
-  mysql-data:      
+  mysql-data:
+    driver: local
 
 networks:
   uqcloud:

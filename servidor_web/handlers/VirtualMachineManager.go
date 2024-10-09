@@ -54,18 +54,10 @@ func ControlMachine(c *gin.Context) {
 
 	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
-	showNewButton := false
 
 	if len(hosts) <= 0 {
 		log.Println("No existen host para realizar esta operación, se deben registrar los host")
 		return
-	}
-	for _, host := range hosts {
-		// Depuración
-		if host.Ip == clientIP {
-			showNewButton = true
-			break
-		}
 	}
 
 	c.HTML(http.StatusOK, "controlMachine.html", gin.H{
@@ -74,7 +66,6 @@ func ControlMachine(c *gin.Context) {
 		"machines":       machines,
 		"machinesChange": machinesChange,
 		"hosts":          hosts,
-		"showNewButton":  showNewButton,
 		"clientIP":       clientIP,
 	})
 }
@@ -109,21 +100,12 @@ func CreateMachinePage(c *gin.Context) {
 
 	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
-	showNewButton := false
-	for _, host := range hosts {
-		// Depuración
-		if host.Ip == clientIP {
-			showNewButton = true
-			break
-		}
-	}
 
 	c.HTML(http.StatusOK, "create-machine.html", gin.H{
 		"email":          session.Get("email").(string),
 		"rol":            session.Get("rol").(uint8),
 		"machinesChange": machinesChange, // TODO: Esta si será necesaria?
 		"hosts":          hosts,
-		"showNewButton":  showNewButton,
 		"clientIP":       clientIP,
 	})
 }
@@ -166,10 +148,10 @@ func MainSend(c *gin.Context) {
 
 	if confirmacion {
 		log.Println("Maquina virtual creada exitosamente", maquina_virtual)
-		c.JSON(http.StatusOK, gin.H{"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito."})
+		c.JSON(http.StatusOK, gin.H{})
 	} else {
 		log.Println("Error al enviar la soliciutd para crear maquina virtual")
-		c.JSON(http.StatusInternalServerError, gin.H{"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo"})
+		c.JSON(http.StatusInternalServerError, gin.H{})
 	}
 }
 
@@ -194,18 +176,12 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
 		return Models.VirtualMachineTemp{}, errors.New("missing required fields")
 	}
 
-	// TODO: IMPLEMENTAR COMO DISTRIBUIR LO DEL ALEATORIO (ASIGNACION DE RECURSOS miamor)
 	// TODO: Crear una funcion que se traiga la CANTIDAD de hosts disponibles, no la info de los hosts
 	hosts, _ := Utilities.CheckAvaibleHost()
-	if arrivedVM.Host_id == 0 {
-		// rand.Seed(time.Now().UnixNano())
-		// randomHost := rand.Intn(len(hosts))
-		// log.Println("RANDOM host: ", hosts[randomHost])
+	if arrivedVM.Host_id == -1 {
+		arrivedVM.Hostname = "roundrobin"
 
-		// newVM.Host_id = hosts[randomHost].Id
-		// newVM.Hostname = hosts[randomHost].Name
-		// log.Println("RANDOM host name: ", hosts[randomHost].Name)
-
+	} else if arrivedVM.Host_id == 0 {
 		arrivedVM.Hostname = "aleatorio"
 
 	} else {
@@ -236,15 +212,20 @@ func createVirtualMachine(c *gin.Context) (Models.VirtualMachineTemp, error) {
 }
 
 // Funcion encargada de encender la maquinavirtual dado su nombre
-func PowerMachine(c *gin.Context) {
+func StartMachine(c *gin.Context) {
 
-	nombre := c.PostForm("nombreMaquina")
+	var req Models.StateMachineRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request | Se envió mal el nombre de la vm"})
+		return
+	}
+	nombre := req.NombreMaquina
 	clientIP := c.ClientIP()
 
 	log.Println("Ip del cliente: ", clientIP)
-	log.Println("Nombre de l VM:", nombre)
+	log.Println("Nombre de la VM:", nombre)
 
-	confirmacion, err := Utilities.PowerMachineFromServer(nombre, clientIP)
+	confirmacion, err := Utilities.StartMachineFromServer(nombre, clientIP)
 
 	if err != nil {
 		log.Println("Error al enceder la maquina virtual")
@@ -254,45 +235,80 @@ func PowerMachine(c *gin.Context) {
 	if confirmacion {
 		log.Println("la maquina virtual ha sido encendida con exito ")
 
+		c.JSON(http.StatusOK, gin.H{
+			"SuccessMessage": "La máquina " + nombre + " se está encendiendo. Por favor espere",
+		})
+	} else { // Registro erróneo, muestra un mensaje de error en el HTML
+		log.Println("Error al encender la maquina virtual")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrorMessage": "Error al encender la maquina " + nombre + "intente de nuevo"})
+	}
+
+}
+
+// Funcion encargada de apagar la maquinavirtual dado su nombre
+func StopMachine(c *gin.Context) {
+
+	var req Models.StateMachineRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request | Se envió mal el nombre de la vm"})
+		return
+	}
+	nombre := req.NombreMaquina
+	clientIP := c.ClientIP()
+
+	log.Println("Nombre de la VM:", nombre)
+	log.Println("Ip del cliente: ", clientIP)
+
+	confirmacion, err := Utilities.StopMachineFromServer(nombre, clientIP)
+
+	if err != nil {
+		log.Println("Error al apagar la maquina virtual")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al apagar la maquina" + err.Error()})
+		return
+	}
+	if confirmacion {
+		log.Println("la maquina virtual ha sido apagada con exito ")
 		session := sessions.Default(c)
 
-		// TODO: CAMBIAR POR c.JSON, no hay necesidad de enviar el html, porque eso genera errores de lectura
-		// (REVISAR: MainSend(), ASÍ SE ARREGLARON los errores de lectura desde el fetch del html)
-
-		// TODO: SI ESTABA ENCENDIDA, MOSTRAR QUE SE ESTÁ APAGANDO
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "La máquina " + nombre + " Se esta encendiendo. Por favor espere",
+		c.JSON(http.StatusOK, gin.H{
+			"SuccessMessage": "La máquina " + nombre + " se está apagando. Por favor espere",
 			"email":          session.Get("email").(string),
 			"rol":            session.Get("rol").(uint8),
 		})
 	} else { // Registro erróneo, muestra un mensaje de error en el HTML
-		log.Println("Error al encender la maquina virtual")
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
-			"ErrorMessage": "Error al encender la maquina " + nombre + "intente de nuevo"})
+		log.Println("Error al apagar la maquina virtual")
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"ErrorMessage": "Error al apagar la maquina " + nombre + "intente de nuevo"})
 	}
 
 }
 
 // Metodo para eliminar una máquina virutal
 func DeleteMachine(c *gin.Context) {
-	nombre := c.PostForm("vmnameDelete")
+	var req Models.StateMachineRequest
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request | Se envió mal el nombre de la vm"})
+		return
+	}
+	nombre := req.NombreMaquina
 	confirmacion, err := Utilities.DeleteMachineFromServer(nombre)
 
 	log.Println("Nombre de la VM a elimianr: ", nombre)
 	if err != nil {
-		log.Println("Error al eliminar la maquina virtual", err.Error())
+		log.Println("Error al eliminar la maquina virtual: ", err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al eliminar la maquina" + err.Error()})
 		return
 	}
 	if confirmacion {
 		// Registro exitoso, muestra un mensaje de éxito en el HTML
 		log.Println("La maquina virutal ha sido eliminada con exito")
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"SuccessMessage": "Solicitud para eliminar la màquina enviada con exito."})
 	} else {
 		// Registro erróneo, muestra un mensaje de error en el HTML
 		log.Println("Error al enviar la solicito para eliminar la maquina virtual")
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{
+		c.JSON(http.StatusInternalServerError, gin.H{
 			"ErrorMessage": "La solicitud para eliminar la màquina no fue exitosa. Intente de nuevo"})
 	}
 }
@@ -312,7 +328,7 @@ func GetMachines(c *gin.Context) {
 	// Obtener los datos de las máquinas utilizando el email del usuario
 	machines, err := Utilities.ConsultMachineFromServer(userEmail)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNoContent, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -369,7 +385,55 @@ func Checkhost(c *gin.Context) {
 	}
 }
 
-/* ToDo: Mira para que se utiliza esta función
+func ConnectionMachine(c *gin.Context) {
+
+	// Acceder a la sesión
+	session := sessions.Default(c)
+	email := session.Get("email")
+	machineIP := c.Query("machineIP")
+	machineName := c.Query("machineName")
+
+	// Recuperar o inicializar un arreglo de máquinas virtuales en la sesión del usuario
+	log.Println("Se ha envidado el email para consultar sus host")
+	machines, _ := Utilities.ConsultMachineFromServer(email.(string))
+
+	log.Println("Se ha procesado la solicitud")
+	hosts, _ := Utilities.CheckAvaibleHost()
+
+	if sessionMachines, ok := session.Get("machines").([]Models.VirtualMachine); ok {
+		log.Println("Se han encontrado las maquinas asociadas al usuario")
+		machines = sessionMachines
+	} else {
+		// Inicializa un nuevo arreglo de máquinas si no existe en la sesión
+		log.Println("No se han encontrado las maquinas asociadas al usuario")
+		machines = []Models.VirtualMachine{}
+	}
+
+	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
+	session.Set("machinesChange", true)
+	session.Save()
+
+	machinesChange := session.Get("machinesChange")
+	clientIP := c.ClientIP()
+
+	if len(hosts) <= 0 {
+		log.Println("No existen host para realizar esta operación, se deben registrar los host")
+		return
+	}
+
+	c.HTML(http.StatusOK, "sshMachine.html", gin.H{
+		"email":          session.Get("email").(string),
+		"rol":            session.Get("rol").(uint8),
+		"machines":       machines,
+		"machinesChange": machinesChange,
+		"hosts":          hosts,
+		"clientIP":       clientIP,
+		"machineIP":      machineIP,
+		"machineName":    machineName,
+	})
+}
+
+/* TODO: Mira para que se utiliza esta función
 func Mvtemp(c *gin.Context) {
 
 	// Deserializa el JSON recibido

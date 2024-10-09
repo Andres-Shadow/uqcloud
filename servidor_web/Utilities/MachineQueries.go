@@ -52,6 +52,11 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 	// }()
 
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
+	log.Println("Respuesta del servidor: ", resp.Status)
+	if resp.StatusCode == http.StatusNoContent {
+		log.Println("Informacion: No fue encontrada ninguna máquina virtual para este usuario, ", err)
+		return nil, errors.New("no fue encontrada ninguna máquina virtual")
+	}
 	if resp.StatusCode != http.StatusOK {
 		log.Println("Error: La solicitud no fue exitosa, ", err)
 		return nil, errors.New("la solicitud al servidor no fue exitosa")
@@ -94,7 +99,7 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	// Esta confirmacion es digamos, del servidor web. Todo fue bien en la creación, pero no sabemos
 	// si todo fue bien en el servidor de procesamiento, por lo que se debe verificar la existencia de la VM
 	if confirmacion {
-		maquinaCreada, err := verifyMachineCreated(VM.Name, VM.Person_Email)
+		maquinaCreada, err := VerifyMachineCreated(VM.Name, VM.Person_Email)
 		if err != nil {
 			log.Println("Error al consultar si la maquina fue creada: ", err.Error())
 			return false, err
@@ -113,7 +118,7 @@ func CreateMachineFromServer(VM Models.VirtualMachineTemp, clienteIp string) (bo
 	return confirmacion, nil
 }
 
-func verifyMachineCreated(vmName, email string) (bool, error) {
+func VerifyMachineCreated(vmName, email string) (bool, error) {
 	// TODO: Cambiar esto, porque acá se obtienen todas las mquinas y se verifica si existe para este user
 	//		 pero deberia ser (en el servidor de procesamiento) que se obtenga solo un bool, de si existe
 	//       un registro en la bd donde clienteEmail 'x' tiene una vm con nombre 'y'
@@ -173,7 +178,7 @@ func verifyMachineCreated(vmName, email string) (bool, error) {
 }
 
 // Encender Maquina virtual
-func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
+func StartMachineFromServer(nombre string, clientIP string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.START_VM_URL)
 	payload := map[string]interface{}{
 		"tipo_solicitud": "start",
@@ -192,10 +197,31 @@ func PowerMachineFromServer(nombre string, clientIP string) (bool, error) {
 
 }
 
+// Apagar Maquina virtual
+func StopMachineFromServer(nombre string, clientIP string) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.STOP_VM_URL)
+	payload := map[string]interface{}{
+		"tipo_solicitud": "stop",
+		"nombreVM":       nombre,
+		"clientIP":       clientIP,
+	}
+
+	confirmacion, err := SendRequest("POST", serverURL, payload)
+
+	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
+		return false, err
+	}
+
+	return confirmacion, nil
+
+}
+
 // Eliminar una Maquina virtual
 func DeleteMachineFromServer(nombre string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL)
+	serverURL := fmt.Sprintf("http://%s:%s%s/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, nombre)
 
+	// ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
 	payload := map[string]interface{}{
 		"tipo_solicitud": "delete",
 		"nombreVM":       nombre,
@@ -215,6 +241,7 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CHECK_HOST_URL)
 
+	// ESTO NO SE DEBE MANDAR, ES UN METODO GET NO PERMITE PAYLOAD
 	// Crear el objeto JSON con los datos del cliente
 	payload := map[string]interface{}{
 		"clientIP":       clienteIp,

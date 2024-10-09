@@ -82,7 +82,7 @@ Estructura de datos tipo JSON que contiene los campos de un host
 type Host struct {
 	gorm.Model
 	Id                             int    `json:"hst_id"`
-	Nombre                         string `json:"hst_name" gorm:"unique"`
+	Nombre                         string `json:"hst_name" gorm:"not null"`
 	Mac                            string `json:"hst_mac" gorm:"unique, not null"`
 	Ip                             string `json:"hst_ip" gorm:"unique, not null"`
 	Hostname                       string `json:"hst_hostname" gorm:"not null"`
@@ -120,7 +120,7 @@ type Catalogo struct {
 }
 
 /*
-Estructura de datos tipo JSON que representa la informaciòn de los discos que tiene la plataforma Desktop Cloud
+Estructura de datos tipo JSON que representa la informaciòn de los discos que tiene la plataforma QuickCloud
 @Id Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
 @Nombre Representa el nombre del disco
 @Ruta_ubicacion Representa la ubicaciòn de disco en el host.
@@ -141,7 +141,7 @@ type Disco struct {
 }
 
 /*
-Estructura de datos tipo JSON que representa la informaciòn de las imagenes que tiene la plataforma Desktop Cloud
+Estructura de datos tipo JSON que representa la informaciòn de las imagenes que tiene la plataforma QuickCloud
 @Repositorio Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
 @Tag Representa el nombre del disco
 @ImagenId Representa la ubicaciòn de disco en el host.
@@ -159,7 +159,7 @@ type Imagen struct {
 }
 
 /*
-Estructura de datos tipo JSON que representa la informaciòn de los contenedores que tiene la plataforma Desktop Cloud
+Estructura de datos tipo JSON que representa la informaciòn de los contenedores que tiene la plataforma QuickCloud
 @ConetendorId Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
 @Imagen Representa el nombre del disco
 @Comando Representa la ubicaciòn de disco en el host.

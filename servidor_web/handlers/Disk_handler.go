@@ -68,7 +68,7 @@ func CreateDiskFromRequest(c *gin.Context) (Models.Disk, error) {
 	if newDisk.Name == "" || newDisk.Ruta_Ubicacion == "" || newDisk.Sistema_Operativo == "" ||
 		newDisk.Arquitectura < 0 || newDisk.Host_id <= 0 {
 		log.Println("Error existen campos vacios")
-		return Models.Disk{}, errors.New("Error existen campos vacios")
+		return Models.Disk{}, errors.New("error existen campos vacios")
 	}
 
 	return newDisk, nil

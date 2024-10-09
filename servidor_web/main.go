@@ -56,23 +56,6 @@ func main() {
 	//TODO: Revisar para que siver o eliminar si se puede
 	router.GET("/signin", handlers.SigninPage)
 
-	//TODO: Adaptar a los usuarios temporales
-	// router.GET("/mainPage", handlers.MainPage)
-
-	//TODO: RUTAS NO DEBERIAN SER RUTAS? Y VAN EN EL /mainpage
-	// Por como está hecho este proyecto, archivos .html llaman a otros .html
-	// ya sea usando JQuery o iframe, por lo cual el servidor debe exponer estas
-	// rutas para acceder a las templates.
-	// Se debe buscar una forma de reescribir esto, como no tener el scrollmenu.html
-	// en otro archivo sino en el mismo mainPage.html. O haciendo que el servidor no
-	// deje acceder a estas rutas desde el navegador.
-
-	// TODO: Eliminar cuando esto ya no sirva del todo
-	// router.GET("/scrollmenu", handlers.Scrollmenu)
-
-	//TODO: ELIMINAR ¿?
-	router.GET("/welcome", handlers.WelcomePage)
-
 	// Explicación para julian de julian: no hay necesidad de asignarle el "adminGroup" al "router",
 	// porque directamente cuando se le asocia una variable con ":=" al "router", gin los junta directamente
 	// sin necesidad de escribir una funcion digamos: router.setGroups( []grupos ). ya tu sabe tu si entiendes
@@ -99,6 +82,7 @@ func main() {
 		userGroup.GET("/profile", handlers.ProfilePage)
 		userGroup.GET("/imagenes", handlers.GestionImagenes)
 		userGroup.GET("/contenedores", handlers.GestionContenedores)
+		userGroup.GET("/connection-machine", handlers.ConnectionMachine)
 		// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 		// router.GET("/helpCenter", handlers.HelpCenterPage)
 	}
@@ -108,8 +92,7 @@ func main() {
 	router.GET("/GetHost", handlers.GetHosts)
 
 	//TODO: Mirar después
-	router.POST("/powerMachine", handlers.PowerMachine)
-	router.POST("/deleteMachine", handlers.DeleteMachine)
+
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
 	router.POST("/DockerHub", handlers.CrearImagen)
@@ -125,9 +108,15 @@ func main() {
 	router.POST("/eliminarContenedores", handlers.EliminarContenedores)
 
 	// API ROUTES
+	router.POST("/api/quick-machine", handlers.QuickMachine)
+
 	router.GET("/api/machines", handlers.GetMachines)
 
 	router.POST("/api/createMachine", handlers.MainSend)
+	router.POST("/api/startMachine", handlers.StartMachine)
+	router.POST("/api/stopMachine", handlers.StopMachine)
+	router.POST("/api/deleteMachine", handlers.DeleteMachine)
+
 	router.POST("/api/loginTemp", handlers.LoginTemp)
 	router.POST("/api/contendores", handlers.GetContendores)
 	router.POST("/api/imagenes", handlers.GetImages)

@@ -22,10 +22,7 @@ gestion de elementos relacionados con la red
 var logger = log.New(os.Stdout, "Logger: ", log.Ldate|log.Ltime|log.Lshortfile)
 
 func ValidateIP(ip string) bool {
-	if net.ParseIP(ip) == nil {
-		return false // La IP no es válida
-	}
-	return true // La IP es válida
+	return net.ParseIP(ip) != nil // La IP es válida si no es nil
 }
 
 func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
@@ -47,7 +44,7 @@ func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
 	ip = ip + ":22"
 	conn, err := ssh.Dial("tcp", ip, config)
 	if err != nil {
-		logger.Println("Error al establecer la conexión SSH:", err, ip)
+		logger.Println("Error al establecer la conexión SSH:", ip)
 		return salida
 	}
 
@@ -93,11 +90,8 @@ func CheckTime(privateKeyPath string) {
 
 	timeTicker := time.NewTicker(10 * time.Minute) // Se ejecuta cada diez minutos
 
-	for {
-		select {
-		case <-timeTicker.C:
-			go CheckMachineTime(privateKeyPath)
-		}
+	for range timeTicker.C {
+		go CheckMachineTime(privateKeyPath)
 	}
 }
 

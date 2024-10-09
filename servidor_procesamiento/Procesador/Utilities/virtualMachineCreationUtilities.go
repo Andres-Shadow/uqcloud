@@ -29,8 +29,8 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
 	var virtualMachineName string = specs.Nombre + "_" + caracteres
 	var availableResources bool = false
-	var estadossh bool = false
-	var validation = false
+	var estadossh bool = true
+	var validation bool = false
 
 	// Verifica la disponibilidad del nombre de la MV
 	dispoible, mensaje := verifyVirtualMachineExistence(virtualMachineName) //Verifica si existe una MV con ese nombre
@@ -47,45 +47,78 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 			log.Println("Error al contar los host que hay en la base de datos: " + err.Error())
 			return "Error al contar los host que hay en la base de datos"
 		}
-		count += 5 //Para dar n+5 iteraciones en busca de hosts con recursos disponibles, donde n es el total de hosts guardados en la bse de datos
 
-		log.Println(estadossh)
-		for !estadossh && !availableResources && count > 0 {
-			//Selecciona un host al azar
-			host, _ = database.SelectHost()
-			estadossh = Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
-			availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, host) //Verifica si el host tiene recursos disponibles
+		// Bucle para seleccionar un host con recursos disponibles
+		for !availableResources && count > 0 {
+			aux, _ := database.SelectHost()
+			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+
+			// Si el estado de SSH es falso, rompe el bucle
+			if !estadossh {
+				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
+			} else {
+				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				if availableResources {
+					host = aux
+					break
+				}
+			}
+
 			count--
 		}
 
 		if !availableResources {
-			fmt.Println("No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde")
-			return "No hay recursos disponibles el Desktop Cloud para crear la màquina virtual. Intente màs tarde"
+			fmt.Println("No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde"
 		}
 
 		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
 		if err != nil {
 			log.Println("Error al obtener el disco:", err)
+			return "Error al obtener el disco"
+		}
 
+	} else if specs.Hostname == "roundrobin" {
+
+		// Bucle para seleccionar un host con recursos disponibles
+		for !availableResources {
+
+			fmt.Println("Obteniendo el host siguiente: " + config.RoundRobinManager.GetNextHost().Nombre)
+			aux := config.RoundRobinManager.GetNextHost()
+			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+
+			// Si el estado de SSH es falso, rompe el bucle
+			if !estadossh {
+				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
+			} else {
+				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				if availableResources {
+					host = aux
+					break
+				}
+			}
+		}
+
+		if !availableResources {
+			fmt.Println("No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde")
+			return "No hay recursos disponibles el QuickCloud para crear la màquina virtual. Intente màs tarde"
+		}
+
+		disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
+
+		if err != nil {
+			log.Println("Error al obtener el disco:", err)
 			return "Error al obtener el disco"
 		}
 
 	} else {
 
-		// Creacion de Maquina Virtual con seleccion de usuario
-		// Obtenemeos el host por medio del indice que es previamente
 		host, err = GetHostByName(specs.Hostname)
 
 		if err != nil {
 			log.Println("Error al obtener el host por nombre:", err)
 			return "Error al obtener el host por nombre " + specs.Hostname
 		}
-
-		// host, err = GetHostById(specs.Host_id)
-		// if err != nil {
-		// 	log.Println("Error al obtener el host por id:", err)
-		// 	return "Error al obtener el host por id " + specs.Hostname
-		// }
 
 		log.Println("Host seleccionado: ", host.Nombre)
 
@@ -112,6 +145,14 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 	err = createDatabaseRecords(host, specs, virtualMachineName, disco)
 	if err != nil {
 		return "Error al crear los registros de la máquina virtual en la base de datos"
+	}
+
+	// En caso de la solicitud sea desde el boton de "Lanzar Máquina Ahora"
+	if specs.Nombre == "QuickGuest" {
+		log.Println("Iniciando automáticamente la máquina virtual rápida en 3 segundos...")
+		// Iniciar la máquina virtual después de 3 segundos de forma asincrona
+		go StartVM(virtualMachineName, host.Hostname)
+		return "Máquina virtual creada y en proceso de inicio"
 	}
 
 	return "solicitud invalida"

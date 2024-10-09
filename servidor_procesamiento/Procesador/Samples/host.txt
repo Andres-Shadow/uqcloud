@@ -18,3 +18,14 @@ POST -> :8081/api/v1/host
     "hst_so" : "windows",
     "hst_so_distro": "64"
 }
+
+POST -> :8081/api/v1/host-fast-register
+
+
+{
+    "ips":[
+        "192.168.1.2",
+        "192.168.1.3",
+        "192.168.1.4"
+    ]
+}

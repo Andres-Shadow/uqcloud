@@ -9,6 +9,7 @@ import (
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models"
+	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -83,46 +84,15 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Funcion que responde al endpoint encargado de registrar un usuario nuevo a la base de datos
-// func UserSignInHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodPost {
-// 		http.Error(w, "Se requiere una solicitud POST", http.StatusMethodNotAllowed)
-// 		return
-// 	}
+// Funcion que responde al endpoint encargado de crear maquinas virtuales para invitados
+func CreateTempUserHandler(w http.ResponseWriter, r *http.Request) {
+	// retorna el correo temporal
+	email := utilities.CreateTempAccount()
 
-// 	var persona models.Persona
-// 	decoder := json.NewDecoder(r.Body)
-// 	if err := decoder.Decode(&persona); err != nil {
-// 		http.Error(w, "Error al decodificar JSON de inicio de sesión", http.StatusBadRequest)
-// 		return
-// 	}
+	// Envía una respuesta al cliente.
+	response := map[string]string{"mensaje": email}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 
-// 	utilities.PrintUserAccount(persona)
-
-// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(persona.Contrasenia), bcrypt.DefaultCost)
-// 	if err != nil {
-// 		fmt.Println("Error al encriptar la contraseña:", err)
-// 		return
-// 	}
-
-// 	query := "INSERT INTO persona (nombre, apellido, email, contrasenia, rol) VALUES ( ?, ?, ?, ?, ?);"
-// 	var resultUsername string
-
-// 	//Registra el usuario en la base de datos
-// 	_, err = database.DB.Exec(query, persona.Nombre, persona.Apellido, persona.Email, hashedPassword, "Estudiante")
-// 	if err != nil {
-// 		fmt.Println("Error al registrar.")
-// 		response := map[string]bool{"loginCorrecto": false}
-// 		w.Header().Set("Content-Type", "application/json")
-// 		w.WriteHeader(http.StatusUnauthorized)
-// 		json.NewEncoder(w).Encode(response)
-// 	} else if err != nil {
-// 		panic(err.Error())
-// 	} else {
-// 		fmt.Printf("Registro correcto: %s\n", resultUsername)
-// 		response := map[string]bool{"loginCorrecto": true}
-// 		w.Header().Set("Content-Type", "application/json")
-// 		w.WriteHeader(http.StatusOK)
-// 		json.NewEncoder(w).Encode(response)
-// 	}
-// }
+}

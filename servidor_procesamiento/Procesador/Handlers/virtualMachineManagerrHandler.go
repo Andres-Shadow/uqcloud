@@ -67,14 +67,14 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	machines, err := database.ConsultMachines(persona)
-	if err != nil && err.Error() != "No Machines Found" {
+	if err != nil && err.Error() != "no Machines Found" {
 		fmt.Println(err)
 		log.Println("Error al consultar las màquinas del usuario")
 		http.Error(w, "Error al consultar las màquinas del usuario", http.StatusBadRequest)
 		return
 	} else if err != nil {
 		fmt.Println(err)
-		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusBadRequest)
+		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusNoContent)
 		return
 	}
 
@@ -132,13 +132,13 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Obtener el nombre de la máquina virtual a partir del path param.
 	vars := mux.Vars(r)
 	virtualMachineName := vars["name"]
-	
+
 	// verificar que el path param no esté vacío
 	if virtualMachineName == "" {
 		http.Error(w, "El nombre de la máquina virtual es obligatorio", http.StatusBadRequest)
 		return
 	}
-	
+
 	payload := make(map[string]interface{})
 	payload["tipo_solicitud"] = "delete"
 	payload["nombreVM"] = virtualMachineName

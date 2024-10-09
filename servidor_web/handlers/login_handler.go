@@ -76,28 +76,10 @@ func ErrorMessage() string {
 // ToDo: Esta función puede cambiar en el futuro
 func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CREATE_GUEST_VM_URL)
-
-	clientIP := c.ClientIP()
-	distribucion := c.PostForm("osCreate")
-
-	//Crea un mapa con la dirección IP del cliente
-	data := map[string]string{
-		"ip":           clientIP,
-		"distribucion": distribucion,
-	}
-
-	// Convierte el mapa a JSON
-	jsonBody, err := json.Marshal(data)
-	if err != nil {
-		// Maneja el error si la conversión falla
-		log.Println("Error al convertir a JSON:", err.Error())
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
-		return
-	}
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.TEMP_USER_ACCOUNT)
 
 	// Crea una solicitud HTTP con el cuerpo JSON
-	req, err := http.NewRequest("POST", serverURL, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest("POST", serverURL, nil)
 	if err != nil {
 		// Maneja el error si la creación de la solicitud falla
 		log.Println("Error al crear la solicitud HTTP:", err.Error())
@@ -147,6 +129,88 @@ func LoginTemp(c *gin.Context) {
 		c.Redirect(http.StatusNotFound, "/")
 	}
 
+}
+
+func QuickMachine(c *gin.Context) {
+	session := sessions.Default(c)
+	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.QUICK_VM)
+
+	//obtener la ip del cliente
+	clienteIp := c.ClientIP()
+
+	//hacer el mapa con la ip del usuario
+	var userSpecs = make(map[string]interface{})
+
+	//adaptar el mapa con la ip del usuario
+	userSpecs["ip"] = clienteIp
+
+	// Crea una solicitud HTTP con el cuerpo JSON
+	jsonData, err := json.Marshal(userSpecs)
+	if err != nil {
+		log.Println("Error al convertir userSpecs a JSON:", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
+		return
+	}
+
+	req, err := http.NewRequest("POST", serverURL, bytes.NewReader(jsonData))
+	if err != nil {
+		// Maneja el error si la creación de la solicitud falla
+		log.Println("Error al crear la solicitud HTTP:", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
+		return
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	// Realiza la solicitud
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error al realizar la solicitud HTTP:", err.Error())
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor"})
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode == http.StatusOK {
+		// Lee el cuerpo de la respuesta
+		responseBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Error al leer el cuerpo de la respuesta:", err)
+			return
+		}
+
+		// Convierte el cuerpo de la respuesta en un mapa
+		var data map[string]string
+		if err := json.Unmarshal(responseBody, &data); err != nil {
+			fmt.Println("Error al decodificar el JSON:", err)
+			return
+		}
+
+		// Accede a los datos del mapa
+		mensaje := data["mensaje"]
+		log.Println("usuario creado con exito", mensaje)
+
+		session.Set("email", mensaje)
+		session.Set("nombre", "Usuario")
+		session.Set("apellido", "Temporal")
+		session.Set("rol", uint8(0))
+		session.Save()
+
+		confirmacion, _ := Utilities.VerifyMachineCreated("QuickGuest", mensaje)
+
+		if !confirmacion {
+			log.Println("No fue posible crear la maquina")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error interno del servidor, no se pudo crear la máquina rápida"})
+			return
+		}
+
+		// c.Redirect(http.StatusSeeOther, "/mainpage/control-machine")
+		c.JSON(http.StatusOK, gin.H{"mensaje": mensaje})
+
+	} else {
+		log.Println("No fue posible crear el usuario")
+		c.Redirect(http.StatusNotFound, "/")
+	}
 }
 
 func Logout(c *gin.Context) {

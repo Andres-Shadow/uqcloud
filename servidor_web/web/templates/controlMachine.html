@@ -3,17 +3,17 @@
 
 <head>
 
-  <title>Desktop Cloud Uniquindio</title>
+  <title>Control Machine</title>
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
   <link rel="stylesheet" type="text/css" href="/web/static/css/mainpage.css">
-  <link rel="stylesheet" type="text/css" href="/web/static/css/styleControlMachine.css">
+  <link rel="stylesheet" type="text/css" href="/web/static/css/controlMachine.css">
 
   <!-- JQuery -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <!-- JS propios (como estos usan JQuery deben estar despues de importar JQuery) -->
   <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/scriptjs/controleMachineScripts.js"></script>
+  <script src="/web/static/js/controleMachineScripts.js"></script>
 
   <!-- Bootstrap -->
   <link rel="stylesheet" href="/web/static/bootstrap/css/bootstrap.min.css">
@@ -41,191 +41,105 @@
 
     <div id="layoutSidenav_content">
 
-      <!--  -->
       <main>
 
-        <div class="container">
-          <!-- Div para la alerta centrada -->
-          <div id="alert-container">
-            <div id="alert-message" class="alert" role="alert">
-            </div>
+        <div id="alert-container"
+          style="display:none; position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 80%;">
+          <div id="alert-message" class="alert" role="alert">
           </div>
+        </div>        
 
-          <div class="container">
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-              <div>
-                <h1 style="font-family: 'Arial', sans-serif; color: #333;">TUS MÁQUINAS VIRTUALES</h1>
-              </div>
-              <div class="centrar-botones">
-                <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
-                  style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
-                  Crear Máquina Virtual
-                  <img src="/web/static/img/icons/add.png" alt="Icono"
-                    style="width: 16px; height: 16px; margin-left: 5px;">
-                </a>
+        <div class="px-4 py-3">
 
-                <!--  BUTTON VERSION -->
-                <!-- <button onclick="abrirVentanaEmergente()" type="button" class="btn btn-primary"
-                style="margin-top: 10px; font-family: 'Arial', sans-serif; background-color: #337ab7; border-color: #2e6da4;">
+          <div style="display: flex; align-items: center; justify-content: space-between;">
+            <div>
+              <h2 style="color: #333;">Máquinas Virtuales</h2>
+            </div>
+            <div class="centrar-botones">
+              <a class="btn btn-primary" href="/mainpage/control-machine/create-machine"
+                style="background-color: #337ab7; border-color: #2e6da4;">
                 Crear Máquina Virtual
-                <img src="/web/static/img/icons/add.png" alt="Icono"
-                  style="width: 16px; height: 16px; margin-left: 5px;">
-                </button> -->
+                <i class="fa-solid fa-circle-plus"></i>
+              </a>
 
-
-              </div>
-            </div>
-            <div class="table">
-              <table id="machine-table">
-                <thead>
-                  <tr>
-                    <th>Nombre</th>
-                    <th>IP</th>
-                    <th>Distribución</th>
-                    <th>Estado</th>
-                    <th>Control</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Los datos se cargarán aquí dinámicamente -->
-                </tbody>
-              </table>
             </div>
           </div>
 
-          <!--VENTANAS EMERGENTES OCULTAS-->
-          <div id="ventanaEmergente" class="ventana-emergente">
-            <button type="button" class="btn-close" aria-label="Cerrar ventana"
-              onclick="cerrarVentanaEmergente()"></button>
-            <form method="post" action="/api/createMachine" id="formulario1">
-              <h2 class="centre-tittle">CREAR MÁQUINA VIRTUAL</h2>
-              <div class="form-group" style="margin-top: 30px;">
-                <label for="vmnameCreate">Nombre de la máquina:</label>
-                <input type="text" class="form-control" name="vmnameCreate" id="vmnameCreate" required>
-              </div>
-              <div class="form-group">
-                <label for="osCreate">Distribución</label>
-                <select class="form-control" id="osCreate" name="osCreate" required>
-                  <option value="Debian">Debian</option>
-                  <option value="Mint">Linux Mint</option>
-                  <option value="Ubuntu">Ubuntu</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="memoryCreate">Cantidad de Memoria</label>
-                <select class="form-control" id="memoryCreate" name="memoryCreate" required>
-                  <option value="1024">1 GB</option>
-                  <option value="2048">2 GB</option>
-                  <option value="3072">3 GB</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="cpuCreate">Cantidad de CPU</label>
-                <select class="form-control" id="cpuCreate" name="cpuCreate" required>
-                  <option value="2">2 Núcleos</option>
-                  <option value="3">3 Núcleos</option>
-                  <option value="4">4 Núcleos</option>
-                </select>
-
-              </div>
-
-              <div class="centrar-botones">
-
-
-                <button type="button" id="MostrarBoton" class="btn btn-primary"
-                  onclick="cerrarVentanahost(1)">Seleccionar
-                  Host</button>
-
-              </div>
-            </form>
+          <div class="table mt-3" style="background-color: white; border-radius: 10px;">
+            <table id="machine-table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>IP</th>
+                  <th>Distribución</th>
+                  <th>Estado</th>
+                  <th>Control</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Los datos se cargarán aquí dinámicamente -->
+              </tbody>
+            </table>
           </div>
 
-          <!--Segunda Iteracion DesktopCloud-->
-          <!-- <div class="card" id="div2" style="display: none; ">
-            <div class="card bg-light " style="max-width: 500rem;align-items: center;align-content:center;">
-              <div class="card-body">
-                <form method="post" action="/api/checkhost" id="formulario2">
-
-                  <h5 class="card-title">Seleciona un Host </h5>
 
 
-                  <div class="host-matrix">
-                    {{if and $.showNewButton (eq $.showNewButton true)}}
-                    <label> Estas en este momento en un Host por lo que cuando
-                      uses el Boton Aleatorio tendrá prioridad para este Host,
-                      si este host llegase a tener problemas se utilizara
-                      una seleccion aleatoria automaticamente</label>
-                    {{end}}
-                    <button type="submit" name="host" value="0" class="btn btn-warning btn-sm"
-                      fill="rgb(255, 255, 255)">
-                      <img src="/web/static/img/icons/pc.png" alt="{{.Nombre}}" class="icon-img" width="40"
-                        height="40" /> -->
-                      <!-- Icono del botón -->
-                      <!-- Aleatorio Texto del botón -->
-                    <!-- </button>
-
-                    <div class="centrar-botones">
-
-
-                      <br>
-                      <br>
-                      <div>
-                        {{range $index, $element := .hosts}}
-                          <button type="submit" name="host" value="{{$element.Id}}"
-                            class="btn btn-info btn-sm {{if eq $element.Ip $.clientIP}}highlight{{end}}">
-                            <img src="/web/static/img/icons/pc.png" alt="{{$element.Name}}" class="icon-img" width="30"
-                              height="30" />
-                            {{$element.Name}}
-                          </button>
-
-                          {{if eq (mod $index 4) 3}}
-                          <br>
-                          {{end}}
-                        {{end}}
-
-                      </div>
-                    </div>
-                  </div>
-
-                  <button type="button" class="btn btn-danger" onclick="cerrarVentanahost(2)"> Cerrar Ventana </button>
-                </form>
-              </div> -->
-
-            <!-- </div>
-          </div> -->          
 
           <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
+            <button type="button" class="btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteEliminar()"></button>
+          
+            <h2 class="centre-tittle" style="text-align: center; font-size: 24px; margin-bottom: 20px;">Eliminar máquina virtual</h2>
+          
+            <div class="form-group" style="text-align: center; margin-bottom: 20px;">
+              <label for="vmnameDelete" style="font-size: 18px;">¿Está seguro de que desea eliminar la siguiente máquina virtual?</label>
+              <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
+                style="background-color: #f2f2f2; width: 80%; margin: 20px auto; cursor: not-allowed; text-align: center;">
+            </div>
+          
+            <div class="centrar-botones" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
+              <button onclick="deleteMachine()" class="btn btn-danger" style="width: 120px;">Eliminar</button>
+              <button type="button" onclick="cerrarVentanaEmergenteEliminar()" class="btn btn-secondary" style="width: 120px;">Cancelar</button>
+            </div>
+          </div>
+          
+
+
+
+
+          <!-- <div id="VentanaEmergenteEliminacion" class="ventana-emergente">
             <button type="button" class="btn-close" aria-label="Cerrar ventana"
               onclick="cerrarVentanaEmergenteEliminar()"></button>
 
-            <form method="post" action="/deleteMachine">
-              <h2 class="centre-tittle">CONFIRMACIÓN DE ELIMINACIÓN</h2>
-              <div class="form-group" style="text-align: center;">
-                <label for="vmnameCreate">¿Está seguro que desea eliminar la máquina virtual?</label>
-                <div style="text-align: center;">
-                  <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
-                    style="background-color: #f2f2f2; width: 100%;cursor: not-allowed; text-align: center; margin-top: 20px;">
-                </div>
+            <h2 class="centre-tittle">CONFIRMACIÓN DE ELIMINACIÓN</h2>
+            <div class="form-group" style="text-align: center;">
+              <label for="vmnameCreate">¿Está seguro que desea eliminar la máquina virtual?</label>
+              <div style="text-align: center;">
+                <input type="text" class="form-control" id="vmnameDelete" name="vmnameDelete" required readonly
+                  style="background-color: #f2f2f2; width: 100%;cursor: not-allowed; text-align: center; margin-top: 20px;">
               </div>
+            </div>
 
-              <div class="centrar-botones" style="margin-top: 20px;">
-                <button type="submit" id="DeleteMachine"
-                  style="background-color: rgba(255, 0, 0, 0.687); width: 100px; margin-right: 10px;"
-                  class="btn btn-Succes">ELIMINAR</button>
-                <button type="button" onclick="cerrarVentanaEmergenteEliminar()"
-                  style="background-color: rgba(0, 128, 0, 0.723); width: 100px; margin-left: 10px;"
-                  class="btn btn-Succes">CANCELAR</button>
-              </div>
-            </form>
-          </div>
-
+            <div class="centrar-botones" style="margin-top: 20px;">
+              <button onclick="deleteMachine()"
+                style="background-color: rgba(255, 0, 0, 0.687); width: 100px; margin-right: 10px;"
+                class="btn btn-Succes">ELIMINAR</button>
+              <button type="button" onclick="cerrarVentanaEmergenteEliminar()"
+                style="background-color: rgba(73, 122, 73, 0.723); width: 100px; margin-left: 10px;"
+                class="btn btn-Succes">CANCELAR</button>
+            </div>
+          </div> -->
+          
+          <!-- VENTANA EMERGENTE INFORMACION DE VM -->
           <div id="VentanaEmergenteInformacion" class="ventana-emergente">
-            <button type="button" class="btn-close" aria-label="Cerrar ventana"
-              onclick="cerrarVentanaEmergenteInformacion()"></button>
 
-            <form action="">
-              <h1 class="centre-tittle">INFORMACIÓN DE LA MÁQUINA</h1>
-              <ul style="margin-top: 30px;">
+            <button type="button" class="btn-close" aria-label="Cerrar ventana" onclick="cerrarVentanaEmergenteInformacion()"></button>
+  
+            <div class="d-flex justify-content-center align-items-center header">
+              <h4>Información de la máquina</h4>
+            </div>
+          
+            <form>
+              <ul class="info-list">
                 <li>
                   <strong>Nombre:</strong>
                   <span id="nombreSpan"></span>
@@ -268,7 +182,7 @@
                 </li>
               </ul>
             </form>
-          </div>
+          </div>        
 
       </main>
 
@@ -281,6 +195,8 @@
   </div>
 
   <script>
+    actualizarTabla();
+
     function showAlert(message, alertType) {
       var alertBox = document.getElementById("alert-message");
       alertBox.innerText = message;
@@ -294,15 +210,39 @@
       }, 5000);
     }
 
-    var successMessage = "{{ .SuccessMessage }}";
-    if (successMessage !== "") {
-      showAlert(successMessage, "success");
+    function deleteMachine() {
+      vm_name = document.getElementById("vmnameDelete").value;
+
+      fetch('/api/deleteMachine', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', },
+        body: JSON.stringify({ vm_name: vm_name, }),
+      })
+        .then(response => {
+          if (response.status === 200) {
+            return response.json();
+          } else if (response.status === 400 || response.status === 500) {
+            return response.json();
+          } else {
+            throw new Error('Error en el servidor web | response status raro');
+          }
+        })
+        .then(data => {
+          if (data.SuccessMessage) {
+            const successMessage = data.SuccessMessage;
+            showAlert(successMessage, "success");
+          } else if (data.ErrorMessage) {
+            const errorMessage = data.ErrorMessage;
+            showAlert(errorMessage, "danger");
+          }
+        })
+        .catch(error => {
+          showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+          console.error('Error: ' + error);
+        })
+      cerrarVentanaEmergenteEliminar();
     }
 
-    var errorMessage = "{{ .ErrorMessage }}";
-    if (errorMessage !== "") {
-      showAlert(errorMessage, "danger");
-    }
   </script>
 </body>
 

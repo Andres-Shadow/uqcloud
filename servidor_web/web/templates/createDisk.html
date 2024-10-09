@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Desktop Cloud | Crear Disco</title>
+  <title>Crear Disco</title>
 
   <link rel="stylesheet"  href="/web/static/css/createDisk.css">
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
@@ -20,6 +20,7 @@
   <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>  
   
   <script src="/web/static/js/mainpage.js"></script>
+  <script src="/web/static/js/createDisk.js"></script>
 
 </head>
 
@@ -36,6 +37,7 @@
         <div>
           <div class="container">
             <div class="center-content">
+
               <!-- Mensaje de éxito -->
               <div id="successMessage" class="alert alert-success alert-dismissible fade show" role="alert" style="display:none;">
                 {{ .message }}
@@ -44,11 +46,13 @@
                 {{ .message }}
                 <button type="button" class="close" data-bs-dismiss="alert" aria-label="close"></button>
               </div>
-              <form class="row g-3 create-form" id="createForm" method="post" action="/createDisk" onsubmit="return showSuccessMessage()">
-                <h1 class="centre-tittle">
-                  <i class="bi bi-disc-fill"></i> Crear Discos
+
+              <form class="row g-3 mx-3 my-2" id="createForm" method="post" action="/createDisk" onsubmit="return showSuccessMessage()">
+                <h1>
+                  <i class="bi bi-disc-fill"></i> 
+                  Crear Discos
                 </h1>
-                <hr class="my-4">
+                <hr class="mt-3">
 
                 <div class="col-md-6">
                   <label for="inputSelectName" class="form-label">Nombre del disco</label>
@@ -101,16 +105,17 @@
                   <label for="inputSelectHost" class="form-label">Host asociado</label>
                   <select id="inputSelectHost" class="form-select">
                     <option value="" disabled selected>Seleccione el host</option>
-                    <! --- Las opciones se rellenan dinamicamente según los hosts registrados previamente --->
+                    <!--- Las opciones se rellenan dinamicamente según los hosts registrados --->
                   </select>
                 </div>
 
-                <div class="col-md-4">
+                <div class="d-flex justify-content-end pt-3">
+                  <button type="reset" class="btn btn-outline-secondary me-2" id="buttonClean">Limpiar Formulario</button>
                   <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Disco</button>
-                  <button type="reset" class="btn btn-outline-secondary" id="buttonClean">Limpiar Formulario</button>
                 </div>
 
               </form>
+              
             </div>
           </div>
         </div>
@@ -120,9 +125,10 @@
       <div class="bg-light mt-auto">
         {{template "mainpage-footer.html"}}
       </div>
+
     </div>
   </div>
-  <script src="/web/static/js/createDisk.js"></script>
+  
 </body>
 
 </html>

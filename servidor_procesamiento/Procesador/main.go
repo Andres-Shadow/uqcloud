@@ -42,6 +42,9 @@ func main() {
 		fmt.Println("Iniciando servidor con llave privada: ", *privateKeyPath)
 	}
 
+	// Inicializa el RoundRobinManager
+	setRoundRobinManager()
+
 	r := mux.NewRouter()
 
 	// Inicializa la ruta de la llave privada SSH
@@ -51,6 +54,9 @@ func main() {
 	if *preregisteredHosts {
 		registerHostData()
 	}
+
+	// Recargar configuración de Prometheus
+	config.ReloadPrometheusConfig()
 
 	// Configura un manejador de solicitud para la ruta "/json".
 	manageServer(r)
@@ -116,6 +122,12 @@ func registerHostData() {
 	}
 }
 
+func setRoundRobinManager() {
+	//TODO actualizar la lista de host cuando se realicen acciones sobre los host
+	registeredHosts := database.GetHosts()
+	config.RoundRobinManager = config.NewRoundRobin(registeredHosts)
+}
+
 /*
 Funciòn que se encarga de configurar los endpoints, realizar las validaciones correspondientes a los JSON que llegan
 por solicitudes HTTP. Se encarga tambièn de ingresar las peticiones para gestiòn de MV a la cola.
@@ -134,25 +146,25 @@ func manageServer(r *mux.Router) {
 	*/
 
 	//Endpoint para las peticiones de creaciòn de màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual_machine", handlers.CreateVirtualMachineHandler).Methods("POST")
+	r.HandleFunc(apiPrefix+"virtual-machine", handlers.CreateVirtualMachineHandler).Methods("POST")
 
 	//Endpoint para consultar las màquinas virtuales de un usuario
-	r.HandleFunc(apiPrefix+"virtual_machine/{email}", handlers.ConsultVirtualMachineHandler).Methods("GET")
+	r.HandleFunc(apiPrefix+"virtual-machine/{email}", handlers.ConsultVirtualMachineHandler).Methods("GET")
 
 	//End point para modificar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual_machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
+	r.HandleFunc(apiPrefix+"virtual-machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
 
 	//End point para eliminar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual_machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
+	r.HandleFunc(apiPrefix+"virtual-machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
 	//End point para encender màquinas virtuales
-	r.HandleFunc(apiPrefix+"start_virtual_machine", handlers.StartVirtualMachineHandler).Methods("POST")
+	r.HandleFunc(apiPrefix+"start-virtual-machine", handlers.StartVirtualMachineHandler).Methods("POST")
 
 	//End point para apagar màquinas virtuales
-	r.HandleFunc(apiPrefix+"stop_virtual_machine", handlers.StopVirtualMachineHandler).Methods("POST")
+	r.HandleFunc(apiPrefix+"stop-virtual-machine", handlers.StopVirtualMachineHandler).Methods("POST")
 
-	//End point para crear maquinas virtuales para invitados
-	r.HandleFunc(apiPrefix+"guest_virtual_machine", handlers.CreateGuestVirtualMachineHandler).Methods("POST")
+	//End point para crear una máquina rápida
+	r.HandleFunc(apiPrefix+"quick-virtual-machine", handlers.CreateQuickVirtualMachineHandler).Methods("POST")
 
 	/*
 		--------------------
@@ -164,13 +176,16 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"hosts", handlers.ConsultHostsHandler).Methods("GET")
 
 	//Endpoint para checkear el Host seleccionado por el usuario caso de uso asignacioon de recursos
-	r.HandleFunc(apiPrefix+"check_host", handlers.CheckHostHandler).Methods("GET")
+	r.HandleFunc(apiPrefix+"check-host", handlers.CheckHostHandler).Methods("GET")
 
 	//Endpoint para consultar los Host
 	r.HandleFunc(apiPrefix+"host/{email}", handlers.ConsultHostHandler).Methods("GET")
 
 	//Endpoint para agregar un host
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")
+
+	//Endpoint para registro rapido de host
+	r.HandleFunc(apiPrefix+"host-fast-register", handlers.FastRegisterHostsHandler).Methods("POST")
 
 	/*
 		------------------
@@ -181,8 +196,8 @@ func manageServer(r *mux.Router) {
 	// Endpoint para peticiones de inicio de sesiòn
 	r.HandleFunc(apiPrefix+"login", handlers.UserLoginHandler)
 
-	//Endpoint para peticiones de inicio de sesiòn
-	// r.HandleFunc("/json/signin", handlers.UserSignInHandler)
+	// Endpoint para crear un usuario nuevo tempral
+	r.HandleFunc(apiPrefix+"temp-user", handlers.CreateTempUserHandler).Methods("POST")
 
 	/*
 		-----------------------
@@ -217,27 +232,27 @@ func manageServer(r *mux.Router) {
 		-------------------
 	*/
 
-	//Endpoint para crear imagen docker desde dockerhub
-	r.HandleFunc(apiPrefix+"dockerhub_image", handlers.CreateImageDockerHubHandler).Methods("POST")
+	// //Endpoint para crear imagen docker desde dockerhub
+	// r.HandleFunc(apiPrefix+"dockerhub_image", handlers.CreateImageDockerHubHandler).Methods("POST")
 
-	//Endpoint para crear imagen docker desde archivo tar
-	r.HandleFunc(apiPrefix+"tar_image", handlers.CreateImageDockerTarHandler).Methods("POST")
+	// //Endpoint para crear imagen docker desde archivo tar
+	// r.HandleFunc(apiPrefix+"tar_image", handlers.CreateImageDockerTarHandler).Methods("POST")
 
-	//Endpoint para crear imagen docker desde archivo Dockerfile
-	r.HandleFunc(apiPrefix+"dockerfile_image", handlers.CreateImageDockerfileHandler).Methods("POST")
+	// //Endpoint para crear imagen docker desde archivo Dockerfile
+	// r.HandleFunc(apiPrefix+"dockerfile_image", handlers.CreateImageDockerfileHandler).Methods("POST")
 
-	//Endpoint para eliminar imagen docker
-	r.HandleFunc(apiPrefix+"docker_image", handlers.DeleteDockerImageHandler).Methods("DELETE")
+	// //Endpoint para eliminar imagen docker
+	// r.HandleFunc(apiPrefix+"docker_image", handlers.DeleteDockerImageHandler).Methods("DELETE")
 
-	//Endpoint para consultar las imagenes de docker en una maquina virtual
-	r.HandleFunc(apiPrefix+"virtual_machine_images", handlers.CheckVirtualMachineDockerImagesHandler).Methods("GET")
+	// //Endpoint para consultar las imagenes de docker en una maquina virtual
+	// r.HandleFunc(apiPrefix+"virtual_machine_images", handlers.CheckVirtualMachineDockerImagesHandler).Methods("GET")
 
-	//Endpoint para crear contenedor
-	r.HandleFunc(apiPrefix+"docker", handlers.CreateDockerHandler).Methods("POST")
+	// //Endpoint para crear contenedor
+	// r.HandleFunc(apiPrefix+"docker", handlers.CreateDockerHandler).Methods("POST")
 
-	//Endpoint para administrar el listado de contenedores en una maquina virtual
-	r.HandleFunc(apiPrefix+"docker", handlers.ManageDockerImagesHandler).Methods("PUT")
+	// //Endpoint para administrar el listado de contenedores en una maquina virtual
+	// r.HandleFunc(apiPrefix+"docker", handlers.ManageDockerImagesHandler).Methods("PUT")
 
-	//Endpoint para consultar los contenedores de una maquina virtual
-	r.HandleFunc(apiPrefix+"virtual_machine_docker", handlers.CheckContainersHandler).Methods("GET")
+	// //Endpoint para consultar los contenedores de una maquina virtual
+	// r.HandleFunc(apiPrefix+"virtual_machine_docker", handlers.CheckContainersHandler).Methods("GET")
 }

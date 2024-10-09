@@ -1,6 +1,7 @@
 package utilities
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"regexp"
@@ -17,6 +18,22 @@ import (
 /*
 Clase encargada de contener las funciones relacionadas con la gestion de maquinas virtuales
 */
+
+func CreateVirtualMachineFromSpecifications(specs map[string]interface{}) {
+	jsonData, _ := json.Marshal(specs) //Se codifica en formato JSON
+
+	var decodedPayload map[string]interface{}
+	err := json.Unmarshal(jsonData, &decodedPayload) //Se decodifica para meterlo en la cola
+	if err != nil {
+		fmt.Println("Error al decodificar el JSON:", err)
+		// Manejar el error según tus necesidades
+		return
+	}
+	// Encola la peticiòn
+	config.GetMu().Lock()
+	config.GetMaquina_virtualQueue().Queue.PushBack(decodedPayload)
+	config.GetMu().Unlock()
+}
 
 /*
 Funciòn que verifica el tiempo de creaciòn de las màquinas de los usuarios invitados con el fin de determinar si se ha pasado o no del tiempo lìmite (2.5horas)
@@ -180,7 +197,7 @@ func DeleteVM(virtualMachineName string) string {
 			return "Error al eliminar la MV"
 		}
 		//Elimina la màquina virtual de la base de datos
-		// err6 := database.DB.QueryRow("DELETE FROM maquina_virtual WHERE NOMBRE = ?", nameVM)
+
 		err6 := database.DeleteVirtualMachine(virtualMachineName)
 		if err6 == nil {
 			log.Println("Error al eliminar el registro de la base de datos: ", err6)
@@ -209,7 +226,7 @@ func ExistVM(virtualMachineName string) (bool, error) {
 
 	//err := database.DB.QueryRow("SELECT EXISTS(SELECT 1 FROM maquina_virtual WHERE nombre = ?)", nameVM).Scan(&existe)
 	existe, err := database.ExistVirtualMachine(virtualMachineName)
-	if err != nil && existe == true {
+	if err != nil && existe {
 		log.Println("Error al realizar la consulta: ", err)
 		return existe, err
 	}
