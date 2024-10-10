@@ -5,6 +5,7 @@ import (
 	"log"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
+	models "servidor_procesamiento/Procesador/Models"
 	"strings"
 	"time"
 )
@@ -23,6 +24,13 @@ para que el usuario de la màquina fìsica no se vea afectado
 
 func StartVM(nameVM string, clientIP string) string {
 
+	var err error
+	var host models.Host
+	var running bool
+	var ipAddress string
+	var restarted bool
+	var maxEspera time.Time
+
 	//Obtiene el objeto "maquina_virtual"
 	maquinaVirtual, err := database.GetVM(nameVM)
 	if err != nil {
@@ -30,22 +38,22 @@ func StartVM(nameVM string, clientIP string) string {
 		return "Error al obtener la MV"
 	}
 	//Obtiene el host en el cual està alojada la MV
-	host, err1 := database.GetHost(maquinaVirtual.Host_id)
-	if err1 != nil {
-		log.Println("Error al obtener el host:", err1)
+	host, err = database.GetHost(maquinaVirtual.Host_id)
+	if err != nil {
+		log.Println("Error al obtener el host:", err)
 		return "Error al obtener el host"
 	}
-	//Configura la conexiòn SSH con el host aaaaa
-	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath()) //RERVISAR QUE SI LE LLEGUE
-	if err2 != nil {
-		log.Println("Error al configurar SSH:", err2)
+	//Configura la conexiòn SSH con el host
+	config, err := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath()) //RERVISAR QUE SI LE LLEGUE
+	if err != nil {
+		log.Println("Error al configurar SSH:", err)
 		return "Error al configurar SSH"
 	}
 
 	//Variable que contiene el estado de la MV (Encendida o apagada)
-	running, err3 := IsRunning(nameVM, host.Ip, config)
-	if err3 != nil {
-		log.Println("Error al obtener el estado de la MV:", err3)
+	running, err = IsRunning(nameVM, host.Ip, config)
+	if err != nil {
+		log.Println("Error al obtener el estado de la MV:", err)
 		return "Error al obtener el estado de la MV"
 	}
 
@@ -61,12 +69,12 @@ func StartVM(nameVM string, clientIP string) string {
 		//Comnado para encender la màquina virtual con GUI
 		startVMGUICommand := "VBoxManage startvm " + "\"" + nameVM + "\""
 
-		_, er := IsAHostIp(clientIP) //Verifica si la solicitud se està realizando desde un host registrado en la BD
-		if er == nil {
+		_, err = IsAHostIp(clientIP) //Verifica si la solicitud se està realizando desde un host registrado en la BD
+		if err == nil {
 			//Envìa el comando para encender la MV con GUI
-			_, err4 := SendSSHCommand(host.Ip, startVMGUICommand, config)
-			if err4 != nil {
-				log.Println("Error al enviar el comando para encender la MV:", err4)
+			_, err = SendSSHCommand(host.Ip, startVMGUICommand, config)
+			if err != nil {
+				log.Println("Error al enviar el comando para encender la MV:", err)
 				return "Error al enviar el comando para encender la MV"
 			}
 		} else {
@@ -93,11 +101,9 @@ func StartVM(nameVM string, clientIP string) string {
 		//Comando para reiniciar la MV
 		rebootCommand := "VBoxManage controlvm " + "\"" + nameVM + "\"" + " reset"
 
-		var ipAddress string
-
 		// Establece un temporizador de espera máximo de 2 minutos
-		maxEspera := time.Now().Add(2 * time.Minute)
-		restarted := false
+		maxEspera = time.Now().Add(2 * time.Minute)
+		restarted = false
 
 		for ipAddress == "" || ipAddress == "No value set!" || strings.HasPrefix(strings.TrimSpace(ipAddress), "169") {
 			if time.Now().Before(maxEspera) {
@@ -136,7 +142,7 @@ func StartVM(nameVM string, clientIP string) string {
 					log.Println("Error al reinciar la MV:", reboot)
 					return "Error al reinciar la MV"
 				}
-				fmt.Println("Reiniciando la màquina: " + nameVM)
+				fmt.Println("Reiniciando la máquina: " + nameVM)
 				maxEspera = time.Now().Add(2 * time.Minute) //Agrega dos minutos de tiempo màximo para obtener la IP cuando se reincia la MV
 				restarted = true
 			}
