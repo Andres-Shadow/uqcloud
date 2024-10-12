@@ -207,7 +207,6 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 	log.Println("Host seleccionado: ", host.Id)
 
 	nuevaMaquinaVirtual := models.Maquina_virtual{
-		Uuid:                           nameVM + "_uuid",
 		Nombre:                         nameVM,
 		Ram:                            specs.Ram,
 		Cpu:                            specs.Cpu,

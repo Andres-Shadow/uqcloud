@@ -25,7 +25,6 @@ func FastRegisterHosts(ips []string) {
 	quickHost.Cpu_usada = 0
 	quickHost.Almacenamiento_usado = 0
 	quickHost.Adaptador_red = os.Getenv("QUICK_HOST_NETWORK")
-	quickHost.Ruta_llave_ssh_pub = os.Getenv("QUICK_HOST_SSH_ROUTE")
 	quickHost.Estado = "apagado"
 	quickHost.Sistema_operativo = os.Getenv("QUICK_HOST_SO")
 	quickHost.Distribucion_sistema_operativo = os.Getenv("QUICK_HOST_SO_DISTRO")

@@ -24,9 +24,7 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 	// Realiza la consulta y guarda los resultados directamente en una lista de mapas
 	// Nota: Está estructura del map se debe usar así para obtener los valores de la BD
 	// 		 Luego, el map cambia cuando toca pasar los key:valor a la estructura del servidor web
-	err := DATABASE.Model(&models.Host{}).Select("id, nombre, ip").Find(&results).Error
-
-	log.Println("RESULTS: ", results)
+	err := DATABASE.Model(&models.Host{}).Select("id, nombre, ip, ram_total, cpu_total, almacenamiento_total, estado").Find(&results).Error
 
 	if err != nil {
 		log.Println("Error al realizar la consulta de máquinas en la BD:", err)
@@ -48,7 +46,6 @@ func ConsultHosts() ([]map[string]interface{}, error) {
 			delete(result, "nombre")
 		}
 	}
-	log.Println("NEW RESULTS: ", results)
 
 	return results, nil
 }
