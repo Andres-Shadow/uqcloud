@@ -18,8 +18,8 @@ Clase encargada de contener las funalidades de encedido y apagado de maquinas vi
 
 /*
 Funciòn que permite iniciar una màquina virtual en modo "headless", lo que indica que se inicia en segundo plano
-para que el usuario de la màquina fìsica no se vea afectado
-@nameVM Paràmetro que contiene el nombre de la màquina virtual a encender
+para que el usuario de la màquina fìsica no se vea afectado, realiza las comprobaciones iniciales y posteriormente
+llama a la funciòn "startVMSequence" para realizar el encendido de la màquina virtual
 */
 
 func StartVM(nameVM string, clientIP string) string {
@@ -64,9 +64,8 @@ func StartVM(nameVM string, clientIP string) string {
 
 }
 
-/* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual
-@nameVM Paràmetro que contiene el nombre de la màquina virtual a apagar
-@clientIP Paràmetro que contiene la direcciòn IP del cliente desde el cual se realiza la solicitud
+/* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual, realiza las comprobaciones iniciales
+y posteriormente llama a la funciòn "powerOffVMSequence" para realizar el apagado de la màquina virtual
 */
 
 func TurnOffVM(nameVM string, clientIP string) string {
@@ -109,7 +108,7 @@ func TurnOffVM(nameVM string, clientIP string) string {
 	return powerOffVMSequence(nameVM, host, conf)
 }
 
-// startVMSequence handles the steps to start the VM and retrieve its IP address.
+// Funcion que se encarga de ejecutar la secuencia de encendido de la màquina virtual
 func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.ClientConfig) string {
 
 	var err error
@@ -123,16 +122,19 @@ func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.Client
 		return "Error al enviar el comando para encender la MV: " + err.Error()
 	}
 
+	//Actualiza el estado de la màquina virtual
 	if err = database.UpdateVirtualMachineState(nameVM, "Procesando"); err != nil {
 		log.Println("Error al actualizar el estado de la MV:", err)
 		return "Error al actualizar el estado de la MV: " + err.Error()
 	}
 
+	//Obtiene la direcciòn IP de la màquina virtual
 	ipAddress, err = getVMIPAddress(nameVM, host, conf)
 	if err != nil {
 		return err.Error()
 	}
 
+	//Actualiza el estado de la màquina virtual y su direcciòn IP en la base de datos
 	if err = finalizeVMStart(nameVM, ipAddress); err != nil {
 		return err.Error()
 	}
@@ -140,7 +142,7 @@ func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.Client
 	return ipAddress
 }
 
-// getStartVMCommand selects the proper start command based on the client IP.
+// funcion que retorna el comando para encender la màquina virtual según las condiciones deseadas
 func getStartVMCommand(clientIP, nameVM string) string {
 	if _, err := IsAHostIp(clientIP); err == nil {
 		return "VBoxManage startvm " + "\"" + nameVM + "\""
@@ -148,25 +150,38 @@ func getStartVMCommand(clientIP, nameVM string) string {
 	return "VBoxManage startvm " + "\"" + nameVM + "\"" + " --type headless"
 }
 
-// getVMIPAddress attempts to retrieve the VM's IP address within a time limit.
+// funcion muy importante encargada de ejecutar el proceso de obtenciòn de la direcciòn IP de la màquina virtual
+// mediante la repeticion de comandos y la espera de la respuesta correcta
 func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (string, error) {
 
-	fmt.Println("Obteniendo direcciòn IP de la màquina " + nameVM + "...")
+	// comandos necesarios para obtener la direccion IP de la màquina virtual mediante
+	// las guestaditions de virtualbox
+	var getIpCommand string = "VBoxManage guestproperty get " + "\"" + nameVM + "\"" + " /VirtualBox/GuestInfo/Net/0/V4/IP"
+	var rebootCommand string = "VBoxManage controlvm " + "\"" + nameVM + "\"" + " reset"
 
-	getIpCommand := "VBoxManage guestproperty get " + "\"" + nameVM + "\"" + " /VirtualBox/GuestInfo/Net/0/V4/IP"
-	rebootCommand := "VBoxManage controlvm " + "\"" + nameVM + "\"" + " reset"
-	maxWait := time.Now().Add(2 * time.Minute)
-	restarted := false
+	// variables necesarias para el control del proceso
+	// dentro de la funcion
+	var restarted bool = false
 	var ipAddress string
+	maxWait := time.Now().Add(2 * time.Minute)
 
 	for time.Now().Before(maxWait) {
-		ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, conf)
-		ipAddress = cleanIPAddress(ipAddress)
+		fmt.Println("Obteniendo direcciòn IP de la màquina " + nameVM + "...")
 
+		// envia el comando ssh para obtener la direcciòn IP o reiniciar si es necesario
+		ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, conf)
+
+		// limpia el output de virtual box para obtener la direcciòn IP
+		// VirtualBox -> "Value: 192.168.x.x"
+		//Limpieza-> "192.168.x.x"
+		ipAddress = strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
+
+		// verifica si la direcciòn IP es correcta
 		if ipAddress != "" && !strings.HasPrefix(ipAddress, "169") && ipAddress != "No value set!" {
 			return ipAddress, nil
 		}
 
+		// verifica si se ha superado el tiempo de espera (variable maxWait)
 		if time.Now().After(maxWait) {
 			if restarted {
 				return "", fmt.Errorf("no se logró obtener la dirección IP. Contacte al administrador")
@@ -183,12 +198,7 @@ func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (st
 	return "", fmt.Errorf("no se logró obtener la dirección IP")
 }
 
-// cleanIPAddress removes unnecessary parts of the IP address string.
-func cleanIPAddress(ipAddress string) string {
-	return strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
-}
-
-// rebootVM reboots the virtual machine if needed.
+// funcion encargada de reiniar la màquina virtual
 func rebootVM(hostIP, rebootCommand string, conf *ssh.ClientConfig) error {
 	_, err := SendSSHCommand(hostIP, rebootCommand, conf)
 	if err != nil {
@@ -197,7 +207,8 @@ func rebootVM(hostIP, rebootCommand string, conf *ssh.ClientConfig) error {
 	return err
 }
 
-// finalizeVMStart updates the database with the VM state and IP address.
+// funcion encargada de finalizar el proceso de encendido de la màquina virtual
+// actualizando su estado y su direcciòn IP en la base de datos
 func finalizeVMStart(nameVM, ipAddress string) error {
 	if err := database.UpdateVirtualMachineState(nameVM, "Encendido"); err != nil {
 		return fmt.Errorf("error al actualizar el estado de la MV: %v", err)
@@ -211,31 +222,41 @@ func finalizeVMStart(nameVM, ipAddress string) error {
 	return nil
 }
 
+// funcion encargada de ejecutar el proceso de apagado de la màquina virtual
+// siguiendo los pasos necesarios para garantizar el apagado correcto
 func powerOffVMSequence(nameVM string, host models.Host, config *ssh.ClientConfig) string {
 
+	// variables necesarias para el control del proceso
 	var err error
+
+	// comando necesario para apgar la màquina virtual
 	var powerOffCommand string = "VBoxManage controlvm \"" + nameVM + "\" poweroff"
 
 	fmt.Println("Apagando máquina " + nameVM + "...")
 
+	// actualiza el estado de la màquina virtual en una primera instancia
 	err = database.UpdateVirtualMachineState(nameVM, "Procesando")
 	if err != nil {
 		log.Println("Error al actualizar el estado de la MV:", err)
 		return "Error al actualizar el estado de la MV"
 	}
 
+	// envia el comando ssh para apagar la màquina virtual
 	_, err = SendSSHCommand(host.Ip, powerOffCommand, config)
 	if err != nil {
 		log.Println("Error al enviar el comando para apagar la MV:", err)
 		return "Error al enviar el comando para apagar la MV" + err.Error()
 	}
 
+	// verifica si la màquina virtual se ha apagado correctamente
 	if !waitForShutdown(nameVM, host, config) {
 		if err := forceShutdown(nameVM, host, config); err != nil {
 			return err.Error()
 		}
 	}
 
+	// actualiza el estado de la màquina virtual en la base de datos a apagado
+	// de forma definitiva
 	err = database.UpdateVirtualMachineState(nameVM, "Apagado")
 	if err != nil {
 		log.Println("Error al actualizar el estado de la MV:", err)
@@ -246,6 +267,8 @@ func powerOffVMSequence(nameVM string, host models.Host, config *ssh.ClientConfi
 	return ""
 }
 
+// funcion encargada de verificar si la màquina virtual se ha apagado correctamente
+// esperando x tiempo (variable maxWait) y verificando el estado de la màquina virtual
 func waitForShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) bool {
 	var running bool
 	var err error
@@ -264,6 +287,8 @@ func waitForShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) 
 	return false
 }
 
+// funcion encargada de forzar el apagado de la màquina virtual en caso de que no se haya apagado correctamente
+// siguiendo los pasos listado en la funcion TurnOffVMSquence
 func forceShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) error {
 	var powerOffCommand string = "VBoxManage controlvm \"" + nameVM + "\" poweroff"
 	var err error
