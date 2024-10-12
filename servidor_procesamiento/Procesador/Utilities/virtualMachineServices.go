@@ -68,7 +68,8 @@ func StartVM(nameVM string, clientIP string) string {
 	}
 
 	if running, err = IsRunning(nameVM, host.Ip, conf); err != nil {
-		return logError("Error al obtener el estado de la MV:", err)
+		log.Println("Error al obtener el estado de la MV:", err)
+		return "Error al obtener el estado de la MV" + err.Error()
 	} else if running {
 		return "La máquina ya está encendida"
 	}
@@ -77,88 +78,19 @@ func StartVM(nameVM string, clientIP string) string {
 
 	return startVMSequence(nameVM, clientIP, host, conf)
 
-	// ------------------------------- //
-
-	// time.Sleep(10 * time.Second)
-
-	// // Establece un temporizador de espera máximo de 2 minutos
-	// maxEspera = time.Now().Add(2 * time.Minute)
-	// restarted = false
-
-	// for ipAddress == "" || ipAddress == "No value set!" || strings.HasPrefix(strings.TrimSpace(ipAddress), "169") {
-	// 	if time.Now().Before(maxEspera) {
-	// 		if ipAddress == "No value set!" {
-	// 			time.Sleep(5 * time.Second) // Espera 5 segundos antes de intentar nuevamente
-	// 			fmt.Println("Obteniendo dirección IP de la màquina " + nameVM + "...")
-	// 		}
-	// 		//Envìa el comando para obtener la IP
-	// 		ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, conf)
-
-	// 		ipAddress = strings.TrimSpace(ipAddress) //Elimina espacios en blanco al final de la cadena
-	// 		ipParts := strings.Split(ipAddress, ":")
-	// 		if len(ipParts) > 1 {
-	// 			ipParts := strings.Split(ipParts[1], ".")
-	// 			if strings.TrimSpace(ipParts[0]) == "169" {
-	// 				ipAddress = strings.TrimSpace(ipParts[0])
-	// 				time.Sleep(5 * time.Second) // Espera 5 segundos antes de intentar nuevamente
-	// 				fmt.Println("Obteniendo dirección IP de la màquina " + nameVM + "...")
-	// 			}
-	// 		}
-
-	// 	} else {
-	// 		if restarted {
-	// 			log.Println("No se logrò obtener la direcciòn IP de la màquina: " + nameVM)
-	// 			//Actualiza el estado de la MV en la base de datos
-	// 			err9 := database.UpdateVirtualMachineState(nameVM, "Apagado")
-	// 			if err9 != nil {
-	// 				log.Println("Error al realizar la actualizaciòn del estado", err9)
-	// 				return "Error al realizar la actualizaciòn del estado"
-	// 			}
-	// 			return "No se logrò obtener la direcciòn IP, por favor contacte al administrador"
-	// 		}
-	// 		//Envìa el comando para reiniciar la MV
-	// 		reboot, error := SendSSHCommand(host.Ip, rebootCommand, conf)
-	// 		if error != nil {
-	// 			log.Println("Error al reinciar la MV:", reboot)
-	// 			return "Error al reinciar la MV"
-	// 		}
-	// 		fmt.Println("Reiniciando la máquina: " + nameVM)
-	// 		maxEspera = time.Now().Add(2 * time.Minute) //Agrega dos minutos de tiempo màximo para obtener la IP cuando se reincia la MV
-	// 		restarted = true
-	// 	}
-	// }
-
-	// //Almacena la direccion ip de la maquina virtual
-	// ipAddress = strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
-
-	// log.Println("Dirección IP de la máquina " + nameVM + ": " + ipAddress)
-
-	// //Actualiza el estado de la MV en la base de datos
-	// err9 := database.UpdateVirtualMachineState(nameVM, "Encendido")
-	// if err9 != nil {
-	// 	log.Println("Error al realizar la actualizaciòn del estado", err9)
-	// 	return "Error al realizar la actualizaciòn del estado"
-	// }
-	// //Actualiza la direcciòn IP de la MV en la base de datos
-	// err10 := database.UpdateVirtualMachineIP(nameVM, ipAddress)
-	// if err10 != nil {
-	// 	log.Println("Error al realizar la actualizaciòn de la IP", err10)
-	// 	return "Error al realizar la actualizaciòn de la IP"
-	// }
-	// fmt.Println("Màquina encendida, la direcciòn IP es: " + ipAddress)
-	// return ipAddress
-
 }
 
 // startVMSequence handles the steps to start the VM and retrieve its IP address.
 func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.ClientConfig) string {
 	startVMCommand := getStartVMCommand(clientIP, nameVM)
 	if err := executeStartCommand(host.Ip, startVMCommand, conf); err != nil {
-		return logError("Error al enviar el comando para encender la MV:", err)
+		log.Println("Error al enviar el comando para encender la MV:", err)
+		return "Error al enviar el comando para encender la MV: " + err.Error()
 	}
 
 	if err := database.UpdateVirtualMachineState(nameVM, "Procesando"); err != nil {
-		return logError("Error al actualizar el estado de la MV:", err)
+		log.Println("Error al actualizar el estado de la MV:", err)
+		return "Error al actualizar el estado de la MV: " + err.Error()
 	}
 
 	ipAddress, err := getVMIPAddress(nameVM, host, conf)
@@ -253,12 +185,6 @@ func finalizeVMStart(nameVM, ipAddress string) error {
 
 	log.Println("Máquina encendida, la dirección IP es:", ipAddress)
 	return nil
-}
-
-// logError logs an error message and returns it as a string.
-func logError(message string, err error) string {
-	log.Println(message, err)
-	return message
 }
 
 /* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual
