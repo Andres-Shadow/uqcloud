@@ -21,7 +21,7 @@ atienden las consultas sobre estos
 
 // Funcion que responde al endpoint encargado de consultar las maquinas virtuales
 func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
-	hosts, err := database.ConsultHosts()
+	hosts, err := database.ConsultHosts() // almacena los hosts que se encuentran en la base de datos
 
 	log.Println("Hosts from servidor_procesamiento > hostHandler.GO: ", hosts)
 

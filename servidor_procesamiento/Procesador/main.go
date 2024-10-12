@@ -151,9 +151,6 @@ func manageServer(r *mux.Router) {
 	//Endpoint para consultar las màquinas virtuales de un usuario
 	r.HandleFunc(apiPrefix+"virtual-machine/{email}", handlers.ConsultVirtualMachineHandler).Methods("GET")
 
-	//End point para modificar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual-machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
-
 	//End point para eliminar màquinas virtuales
 	r.HandleFunc(apiPrefix+"virtual-machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
 
