@@ -29,25 +29,11 @@ func StartVM(nameVM string, clientIP string) string {
 	var err error
 	var host models.Host
 	var running bool
-	// var ipAddress string
-	// var restarted bool
-	// var maxEspera time.Time
 	var conf *ssh.ClientConfig
-
-	// // Comando para encender la máquina virtual en segundo planto
-	// var startVMHeadlessCommand string = "VBoxManage startvm " + "\"" + nameVM + "\"" + " --type headless"
-
-	// //Comnado para encender la màquina virtual con GUI
-	// var startVMGUICommand string = "VBoxManage startvm " + "\"" + nameVM + "\""
-
-	//Comando para obtener la dirección IP de la máquina virtual
-	// var getIpCommand string = "VBoxManage guestproperty get " + "\"" + nameVM + "\"" + " /VirtualBox/GuestInfo/Net/0/V4/IP"
-
-	// //Comando para reiniciar la MV
-	// var rebootCommand string = "VBoxManage controlvm " + "\"" + nameVM + "\"" + " reset"
+	var maquinaVirtual models.Maquina_virtual
 
 	//Obtiene el objeto "maquina_virtual"
-	maquinaVirtual, err := database.GetVM(nameVM)
+	maquinaVirtual, err = database.GetVM(nameVM)
 	if err != nil {
 		log.Println("Error al obtener la MV:", err)
 		return "Error al obtener la MV"
@@ -83,7 +69,9 @@ func StartVM(nameVM string, clientIP string) string {
 // startVMSequence handles the steps to start the VM and retrieve its IP address.
 func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.ClientConfig) string {
 	startVMCommand := getStartVMCommand(clientIP, nameVM)
-	if err := executeStartCommand(host.Ip, startVMCommand, conf); err != nil {
+
+	// verifica el envio del comando ssh
+	if _, err := SendSSHCommand(host.Ip, startVMCommand, conf); err != nil {
 		log.Println("Error al enviar el comando para encender la MV:", err)
 		return "Error al enviar el comando para encender la MV: " + err.Error()
 	}
@@ -113,12 +101,6 @@ func getStartVMCommand(clientIP, nameVM string) string {
 	return "VBoxManage startvm " + "\"" + nameVM + "\"" + " --type headless"
 }
 
-// executeStartCommand sends the command to start the VM.
-func executeStartCommand(hostIP, command string, conf *ssh.ClientConfig) error {
-	_, err := SendSSHCommand(hostIP, command, conf)
-	return err
-}
-
 // getVMIPAddress attempts to retrieve the VM's IP address within a time limit.
 func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (string, error) {
 
@@ -134,7 +116,7 @@ func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (st
 		ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, conf)
 		ipAddress = cleanIPAddress(ipAddress)
 
-		if isValidIPAddress(ipAddress) {
+		if ipAddress != "" && !strings.HasPrefix(ipAddress, "169") && ipAddress != "No value set!" {
 			return ipAddress, nil
 		}
 
@@ -157,11 +139,6 @@ func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (st
 // cleanIPAddress removes unnecessary parts of the IP address string.
 func cleanIPAddress(ipAddress string) string {
 	return strings.TrimSpace(strings.TrimPrefix(ipAddress, "Value:"))
-}
-
-// isValidIPAddress checks if the IP address is valid.
-func isValidIPAddress(ipAddress string) bool {
-	return ipAddress != "" && !strings.HasPrefix(ipAddress, "169") && ipAddress != "No value set!"
 }
 
 // rebootVM reboots the virtual machine if needed.
