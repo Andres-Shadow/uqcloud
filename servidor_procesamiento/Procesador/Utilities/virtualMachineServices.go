@@ -13,9 +13,7 @@ import (
 )
 
 /*
-Clase encargada de contener las funalidades asociadas a la realizacion de acciones
-dentro de las maquinas virtuales, diferente a las utilidades encargadas de
-realizar acciones de interaccion con las mismas
+Clase encargada de contener las funalidades de encedido y apagado de maquinas virtuales
 */
 
 /*
@@ -66,27 +64,76 @@ func StartVM(nameVM string, clientIP string) string {
 
 }
 
+/* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual
+@nameVM Paràmetro que contiene el nombre de la màquina virtual a apagar
+@clientIP Paràmetro que contiene la direcciòn IP del cliente desde el cual se realiza la solicitud
+*/
+
+func TurnOffVM(nameVM string, clientIP string) string {
+	var err error
+	var maquinaVirtual models.Maquina_virtual
+	var host models.Host
+	var conf *ssh.ClientConfig
+	var running bool
+	//Obtiene la màquina vitual a apagar
+	maquinaVirtual, err = database.GetVM(nameVM)
+	if err != nil {
+		log.Println("Error al obtener la MV:", err)
+		return "Error al obtener la MV"
+	}
+
+	//Obtiene el host en el cual està alojada la MV
+	host, err = database.GetHost(maquinaVirtual.Host_id)
+	if err != nil {
+		log.Println("Error al obtener el host:", err)
+		return "Error al obtener el host"
+	}
+	//Configura la conexiòn SSH con el host
+	conf, err = ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
+	if err != nil {
+		log.Println("Error al configurar SSH:", err)
+		return "Error al configurar SSH"
+	}
+
+	running, err = IsRunning(nameVM, host.Ip, conf)
+	if err != nil {
+		log.Println("Error al obtener el estado de la MV:", err)
+		return "Error al obtener el estado de la MV"
+	}
+
+	if !running {
+		log.Println("La máquina ya está apagada")
+		return "La máquina ya está apagada"
+	}
+
+	return powerOffVMSequence(nameVM, host, conf)
+}
+
 // startVMSequence handles the steps to start the VM and retrieve its IP address.
 func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.ClientConfig) string {
+
+	var err error
+	var ipAddress string
+
 	startVMCommand := getStartVMCommand(clientIP, nameVM)
 
 	// verifica el envio del comando ssh
-	if _, err := SendSSHCommand(host.Ip, startVMCommand, conf); err != nil {
+	if _, err = SendSSHCommand(host.Ip, startVMCommand, conf); err != nil {
 		log.Println("Error al enviar el comando para encender la MV:", err)
 		return "Error al enviar el comando para encender la MV: " + err.Error()
 	}
 
-	if err := database.UpdateVirtualMachineState(nameVM, "Procesando"); err != nil {
+	if err = database.UpdateVirtualMachineState(nameVM, "Procesando"); err != nil {
 		log.Println("Error al actualizar el estado de la MV:", err)
 		return "Error al actualizar el estado de la MV: " + err.Error()
 	}
 
-	ipAddress, err := getVMIPAddress(nameVM, host, conf)
+	ipAddress, err = getVMIPAddress(nameVM, host, conf)
 	if err != nil {
 		return err.Error()
 	}
 
-	if err := finalizeVMStart(nameVM, ipAddress); err != nil {
+	if err = finalizeVMStart(nameVM, ipAddress); err != nil {
 		return err.Error()
 	}
 
@@ -164,98 +211,66 @@ func finalizeVMStart(nameVM, ipAddress string) error {
 	return nil
 }
 
-/* Funciòn que permite enviar el comando PowerOff para apagar una màquina virtual
-@nameVM Paràmetro que contiene el nombre de la màquina virtual a apagar
-@clientIP Paràmetro que contiene la direcciòn IP del cliente desde el cual se realiza la solicitud
-*/
+func powerOffVMSequence(nameVM string, host models.Host, config *ssh.ClientConfig) string {
 
-func TurnOffVM(nameVM string, clientIP string) string {
+	var err error
+	var powerOffCommand string = "VBoxManage controlvm \"" + nameVM + "\" poweroff"
 
-	//Obtiene la màquina vitual a apagar
-	maquinaVirtual, err := database.GetVM(nameVM)
+	fmt.Println("Apagando máquina " + nameVM + "...")
+
+	err = database.UpdateVirtualMachineState(nameVM, "Procesando")
 	if err != nil {
-		log.Println("Error al obtener la MV:", err)
-		return "Error al obtener la MV"
-	}
-	//Obtiene el host en el cual està alojada la MV
-	host, err1 := database.GetHost(maquinaVirtual.Host_id)
-	if err1 != nil {
-		log.Println("Error al obtener el host:", err1)
-		return "Error al obtener el host"
-	}
-	//Configura la conexiòn SSH con el host
-	config, err2 := ConfigureSSH(host.Hostname, config.GetPrivateKeyPath())
-	if err2 != nil {
-		log.Println("Error al configurar SSH:", err2)
-		return "Error al configurar SSH"
-	}
-	//Variable que contiene el estado de la MV (Encendida o apagada)
-	running, err3 := IsRunning(nameVM, host.Ip, config)
-	if err3 != nil {
-		log.Println("Error al obtener el estado de la MV:", err3)
-		return "Error al obtener el estado de la MV"
+		log.Println("Error al actualizar el estado de la MV:", err)
+		return "Error al actualizar el estado de la MV"
 	}
 
-	if !running { //En caso de que la MV estè apagada, no haga nada
-		log.Println("La máquina ya está apagada")
-		return "La máquina ya está apagada"
-	} else {
-
-		//Comando para apagar la màquina virtual
-		powerOffCommand := "VBoxManage controlvm " + "\"" + nameVM + "\"" + " poweroff"
-
-		fmt.Println("Apagando màquina " + nameVM + "...")
-		//Actualza el estado de la MV en la base de datos
-
-		err4 := database.UpdateVirtualMachineState(nameVM, "Procesando")
-		if err4 != nil {
-			log.Println("Error al realizar la actualizaciòn del estado", err4)
-			return "Error al realizar la actualizaciòn del estado"
-		}
-		//Envìa el comando para apagar la MV a travès de un ACPI
-		_, err5 := SendSSHCommand(host.Ip, powerOffCommand, config)
-		if err5 != nil {
-			log.Println("Error al enviar el comando para apagar la MV:", err5)
-			return "Error al enviar el comando para apagar la MV"
-		}
-		// Establece un temporizador de espera máximo de 5 minutos
-		maxEspera := time.Now().Add(5 * time.Minute)
-
-		// Espera hasta que la máquina esté apagada o haya pasado el tiempo máximo de espera
-		for time.Now().Before(maxEspera) {
-			status, err6 := IsRunning(nameVM, host.Ip, config)
-			if err6 != nil {
-				log.Println("Error al obtener el estado de la MV:", err6)
-				return "Error al obtener el estado de la MV"
-			}
-			if !status {
-				break
-			}
-			// Espera un 1 segundo antes de volver a verificar el estado de la màquina
-			time.Sleep(1 * time.Second)
-		}
-
-		//Consulta si la MV està encendida
-		status, err7 := IsRunning(nameVM, host.Ip, config)
-		if err7 != nil {
-			log.Println("Error al obtener el estado de la MV:", err7)
-			return "Error al obtener el estado de la MV"
-		}
-		if status {
-			_, err8 := SendSSHCommand(host.Ip, powerOffCommand, config) //Envìa el comando para apagar la MV a travès de un Power Off
-			if err8 != nil {
-				log.Println("Error al enviar el comando para apagar la MV:", err8)
-				return "Error al enviar el comando para apagar la MV"
-			}
-		}
-		//Actualiza el estado de la MV en la base de datos
-		err9 := database.UpdateVirtualMachineState(nameVM, "Apagado")
-		if err9 != nil {
-			log.Println("Error al realizar la actualizaciòn del estado", err9)
-			return "Error al realizar la actualizaciòn del estado"
-		}
-
-		fmt.Println("Màquina apagada con èxito")
+	_, err = SendSSHCommand(host.Ip, powerOffCommand, config)
+	if err != nil {
+		log.Println("Error al enviar el comando para apagar la MV:", err)
+		return "Error al enviar el comando para apagar la MV" + err.Error()
 	}
+
+	if !waitForShutdown(nameVM, host, config) {
+		if err := forceShutdown(nameVM, host, config); err != nil {
+			return err.Error()
+		}
+	}
+
+	err = database.UpdateVirtualMachineState(nameVM, "Apagado")
+	if err != nil {
+		log.Println("Error al actualizar el estado de la MV:", err)
+		return "Error al actualizar el estado de la MV"
+	}
+
+	fmt.Println("Máquina apagada con éxito")
 	return ""
+}
+
+func waitForShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) bool {
+	var running bool
+	var err error
+	maxWait := time.Now().Add(5 * time.Minute)
+	for time.Now().Before(maxWait) {
+		running, err = IsRunning(nameVM, host.Ip, config)
+		if err != nil {
+			log.Println("Error al obtener el estado de la MV:", err)
+			return false
+		}
+		if !running {
+			return true
+		}
+		time.Sleep(1 * time.Second)
+	}
+	return false
+}
+
+func forceShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) error {
+	var powerOffCommand string = "VBoxManage controlvm \"" + nameVM + "\" poweroff"
+	var err error
+	_, err = SendSSHCommand(host.Ip, powerOffCommand, config)
+	if err != nil {
+		log.Println("Error al enviar el comando para apagar la MV:", err)
+		return fmt.Errorf("error al enviar el comando para apagar la MV")
+	}
+	return nil
 }
