@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"gorm.io/gorm"

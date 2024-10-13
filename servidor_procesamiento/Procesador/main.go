@@ -9,7 +9,7 @@ import (
 	database "servidor_procesamiento/Procesador/Database"
 	handlers "servidor_procesamiento/Procesador/Handlers"
 	jobs "servidor_procesamiento/Procesador/Jobs"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -123,7 +123,6 @@ func registerHostData() {
 }
 
 func setRoundRobinManager() {
-	//TODO actualizar la lista de host cuando se realicen acciones sobre los host
 	registeredHosts := database.GetHosts()
 	config.RoundRobinManager = config.NewRoundRobin(registeredHosts)
 }

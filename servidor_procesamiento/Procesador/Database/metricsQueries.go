@@ -2,7 +2,7 @@ package database
 
 import (
 	"log"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 )
 
 /*

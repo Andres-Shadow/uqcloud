@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"strings"
 )
 

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	config "servidor_procesamiento/Procesador/Config"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strings"
 	"time"

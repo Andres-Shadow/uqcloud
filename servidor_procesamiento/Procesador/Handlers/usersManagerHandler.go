@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	"golang.org/x/crypto/bcrypt"

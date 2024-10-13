@@ -1,9 +1,9 @@
 package database
 
 import (
-	_"database/sql"
+	_ "database/sql"
 	"log"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 
 	"gorm.io/gorm"
 )
@@ -15,7 +15,6 @@ Funciòn que permite obtener un disco que cumpla con los paràmetros especificad
 @id_host Paràmetro que representa el identificador ùnico del host en el cual se està buscando el disco
 @Return Retorna el disco en caso de que exista y cumpla con las condiciones mencionadas anterormente
 */
-
 
 func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id_host int) (models.Disco, error) {
 
@@ -31,7 +30,6 @@ func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id
 	}
 	return disco, nil
 }
-
 
 func CreateDisck(disco models.Disco) error {
 	err := DATABASE.Create(&disco).Error

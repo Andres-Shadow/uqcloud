@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 	"math/rand"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 )
 

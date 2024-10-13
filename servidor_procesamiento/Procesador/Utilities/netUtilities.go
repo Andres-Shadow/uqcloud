@@ -6,7 +6,7 @@ import (
 	"net"
 	"os"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -80,7 +80,6 @@ func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
 
 	return salida
 }
-
 
 /*
 Funciòn que se encarga de enviar los comandos a travès de la conexiòn SSH con el host

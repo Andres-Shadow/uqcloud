@@ -4,7 +4,7 @@ import (
 	"log"
 	"math/rand"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
