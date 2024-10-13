@@ -7,8 +7,9 @@ import (
 	"net/http"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models/Entities"
+	dto "servidor_procesamiento/Procesador/Models/Dto"
 	external "servidor_procesamiento/Procesador/Models/External"
+	"servidor_procesamiento/Procesador/Utilities/mapper"
 
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
@@ -41,7 +42,7 @@ func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func buildHostList(hosts []map[string]interface{}, stuts, message string) external.HostListResponse {
+func buildHostList(hosts []map[string]interface{}, status, message string) external.HostListResponse {
 	var response external.HostListResponse
 	var count int
 
@@ -51,7 +52,7 @@ func buildHostList(hosts []map[string]interface{}, stuts, message string) extern
 		count = 0
 	}
 
-	response.Status = "success"
+	response.Status = status
 	response.Data = hosts
 	response.Message = message
 	response.Count = count
@@ -181,7 +182,7 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 
 // Funcion que responde al endpoint encargado de agregar un host a la base de datos
 func AddHostHandler(w http.ResponseWriter, r *http.Request) {
-	var host models.Host
+	var host dto.HostDTO
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&host); err != nil {
@@ -190,7 +191,9 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := database.AddHost(host)
+	converted := mapper.ToHostFromDTO(host)
+
+	err := database.AddHost(converted)
 
 	if err != nil {
 		fmt.Println(err)
@@ -198,6 +201,7 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	// recarga la lsita de host contemplados en roundrobin
 	config.RoundRobinManager.UpdateHosts(database.GetHosts())
 
 	// Recargar configuración de Prometheus
@@ -234,8 +238,10 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 	// Recargar configuración de Prometheus
 	config.ReloadPrometheusConfig()
 
+	confirmation := map[string]bool{"registro rapido correcto": true}
+	response := utilities.BuildGenericResponse(confirmation, "success", "Registro rapido de los hosts exitoso")
 	fmt.Println("Registro de hosts exitoso")
-	response := map[string]bool{"registroCorrecto": true}
+	
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
