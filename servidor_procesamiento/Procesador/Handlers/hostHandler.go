@@ -8,6 +8,8 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	external "servidor_procesamiento/Procesador/Models/External"
+
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
 
@@ -21,21 +23,40 @@ atienden las consultas sobre estos
 
 // Funcion que responde al endpoint encargado de consultar las maquinas virtuales
 func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
-	hosts, err := database.ConsultHosts() // almacena los hosts que se encuentran en la base de datos
-
-	log.Println("Hosts from servidor_procesamiento > hostHandler.GO: ", hosts)
+	var hosts []map[string]interface{}
+	var err error
+	hosts, err = database.ConsultHosts() // almacena los hosts que se encuentran en la base de datos
 
 	if err != nil && err.Error() != "no Hosts encontrados" {
-		fmt.Println(err)
 		log.Println("Error al consultar los host, no se encontraron máquinas host registradas en la base de datos")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Respondemos con la lista de máquinas virtuales en formato JSON
+	response := buildHostList(hosts, "success", "Consulta de hosts exitosa")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(hosts)
+	json.NewEncoder(w).Encode(response)
+
+}
+
+func buildHostList(hosts []map[string]interface{}, stuts, message string) external.HostListResponse {
+	var response external.HostListResponse
+	var count int
+
+	if hosts != nil {
+		count = len(hosts)
+	} else {
+		count = 0
+	}
+
+	response.Status = "success"
+	response.Data = hosts
+	response.Message = message
+	response.Count = count
+
+	return response
 
 }
 
@@ -142,6 +163,7 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hosts, err := database.ConsultHosts()
+
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
 		log.Println("Error al consultar los Host")
@@ -149,10 +171,11 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := buildHostList(hosts, "success", "Consulta de Host exitosa")
 	// Respondemos con la lista de máquinas virtuales en formato JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(hosts)
+	json.NewEncoder(w).Encode(response)
 
 }
 
