@@ -24,31 +24,6 @@ func ToHostFromDTO(dto dto.HostDTO) entities.Host {
 	}
 }
 
-func ToPeronsaFromDTO(dto dto.PeronsaDTO) entities.Persona {
-	return entities.Persona{
-		Nombre:      dto.Nombre,
-		Apellido:    dto.Apellido,
-		Email:       dto.Email,
-		Contrasenia: dto.Contrasenia,
-		Rol:         dto.Rol,
-	}
-}
-
-func ToMaquina_virtualFromDTO(dto dto.Maquina_virtualDTO) entities.Maquina_virtual {
-	return entities.Maquina_virtual{
-		Nombre:                         dto.Nombre,
-		Ram:                            dto.Ram,
-		Cpu:                            dto.Cpu,
-		Ip:                             dto.Ip,
-		Estado:                         dto.Estado,
-		Hostname:                       dto.Hostname,
-		Persona_email:                  dto.Persona_email,
-		Host_id:                        dto.Host_id,
-		Disco_id:                       dto.Disco_id,
-		Sistema_operativo:              dto.Sistema_operativo,
-		Distribucion_sistema_operativo: dto.Distribucion_sistema_operativo,
-	}
-}
 
 func ToDiscoFromDTO(dto dto.DiscoDTO) entities.Disco {
 	return entities.Disco{
@@ -61,5 +36,3 @@ func ToDiscoFromDTO(dto dto.DiscoDTO) entities.Disco {
 		Host_id:                        dto.Host_id,
 	}
 }
-
-

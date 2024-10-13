@@ -1,28 +1,20 @@
 package dto
 
-import "time"
-
-type PeronsaDTO struct {
-	Nombre      string `json:"usr_name"`
-	Apellido    string `json:"usr_surname"`
-	Email       string `json:"usr_email" gorm:"unique"`
-	Contrasenia string `json:"usr_password"`
-	Rol         byte   `json:"usr_role"`
+// VMSpecificationsDTO representa las especificaciones de la máquina virtual
+type VMSpecificationsDTO struct {
+	VMName      string `json:"vm_name"`
+	VMOS        string `json:"vm_so"`
+	VMOSDistro  string `json:"vm_so_distro"`
+	VMRAM       int    `json:"vm_ram"`
+	VMCPU       int    `json:"vm_cpu"`
+	VMUserEmail string `json:"vm_usr_email"`
+	VMHostname  string `json:"vm_hostname"`
 }
 
-type Maquina_virtualDTO struct {
-	Nombre                         string    `json:"vm_name" gorm:"unique"`
-	Ram                            int       `json:"vm_ram" gorm:"not null"`
-	Cpu                            int       `json:"vm_cpu" gorm:"not null"`
-	Ip                             string    `json:"vm_ip"`
-	Estado                         string    `json:"vm_state" gorm:"not null"`
-	Hostname                       string    `json:"vm_hostname" gorm:"not null"`
-	Persona_email                  string    `json:"vm_usr_email" gorm:"not null"`
-	Host_id                        int       `json:"vm_host_id" gorm:"not null"`
-	Disco_id                       int       `json:"vm_disk_id" gorm:"not null"`
-	Sistema_operativo              string    `json:"vm_so" gorm:"not null"`
-	Distribucion_sistema_operativo string    `json:"vm_so_distro" gorm:"not null"`
-	Fecha_creacion                 time.Time `json:"vm_creation_date" gorm:"not null"`
+// CreateVMRequestDTO representa el cuerpo completo de la solicitud
+type CreateVMRequestDTO struct {
+	Specifications VMSpecificationsDTO `json:"specifications"`
+	ClientIP       string              `json:"clientIP"`
 }
 
 type HostDTO struct {

@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models/Entities"
+	dto "servidor_procesamiento/Procesador/Models/Dto"
+	utilities "servidor_procesamiento/Procesador/Utilities"
+	"servidor_procesamiento/Procesador/Utilities/mapper"
 	"strings"
 )
 
@@ -17,7 +19,7 @@ Clase encargada de contener los handlers que responden a las acciones sobre los 
 // realiza un llamado a su respectiva función en la base de datos
 // para registrar en la base de datos un nuevo disco para maquina virtual
 func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
-	var disco models.Disco
+	var disco dto.DiscoDTO
 	var rutaDisco string
 
 	decoder := json.NewDecoder(r.Body)
@@ -29,7 +31,9 @@ func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
 
 	disco.Ruta_ubicacion = rutaDisco
 
-	err := database.CreateDisck(disco)
+	convertedDisk := mapper.ToDiscoFromDTO(disco)
+
+	err := database.CreateDisck(convertedDisk)
 
 	if err != nil {
 		fmt.Println("Error al registrar el disco en la base de datos: " + err.Error())
@@ -37,7 +41,9 @@ func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	fmt.Println("Registro del disco exitoso")
-	response := map[string]bool{"registro_correcto": true}
+	confirmation := map[string]bool{"registro_correcto": true}
+
+	response := utilities.BuildGenericResponse(confirmation, "Success", "Registro del disco exitoso")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

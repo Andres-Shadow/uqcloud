@@ -100,7 +100,7 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 	// Verifica la respuesta del servidor (resp.StatusCode) aquí si es necesario
 	if resp.StatusCode != http.StatusOK {
 		log.Println("Error: La solicitud no fue exitosa", resp.StatusCode)
-		return nil, errors.New("La solicitud al servidor no fue exitosa")
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
 	}
 
 	// Lee la respuesta del cuerpo de la respuesta HTTP
