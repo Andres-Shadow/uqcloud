@@ -69,10 +69,28 @@ func ConsultMachineFromServer(email string) ([]Models.VirtualMachine, error) {
 		return nil, err
 	}
 
+	// Utilizar un mapa genérico para decodificar el cuerpo JSON
+	var result map[string]interface{}
+	if err := json.Unmarshal(responseBody, &result); err != nil {
+		return nil, fmt.Errorf("error al decodificar el JSON: %w", err)
+	}
+
+	// Extraer el campo "data" del mapa
+	data, ok := result["data"]
+	if !ok {
+		return nil, errors.New("el campo 'data' no se encuentra en la respuesta")
+	}
+
+	machinesData, err := json.Marshal(data) // Convertir "data" a JSON para luego deserializarlo
+
+	if err != nil {
+		return nil, fmt.Errorf("error al procesar el campo 'data': %w", err)
+	}
+
 	var machines []Models.VirtualMachine
 
 	// Decodifica los datos de respuesta en la variable machines.
-	if err := json.Unmarshal(responseBody, &machines); err != nil {
+	if err := json.Unmarshal(machinesData, &machines); err != nil {
 		// Maneja el error de decodificación aquí
 		log.Println("error al decodifcar el JSON", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
@@ -137,6 +155,7 @@ func VerifyMachineCreated(vmName, email string) (bool, error) {
 
 		// Se trae todas las vm del user y se verifica si ya se le creó la vm en la BD
 		machines, err := ConsultMachineFromServer(email)
+		fmt.Println("Machines: ", machines)
 		if err != nil {
 			log.Printf("Intento %d: Error al consultar si la máquina fue creada: %v", intento, err)
 

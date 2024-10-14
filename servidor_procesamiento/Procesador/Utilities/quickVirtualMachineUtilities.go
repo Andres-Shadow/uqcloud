@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"strconv"
 
 	"golang.org/x/crypto/bcrypt"

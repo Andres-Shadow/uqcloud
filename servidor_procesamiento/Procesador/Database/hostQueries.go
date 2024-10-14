@@ -5,7 +5,7 @@ import (
 	"errors"
 	"log"
 	"math/rand"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 )
 
@@ -155,4 +155,13 @@ func GetHosts() []models.Host {
 		log.Println("Error al obtener los hosts: ", err)
 	}
 	return hosts
+}
+
+func DeleteHostByName(name string) error {
+	err := DATABASE.Where("nombre = ?", name).Delete(&models.Host{}).Error
+	if err != nil {
+		log.Println("Error al eliminar el host: ", err)
+		return err
+	}
+	return nil
 }

@@ -1,4 +1,4 @@
-package models
+package entities
 
 import (
 	"time"
@@ -82,7 +82,6 @@ type Host struct {
 	gorm.Model
 	Id                             int    `json:"hst_id"`
 	Nombre                         string `json:"hst_name" gorm:"not null"`
-	Mac                            string `json:"hst_mac" gorm:"unique, not null"`
 	Ip                             string `json:"hst_ip" gorm:"unique, not null"`
 	Hostname                       string `json:"hst_hostname" gorm:"not null"`
 	Ram_total                      int    `json:"hst_ram" gorm:"not null"`
@@ -95,26 +94,6 @@ type Host struct {
 	Estado                         string `json:"hst_state" gorm:"not null"`
 	Sistema_operativo              string `json:"hst_so" gorm:"not null"`
 	Distribucion_sistema_operativo string `json:"hst_so_distro" gorm:"not null"`
-}
-
-/*
-Estructura de datos tipo JSON que contiene los campos para representar una MV del catàlogo
-@Nombre Representa el nombre de la MV
-@Memoria Representa la cantidad de memoria RAM de la MV
-@Cpu Representa la cantidad de unidades de procesamiento de la MV
-@Sistema_operativo Representa el tipo de sistema operativo de la Mv
-@Distribucion_sistema_operativo Representa la distribuciòn del sistema operativo que tiene la màquina del catàlogo
-@Arquitectura Respresenta la arquitectura del sistema operativo. Se presententa en un valor entero. Por ejemplo: 32 o 64
-*/
-type Catalogo struct {
-	gorm.Model
-	Id                             int    `json:"cat_id"`
-	Nombre                         string `json:"cat_name" gorm:"not null"`
-	Ram                            int    `json:"cat_ram" gorm:"not null"`
-	Cpu                            int    `json:"cat_cpu" gorm:"not null"`
-	Sistema_operativo              string `json:"cat_so" gorm:"not null"`
-	Distribucion_sistema_operativo string `json:"cat_so_distro" gorm:"not null"`
-	Arquitectura                   int    `json:"cat_arch" gorm:"not null"`
 }
 
 /*
@@ -139,47 +118,21 @@ type Disco struct {
 }
 
 /*
-Estructura de datos tipo JSON que representa la informaciòn de las imagenes que tiene la plataforma QuickCloud
-@Repositorio Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
-@Tag Representa el nombre del disco
-@ImagenId Representa la ubicaciòn de disco en el host.
-@Creacion Representa el tipo de sistema operativo que tiene el disco. Por ejemplo: Linux
-@Tamanio Representa el tipo de distribuciòn del sistema operativo. Por ejemplo: Debian o Ubuntu
+Estructura de datos tipo JSON que contiene los campos para representar una MV del catàlogo
+@Nombre Representa el nombre de la MV
+@Memoria Representa la cantidad de memoria RAM de la MV
+@Cpu Representa la cantidad de unidades de procesamiento de la MV
+@Sistema_operativo Representa el tipo de sistema operativo de la Mv
+@Distribucion_sistema_operativo Representa la distribuciòn del sistema operativo que tiene la màquina del catàlogo
+@Arquitectura Respresenta la arquitectura del sistema operativo. Se presententa en un valor entero. Por ejemplo: 32 o 64
 */
-type Imagen struct {
+type Catalogo struct {
 	gorm.Model
-	Repositorio string
-	Tag         string
-	ImagenId    string
-	Creacion    string
-	Tamanio     string
-	MaquinaVM   string
-}
-
-/*
-Estructura de datos tipo JSON que representa la informaciòn de los contenedores que tiene la plataforma QuickCloud
-@ConetendorId Representa el identificador ùnico del disco en la base de datos. Este identificador es generado automaticamente por la base de datos
-@Imagen Representa el nombre del disco
-@Comando Representa la ubicaciòn de disco en el host.
-@Creado Representa el tipo de sistema operativo que tiene el disco. Por ejemplo: Linux
-@Status Representa el tipo de distribuciòn del sistema operativo. Por ejemplo: Debian o Ubuntu
-@Puerto Representa la arquitectura del sistema operativo. Se representa en un valor entero. Por ejemplo: 32 o 64
-@Nombre Representa el identificador ùnico del host en el cual està ubicado el disco
-*/
-
-type Contenedor struct {
-	gorm.Model
-	ContenedorId string
-	Imagen       string
-	Comando      string
-	Creado       string
-	Status       string
-	Puerto       string
-	Nombre       string
-	MaquinaVM    string
-}
-
-type CatalogoDisco struct {
-	CatalogoID int
-	DiscoID    int
+	Id                             int    `json:"cat_id"`
+	Nombre                         string `json:"cat_name" gorm:"not null"`
+	Ram                            int    `json:"cat_ram" gorm:"not null"`
+	Cpu                            int    `json:"cat_cpu" gorm:"not null"`
+	Sistema_operativo              string `json:"cat_so" gorm:"not null"`
+	Distribucion_sistema_operativo string `json:"cat_so_distro" gorm:"not null"`
+	Arquitectura                   int    `json:"cat_arch" gorm:"not null"`
 }

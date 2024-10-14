@@ -4,7 +4,7 @@ import (
 	_ "database/sql"
 	"fmt"
 	"log"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 
 	"gorm.io/gorm"
 )

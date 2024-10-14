@@ -4,7 +4,9 @@ import (
 	"container/list"
 	"fmt"
 	"net/http"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
+	internal "servidor_procesamiento/Procesador/Models/Internal"
+
 	"sync"
 	"time"
 )
@@ -19,10 +21,10 @@ var privateKeyPath string // Ruta del archivo de clave privada
 
 // Variables globales del sistema de colas
 var (
-	maquina_virtualesQueue models.Maquina_virtualQueue
-	managementQueue        models.ManagementQueue
-	docker_imagesQueue     models.Docker_imagesQueue
-	docker_contenedorQueue models.Docker_contenedorQueue
+	maquina_virtualesQueue internal.Maquina_virtualQueue
+	managementQueue        internal.ManagementQueue
+	docker_imagesQueue     internal.Docker_imagesQueue
+	docker_contenedorQueue internal.Docker_contenedorQueue
 	mu                     sync.Mutex
 	LastQueueSize          int
 )
@@ -39,6 +41,7 @@ var RoundRobinManager *RoundRobin = nil
 
 // NewRoundRobin: Constructor para inicializar la estructura de RoundRobin
 func NewRoundRobin(hosts []models.Host) *RoundRobin {
+
 	return &RoundRobin{
 		Hosts:       hosts,
 		CurrentHost: -1, // Iniciamos en -1 para que la primera asignación sea el host 0
@@ -82,19 +85,19 @@ func InitQueues() {
 
 // ====== Getters para las variables globales ======
 
-func GetMaquina_virtualQueue() *models.Maquina_virtualQueue {
+func GetMaquina_virtualQueue() *internal.Maquina_virtualQueue {
 	return &maquina_virtualesQueue
 }
 
-func GetManagementQueue() *models.ManagementQueue {
+func GetManagementQueue() *internal.ManagementQueue {
 	return &managementQueue
 }
 
-func GetDocker_imagesQueue() *models.Docker_imagesQueue {
+func GetDocker_imagesQueue() *internal.Docker_imagesQueue {
 	return &docker_imagesQueue
 }
 
-func GetDocker_contenedorQueue() *models.Docker_contenedorQueue {
+func GetDocker_contenedorQueue() *internal.Docker_contenedorQueue {
 	return &docker_contenedorQueue
 }
 

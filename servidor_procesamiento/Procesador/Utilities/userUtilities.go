@@ -2,7 +2,7 @@ package utilities
 
 import (
 	"fmt"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 )
 
 /*

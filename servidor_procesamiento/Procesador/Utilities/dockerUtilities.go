@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 )
 
 // Función que crea una imagen docker desde dockerhub dentro de una maquina virtual
