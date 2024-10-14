@@ -24,7 +24,6 @@ func ToHostFromDTO(dto dto.HostDTO) entities.Host {
 	}
 }
 
-
 func ToDiscoFromDTO(dto dto.DiscoDTO) entities.Disco {
 	return entities.Disco{
 		Id:                             dto.Id,
@@ -35,4 +34,25 @@ func ToDiscoFromDTO(dto dto.DiscoDTO) entities.Disco {
 		Arquitectura:                   dto.Arquitectura,
 		Host_id:                        dto.Host_id,
 	}
+}
+
+func ToDTOFromDiskDistroList(disks []entities.Disco) []dto.ConsultaDiscosDTO {
+	var diskDTOList []dto.ConsultaDiscosDTO
+	for _, disk := range disks {
+		diskDTOList = append(diskDTOList, dto.ConsultaDiscosDTO{
+			Distribucion_sistema_operativo: disk.Distribucion_sistema_operativo,
+		})
+	}
+	return diskDTOList
+}
+
+func ToDTOFromHostWithDiskList(hosts []entities.Host) []dto.ConsultaHostConDiscoDTO {
+	var hostDTOList []dto.ConsultaHostConDiscoDTO
+	for _, host := range hosts {
+		hostDTOList = append(hostDTOList, dto.ConsultaHostConDiscoDTO{
+			Id:     host.Id,
+			Nombre: host.Nombre,
+		})
+	}
+	return hostDTOList
 }

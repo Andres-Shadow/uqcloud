@@ -19,27 +19,36 @@ type CreateVMRequestDTO struct {
 
 type HostDTO struct {
 	Id                             int    `json:"hst_id"`
-	Nombre                         string `json:"hst_name" gorm:"not null"`
-	Ip                             string `json:"hst_ip" gorm:"unique, not null"`
-	Hostname                       string `json:"hst_hostname" gorm:"not null"`
-	Ram_total                      int    `json:"hst_ram" gorm:"not null"`
-	Cpu_total                      int    `json:"hst_cpu" gorm:"not null"`
-	Almacenamiento_total           int    `json:"hst_storage" gorm:"not null"`
+	Nombre                         string `json:"hst_name" `
+	Ip                             string `json:"hst_ip" `
+	Hostname                       string `json:"hst_hostname" `
+	Ram_total                      int    `json:"hst_ram" `
+	Cpu_total                      int    `json:"hst_cpu" `
+	Almacenamiento_total           int    `json:"hst_storage" `
 	Ram_usada                      int    `json:"hst_used_ram"`
 	Cpu_usada                      int    `json:"hst_used_cpu"`
 	Almacenamiento_usado           int    `json:"hst_used_storage"`
-	Adaptador_red                  string `json:"hst_network" gorm:"not null"`
-	Estado                         string `json:"hst_state" gorm:"not null"`
-	Sistema_operativo              string `json:"hst_so" gorm:"not null"`
-	Distribucion_sistema_operativo string `json:"hst_so_distro" gorm:"not null"`
+	Adaptador_red                  string `json:"hst_network" `
+	Estado                         string `json:"hst_state" `
+	Sistema_operativo              string `json:"hst_so" `
+	Distribucion_sistema_operativo string `json:"hst_so_distro" `
+}
+
+type ConsultaDiscosDTO struct {
+	Distribucion_sistema_operativo string `json:"dsk_so_distro" `
+}
+
+type ConsultaHostConDiscoDTO struct {
+	Id     int    `json:"hst_id" `
+	Nombre string `json:"hst_name" `
 }
 
 type DiscoDTO struct {
 	Id                             int    `json:"dsk_id"`
-	Nombre                         string `json:"dsk_name" gorm:"not null"`
-	Ruta_ubicacion                 string `json:"dsk_route" gorm:"not null"`
-	Sistema_operativo              string `json:"dsk_so" gorm:"not null"`
-	Distribucion_sistema_operativo string `json:"dsk_so_distro" gorm:"not null"`
-	Arquitectura                   int    `json:"dsk_arch" gorm:"not null"`
-	Host_id                        int    `json:"dsk_host_id" gorm:"not null"`
+	Nombre                         string `json:"dsk_name" `
+	Ruta_ubicacion                 string `json:"dsk_route" `
+	Sistema_operativo              string `json:"dsk_so" `
+	Distribucion_sistema_operativo string `json:"dsk_so_distro" `
+	Arquitectura                   int    `json:"dsk_arch" `
+	Host_id                        int    `json:"dsk_host_id" `
 }

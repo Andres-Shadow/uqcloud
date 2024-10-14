@@ -238,10 +238,37 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 	// Recargar configuración de Prometheus
 	config.ReloadPrometheusConfig()
 
+	// recarga la lsita de host contemplados en roundrobin
+	config.RoundRobinManager.UpdateHosts(database.GetHosts())
+
 	confirmation := map[string]bool{"registro rapido correcto": true}
 	response := utilities.BuildGenericResponse(confirmation, "success", "Registro rapido de los hosts exitoso")
 	fmt.Println("Registro de hosts exitoso")
-	
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	hostName := vars["name"]
+
+	err := database.DeleteHostByName(hostName)
+
+	if err != nil {
+		log.Println("Error al eliminar el host, no se encontró un host con el nombre asociado")
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// recarga la lsita de host contemplados en roundrobin
+	config.RoundRobinManager.UpdateHosts(database.GetHosts())
+
+	confirmation := map[string]bool{"eliminacion de host": true}
+	response := utilities.BuildGenericResponse(confirmation, "success", "Eliminación del host exitosa")
+	fmt.Println("Eliminación del host exitosa")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

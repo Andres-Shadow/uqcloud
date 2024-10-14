@@ -39,3 +39,32 @@ func CreateDisck(disco models.Disco) error {
 	}
 	return nil
 }
+
+func ListUniquesDisks() ([]models.Disco, error) {
+	var disks []models.Disco
+	err := DATABASE.Select("DISTINCT distribucion_sistema_operativo").Find(&disks).Error
+	if err != nil {
+		log.Println("Hubo un error al listar los discos únicos: " + err.Error())
+		return disks, err
+	}
+	return disks, nil
+}
+
+func ListHostWhereDiskExists(diskSo string) ([]models.Host, error) {
+	var hosts []models.Host
+	err := DATABASE.Joins("JOIN disco ON host.id = disco.host_id").Where("disco.distribucion_sistema_operativo = ?", diskSo).Find(&hosts).Error
+	if err != nil {
+		log.Println("Hubo un error al listar los hosts donde existe el disco: " + err.Error())
+		return hosts, err
+	}
+	return hosts, nil
+}
+
+func DeleteDiskFromHost(hostId string, diskSo string) error {
+	err := DATABASE.Where("host_id = ? AND sistema_operativo = ?", hostId, diskSo).Delete(&models.Disco{}).Error
+	if err != nil {
+		log.Println("Hubo un error al eliminar el disco: " + err.Error())
+		return err
+	}
+	return nil
+}

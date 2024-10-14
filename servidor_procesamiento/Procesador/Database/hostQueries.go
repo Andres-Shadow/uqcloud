@@ -156,3 +156,12 @@ func GetHosts() []models.Host {
 	}
 	return hosts
 }
+
+func DeleteHostByName(name string) error {
+	err := DATABASE.Where("nombre = ?", name).Delete(&models.Host{}).Error
+	if err != nil {
+		log.Println("Error al eliminar el host: ", err)
+		return err
+	}
+	return nil
+}
