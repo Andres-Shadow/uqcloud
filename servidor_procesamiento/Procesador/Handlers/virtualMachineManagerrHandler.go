@@ -12,6 +12,7 @@ import (
 	"net/http"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
+	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -21,33 +22,34 @@ import (
 func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-	var payload map[string]interface{}
+	// var virtualMachineDTO dto.CreateVMRequestDTO
+	var virtualMachineDTO map[string]interface{}
+
 	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
+	if err := decoder.Decode(&virtualMachineDTO); err != nil {
 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
 		log.Println("Error al decodificar JSON de la solicitud")
 		return
 	}
 
-	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
-	if payload == nil {
+	// // Verifica si el JSON recibido en la solicitud no es un JSON vacío
+	if virtualMachineDTO == nil {
 		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
 		log.Println("El JSON de la solicitud está vacío")
 		return
 	}
 
-	//imprimir el payload
-	fmt.Println(payload)
-
 	// Encola las especificaciones.
 	config.GetMu().Lock()
-	config.GetMaquina_virtualQueue().Queue.PushBack(payload)
+	config.GetMaquina_virtualQueue().Queue.PushBack(virtualMachineDTO)
 	config.GetMu().Unlock()
 
 	fmt.Println("Cantidad de Solicitudes de Especificaciones en la Cola: " + strconv.Itoa(config.GetMaquina_virtualQueue().Queue.Len()))
 
 	// Envía una respuesta al cliente.
-	response := map[string]string{"mensaje": "Mensaje JSON de crear MV recibido correctamente"}
+	confirmation := map[string]string{"mensaje": "Mensaje JSON de crear MV recibido correctamente"}
+
+	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON de crear MV recibido correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -67,64 +69,66 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	machines, err := database.ConsultMachines(persona)
+
 	if err != nil && err.Error() != "no Machines Found" {
-		fmt.Println(err)
 		log.Println("Error al consultar las màquinas del usuario")
 		http.Error(w, "Error al consultar las màquinas del usuario", http.StatusBadRequest)
 		return
 	} else if err != nil {
-		fmt.Println(err)
+		log.Println("No se encontraron màquinas virtuales para el usuario")
 		http.Error(w, "No se encontraron màquinas virtuales para el usuario", http.StatusNoContent)
 		return
 	}
 
+	response := utilities.BuildGenericResponse(machines, "Success", "Máquinas virtuales consultadas correctamente")
+
 	// Respondemos con la lista de máquinas virtuales en formato JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(machines)
+	json.NewEncoder(w).Encode(response)
 
 }
 
 // Funcion que responde al endpoint encargado de modificar una maquina virtual (en caliente o apagada)
-func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
+// func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
-	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-	var payload map[string]interface{}
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
-		log.Println("Error al decodificar JSON de la solicitud")
-		return
-	}
+// 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
+// 	var payload map[string]interface{}
+// 	decoder := json.NewDecoder(r.Body)
+// 	if err := decoder.Decode(&payload); err != nil {
+// 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
+// 		log.Println("Error al decodificar JSON de la solicitud")
+// 		return
+// 	}
 
-	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
-	if payload == nil {
-		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
-		log.Println("El JSON de la solicitud está vacío")
-		return
-	}
+// 	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
+// 	if payload == nil {
+// 		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+// 		log.Println("El JSON de la solicitud está vacío")
+// 		return
+// 	}
 
-	// Extrae el objeto "specifications" del JSON.
-	specificationsData, isPresent := payload["specifications"].(map[string]interface{})
-	if !isPresent || specificationsData == nil {
-		http.Error(w, "El campo 'specifications' es inválido", http.StatusBadRequest)
-		return
-	}
+// 	// Extrae el objeto "specifications" del JSON.
+// 	specificationsData, isPresent := payload["specifications"].(map[string]interface{})
+// 	if !isPresent || specificationsData == nil {
+// 		http.Error(w, "El campo 'specifications' es inválido", http.StatusBadRequest)
+// 		return
+// 	}
 
-	//agregar el campo tipo_solicitud al payload
-	payload["tipo_solicitud"] = "modify"
+// 	//agregar el campo tipo_solicitud al payload
+// 	payload["tipo_solicitud"] = "modify"
 
-	// Encola las peticiones.
-	config.GetMu().Lock()
-	config.GetManagementQueue().Queue.PushBack(payload)
-	config.GetMu().Unlock()
+// 	// Encola las peticiones.
+// 	config.GetMu().Lock()
+// 	config.GetManagementQueue().Queue.PushBack(payload)
+// 	config.GetMu().Unlock()
 
-	// Envía una respuesta al cliente.
-	response := map[string]string{"mensaje": "Mensaje JSON de especificaciones para modificar MV recibido correctamente"}
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
-}
+// 	// Envía una respuesta al cliente.
+// 	response := map[string]string{"mensaje": "Mensaje JSON de especificaciones para modificar MV recibido correctamente"}
+// 	w.Header().Set("Content-Type", "application/json")
+// 	w.WriteHeader(http.StatusOK)
+// 	json.NewEncoder(w).Encode(response)
+// }
 
 // Funcion que responde al endpoint encargado de eliminar una maquina virtual
 func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
@@ -149,7 +153,10 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	config.GetMu().Unlock()
 
 	// Envía una respuesta al cliente.
-	response := map[string]string{"mensaje": "Mensaje JSON para eliminar MV recibido correctamente"}
+	confirmation := map[string]string{"mensaje": "Mensaje JSON para eliminar MV recibido correctamente"}
+
+	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para eliminar MV recibido correctamente")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -202,7 +209,9 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Envía una respuesta al cliente.
-	response := map[string]string{"mensaje": mensaje}
+	confirmation := map[string]string{"mensaje": mensaje}
+
+	response := utilities.BuildGenericResponse(confirmation, "Success", mensaje)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -242,7 +251,9 @@ func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	config.GetMu().Unlock()
 
 	// Envía una respuesta al cliente.
-	response := map[string]string{"mensaje": "Mensaje JSON para apagar MV recibido correctamente"}
+	confirmation := map[string]string{"mensaje": "Mensaje JSON para apagar MV recibido correctamente"}
+
+	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para apagar MV recibido correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

@@ -9,7 +9,7 @@ import (
 	database "servidor_procesamiento/Procesador/Database"
 	handlers "servidor_procesamiento/Procesador/Handlers"
 	jobs "servidor_procesamiento/Procesador/Jobs"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -123,7 +123,6 @@ func registerHostData() {
 }
 
 func setRoundRobinManager() {
-	//TODO actualizar la lista de host cuando se realicen acciones sobre los host
 	registeredHosts := database.GetHosts()
 	config.RoundRobinManager = config.NewRoundRobin(registeredHosts)
 }
@@ -150,9 +149,6 @@ func manageServer(r *mux.Router) {
 
 	//Endpoint para consultar las màquinas virtuales de un usuario
 	r.HandleFunc(apiPrefix+"virtual-machine/{email}", handlers.ConsultVirtualMachineHandler).Methods("GET")
-
-	//End point para modificar màquinas virtuales
-	r.HandleFunc(apiPrefix+"virtual-machine", handlers.ModifyVirtualMachineHandler).Methods("PUT")
 
 	//End point para eliminar màquinas virtuales
 	r.HandleFunc(apiPrefix+"virtual-machine/{name}", handlers.DeleteVirtualMachineHandler).Methods("DELETE")
@@ -184,8 +180,29 @@ func manageServer(r *mux.Router) {
 	//Endpoint para agregar un host
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")
 
+	//Endpoint para eliminar un host
+	r.HandleFunc(apiPrefix+"host/{name}", handlers.DeleteHostHandler).Methods("DELETE")
+
 	//Endpoint para registro rapido de host
 	r.HandleFunc(apiPrefix+"host-fast-register", handlers.FastRegisterHostsHandler).Methods("POST")
+
+	/*
+		--------------------
+		| DISK ENDPOINTS   |
+		-------------------
+	*/
+
+	//Endpoint para agregar un disco
+	r.HandleFunc(apiPrefix+"disk", handlers.AddDiskHandler).Methods("POST")
+
+	//Endpoint para consultar los sistemas operativos de los discos de forma única
+	r.HandleFunc(apiPrefix+"disks", handlers.GetDisksHandler).Methods("GET")
+
+	//Enpoint para consultar los host que tienen un disco en específico
+	r.HandleFunc(apiPrefix+"disk/{name}", handlers.GetHostsWithDiskHandler).Methods("GET")
+
+	//Endpoint para eliminar un disco enviando la distribucion del disco y el host donde se encuentra
+	r.HandleFunc(apiPrefix+"disk/{name}", handlers.DeleteDiskHandler).Methods("DELETE")
 
 	/*
 		------------------
@@ -207,15 +224,6 @@ func manageServer(r *mux.Router) {
 
 	//Endpoint para consultar el catàlogo
 	r.HandleFunc(apiPrefix+"catalog", handlers.ConsultCatalogHandler).Methods("GET")
-
-	/*
-		--------------------
-		| DISK ENDPOINTS   |
-		-------------------
-	*/
-
-	//Endpoint para agregar un disco
-	r.HandleFunc(apiPrefix+"disk", handlers.AddDiskHandler).Methods("POST")
 
 	/*
 		-----------------------

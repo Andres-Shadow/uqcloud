@@ -2,12 +2,11 @@ package utilities
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net"
 	"os"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -73,26 +72,13 @@ func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
 
 	defer session.Close()
 
-	command := "ls " + "C:/Discos"
+	command := "ls " + "C:/Uqcloud"
 	if err := session.Run(command); err != nil {
 		logger.Println("El archivo no existe en la ruta especificada:", err)
 		return false
 	}
 
 	return salida
-}
-
-/*
-Funciòn que establece un disparador cada 10 minutos el cual invoca la funciòn checkMachineTime
-*/
-
-func CheckTime(privateKeyPath string) {
-
-	timeTicker := time.NewTicker(10 * time.Minute) // Se ejecuta cada diez minutos
-
-	for range timeTicker.C {
-		go CheckMachineTime(privateKeyPath)
-	}
 }
 
 /*
@@ -153,8 +139,6 @@ Funciòn que se encarga de realizar la configuraciòn SSH con el host por medio 
 */
 
 func ConfigureSSHPassword(user string) (*ssh.ClientConfig, error) {
-
-	fmt.Println("\nconfigurarSSH")
 
 	config := &ssh.ClientConfig{
 		User: user,

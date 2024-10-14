@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"os"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"strconv"
 )
 
@@ -14,9 +14,7 @@ import (
 // y generando nombres aleatorios para los host, los registra junto a sus discos
 func FastRegisterHosts(ips []string) {
 
-	//TODO hacer la implementación de la función
 	var quickHost models.Host
-	quickHost.Mac = "0A-00-27-00-00-0A"
 	quickHost.Hostname = os.Getenv("QUICK_HOST_HOSTNAME")
 	quickHost.Ram_total, _ = strconv.Atoi(os.Getenv("QUICK_HOST_RAM"))
 	quickHost.Cpu_total, _ = strconv.Atoi(os.Getenv("QUICK_HOST_CPU"))
@@ -25,7 +23,6 @@ func FastRegisterHosts(ips []string) {
 	quickHost.Cpu_usada = 0
 	quickHost.Almacenamiento_usado = 0
 	quickHost.Adaptador_red = os.Getenv("QUICK_HOST_NETWORK")
-	quickHost.Ruta_llave_ssh_pub = os.Getenv("QUICK_HOST_SSH_ROUTE")
 	quickHost.Estado = "apagado"
 	quickHost.Sistema_operativo = os.Getenv("QUICK_HOST_SO")
 	quickHost.Distribucion_sistema_operativo = os.Getenv("QUICK_HOST_SO_DISTRO")

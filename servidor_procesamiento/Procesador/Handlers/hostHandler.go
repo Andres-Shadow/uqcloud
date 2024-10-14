@@ -7,7 +7,10 @@ import (
 	"net/http"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	dto "servidor_procesamiento/Procesador/Models/Dto"
+	external "servidor_procesamiento/Procesador/Models/External"
+	"servidor_procesamiento/Procesador/Utilities/mapper"
+
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
 
@@ -21,21 +24,40 @@ atienden las consultas sobre estos
 
 // Funcion que responde al endpoint encargado de consultar las maquinas virtuales
 func ConsultHostsHandler(w http.ResponseWriter, r *http.Request) {
-	hosts, err := database.ConsultHosts()
-
-	log.Println("Hosts from servidor_procesamiento > hostHandler.GO: ", hosts)
+	var hosts []map[string]interface{}
+	var err error
+	hosts, err = database.ConsultHosts() // almacena los hosts que se encuentran en la base de datos
 
 	if err != nil && err.Error() != "no Hosts encontrados" {
-		fmt.Println(err)
 		log.Println("Error al consultar los host, no se encontraron máquinas host registradas en la base de datos")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Respondemos con la lista de máquinas virtuales en formato JSON
+	response := buildHostList(hosts, "success", "Consulta de hosts exitosa")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(hosts)
+	json.NewEncoder(w).Encode(response)
+
+}
+
+func buildHostList(hosts []map[string]interface{}, status, message string) external.HostListResponse {
+	var response external.HostListResponse
+	var count int
+
+	if hosts != nil {
+		count = len(hosts)
+	} else {
+		count = 0
+	}
+
+	response.Status = status
+	response.Data = hosts
+	response.Message = message
+	response.Count = count
+
+	return response
 
 }
 
@@ -142,6 +164,7 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hosts, err := database.ConsultHosts()
+
 	if err != nil && err.Error() != "no Hosts encontrados" {
 		fmt.Println(err)
 		log.Println("Error al consultar los Host")
@@ -149,16 +172,17 @@ func ConsultHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	response := buildHostList(hosts, "success", "Consulta de Host exitosa")
 	// Respondemos con la lista de máquinas virtuales en formato JSON
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(hosts)
+	json.NewEncoder(w).Encode(response)
 
 }
 
 // Funcion que responde al endpoint encargado de agregar un host a la base de datos
 func AddHostHandler(w http.ResponseWriter, r *http.Request) {
-	var host models.Host
+	var host dto.HostDTO
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&host); err != nil {
@@ -167,7 +191,9 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := database.AddHost(host)
+	converted := mapper.ToHostFromDTO(host)
+
+	err := database.AddHost(converted)
 
 	if err != nil {
 		fmt.Println(err)
@@ -175,6 +201,7 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 
+	// recarga la lsita de host contemplados en roundrobin
 	config.RoundRobinManager.UpdateHosts(database.GetHosts())
 
 	// Recargar configuración de Prometheus
@@ -211,8 +238,37 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 	// Recargar configuración de Prometheus
 	config.ReloadPrometheusConfig()
 
+	// recarga la lsita de host contemplados en roundrobin
+	config.RoundRobinManager.UpdateHosts(database.GetHosts())
+
+	confirmation := map[string]bool{"registro rapido correcto": true}
+	response := utilities.BuildGenericResponse(confirmation, "success", "Registro rapido de los hosts exitoso")
 	fmt.Println("Registro de hosts exitoso")
-	response := map[string]bool{"registroCorrecto": true}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
+
+func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	hostName := vars["name"]
+
+	err := database.DeleteHostByName(hostName)
+
+	if err != nil {
+		log.Println("Error al eliminar el host, no se encontró un host con el nombre asociado")
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// recarga la lsita de host contemplados en roundrobin
+	config.RoundRobinManager.UpdateHosts(database.GetHosts())
+
+	confirmation := map[string]bool{"eliminacion de host": true}
+	response := utilities.BuildGenericResponse(confirmation, "success", "Eliminación del host exitosa")
+	fmt.Println("Eliminación del host exitosa")
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

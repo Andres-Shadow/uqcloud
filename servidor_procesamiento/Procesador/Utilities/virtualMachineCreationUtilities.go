@@ -5,7 +5,7 @@ import (
 	"log"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 
 	"strconv"
 	"time"
@@ -207,7 +207,6 @@ func createDatabaseRecords(host models.Host, specs models.Maquina_virtual, nameV
 	log.Println("Host seleccionado: ", host.Id)
 
 	nuevaMaquinaVirtual := models.Maquina_virtual{
-		Uuid:                           nameVM + "_uuid",
 		Nombre:                         nameVM,
 		Ram:                            specs.Ram,
 		Cpu:                            specs.Cpu,

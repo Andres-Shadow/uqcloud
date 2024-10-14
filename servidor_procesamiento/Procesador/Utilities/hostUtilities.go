@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"strconv"
 	"strings"
 )
@@ -227,15 +227,8 @@ func SetUpHostAndDisk(host models.Host) {
 /*
 Función que dado el nombre de un host retorna el objeto
 */
-
 func GetHostByName(name string) (models.Host, error) {
 	var host models.Host
 	err := database.DATABASE.Where("nombre = ?", name).First(&host).Error
-	return host, err
-}
-
-func GetHostById(id int) (models.Host, error) {
-	var host models.Host
-	err := database.DATABASE.Where("id = ?", id).First(&host).Error
 	return host, err
 }
