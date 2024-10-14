@@ -12,7 +12,6 @@ import (
 	"net/http"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	dto "servidor_procesamiento/Procesador/Models/Dto"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
 
@@ -23,7 +22,8 @@ import (
 func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-	var virtualMachineDTO dto.CreateVMRequestDTO
+	// var virtualMachineDTO dto.CreateVMRequestDTO
+	var virtualMachineDTO map[string]interface{}
 
 	decoder := json.NewDecoder(r.Body)
 	if err := decoder.Decode(&virtualMachineDTO); err != nil {
@@ -33,11 +33,11 @@ func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// // Verifica si el JSON recibido en la solicitud no es un JSON vacío
-	// if virtualMachineDTO.Specifications == nil {
-	// 	http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
-	// 	log.Println("El JSON de la solicitud está vacío")
-	// 	return
-	// }
+	if virtualMachineDTO == nil {
+		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
+		log.Println("El JSON de la solicitud está vacío")
+		return
+	}
 
 	// Encola las especificaciones.
 	config.GetMu().Lock()

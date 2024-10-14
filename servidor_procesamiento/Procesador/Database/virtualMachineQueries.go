@@ -78,12 +78,12 @@ func ConsultMachines(persona models.Persona) ([]models.Maquina_virtual, error) {
 
 	if persona.Rol == 1 {
 		err = DATABASE.Table("maquina_virtual as m").
-			Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname").
+			Select("m.id, m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname, m.fecha_creacion, m.host_id, m.disco_id, m.persona_email").
 			Joins("INNER JOIN disco as d on m.disco_id = d.id").
 			Scan(&machines).Error
 
 	} else {
-		err = DATABASE.Table("(?) AS m", DATABASE.Model(&models.Maquina_virtual{})).Select("m.nombre, m.ram, m.cpu, m.ip, m.estado, m.deleted_at, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname, m.fecha_creacion").
+		err = DATABASE.Table("(?) AS m", DATABASE.Model(&models.Maquina_virtual{})).Select("m.id, m.nombre, m.ram, m.cpu, m.ip, m.estado, d.sistema_operativo, d.distribucion_sistema_operativo, m.hostname, m.fecha_creacion, m.host_id, m.disco_id, m.persona_email").
 			Joins("INNER JOIN disco as d on m.disco_id = d.id").
 			Where("m.persona_email = ? and m.deleted_at IS NULL", persona.Email).
 			Scan(&machines).Error

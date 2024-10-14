@@ -56,9 +56,30 @@ func ConsultHostsFromServer(email string) ([]Models.Host, error) {
 		return nil, fmt.Errorf("error al leer cuerpo de la respuesta: %w", err)
 	}
 
+	fmt.Println("RESPONSE: ", string(responseBody))
+
+	// Utilizar un mapa genérico para decodificar el cuerpo JSON
+	var result map[string]interface{}
+	if err := json.Unmarshal(responseBody, &result); err != nil {
+		return nil, fmt.Errorf("error al decodificar el JSON: %w", err)
+	}
+
+	// Extraer el campo "data" del mapa
+	data, ok := result["data"]
+	if !ok {
+		return nil, errors.New("el campo 'data' no se encuentra en la respuesta")
+	}
+
+	// Convertir el campo "data" a una lista de hosts
+	hostsData, err := json.Marshal(data) // Convertir "data" a JSON para luego deserializarlo
+	if err != nil {
+		return nil, fmt.Errorf("error al procesar el campo 'data': %w", err)
+	}
 	// Decodificar los datos de respuesta en la variable hosts
+
+	fmt.Println("Hostdata ->" + string(hostsData))
 	var hosts []Models.Host
-	if err := json.Unmarshal(responseBody, &hosts); err != nil {
+	if err := json.Unmarshal(hostsData, &hosts); err != nil {
 		log.Println("error al decodificar el JSON de la respuesta", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
 	}
@@ -123,15 +144,32 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 	// servidor_procesamiento > Procesador > Database > hostQueries.go > ConsultHosts()
 	// Cambiando el map con el que se colecta en la BD por un map que se ajuste al struct Host del servidor web
 
+	// Utilizar un mapa genérico para decodificar el cuerpo JSON
+	var result map[string]interface{}
+	if err := json.Unmarshal(responseBody, &result); err != nil {
+		return nil, fmt.Errorf("error al decodificar el JSON: %w", err)
+	}
+
+	// Extraer el campo "data" del mapa
+	data, ok := result["data"]
+	if !ok {
+		return nil, errors.New("el campo 'data' no se encuentra en la respuesta")
+	}
+
+	// Convertir el campo "data" a una lista de hosts
+	hostsData, err := json.Marshal(data) // Convertir "data" a JSON para luego deserializarlo
+	if err != nil {
+		return nil, fmt.Errorf("error al procesar el campo 'data': %w", err)
+	}
+	// Decodificar los datos de respuesta en la variable hosts
+
 	var hosts []Models.Host
 
 	// Decodifica los datos de respuesta en la variable machines.
-	if err := json.Unmarshal(responseBody, &hosts); err != nil {
+	if err := json.Unmarshal(hostsData, &hosts); err != nil {
 		log.Println("error al decodificar la JSON de la respuesta", err.Error())
 		return nil, fmt.Errorf("error al decodificar JSON de respuesta: %w", err)
 	}
-
-	log.Println("Hosts from servidorWeb > HostQueries: ", hosts)
 
 	return hosts, nil
 }
