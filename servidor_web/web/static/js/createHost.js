@@ -49,6 +49,7 @@ document.getElementById('fileInputJSON').addEventListener('change', function (e)
 
     var reader = new FileReader();
     reader.onload = function (e) {
+        console.log("Contenido del archivo JSON:", e.target.result);
         try {
             var jsonData = JSON.parse(e.target.result);
 

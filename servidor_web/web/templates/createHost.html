@@ -17,7 +17,6 @@
   <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/js/createHost.js"></script>
 
 </head>
 
@@ -65,21 +64,6 @@
                 <div class="col-md-4"></div>
 
                 <div class="col-md-4">
-                  <label for="inputIpHost" class="form-label">IP del Host</label>
-                  <input type="text" class="form-control" id="inputIpHost" placeholder="Ingresa la dirección IP del host">
-                </div>
-
-                <div class="col-md-4">
-                  <label for="inputMacHost" class="form-label">MAC del Host</label>
-                  <input type="text" class="form-control" id="inputMacHost" placeholder="Ingresa la MAC del host">
-                </div>
-
-                <div class="col-md-4">
-                  <label for="inputAdaptadorRed" class="form-label">Adaptador de red del Host</label>
-                  <input type="text"  class="form-control" id="inputAdaptadorRed" placeholder="Ingresa el adaptador de red del Host">
-                </div>
-
-                <div class="col-md-4">
                   <label for="inputCPUHost" class="form-label">CPU total del Host</label>
                   <input type="number" min="1" max="16" class="form-control" id="inputCPUHost" placeholder="Ingresa la CPU total del host">
                 </div>
@@ -95,21 +79,25 @@
                 </div>
 
                 <div class="col-md-4">
+                  <label for="inputIpHost" class="form-label">IP del Host</label>
+                  <input type="text" class="form-control" id="inputIpHost" placeholder="Ingresa la dirección IP del host">
+                </div>
+
+                <div class="col-md-4">
+                  <label for="inputAdaptadorRed" class="form-label">Adaptador de red del Host</label>
+                  <input type="text"  class="form-control" id="inputAdaptadorRed" placeholder="Ingresa el adaptador de red del Host">
+                </div>
+
+                <div class="col-md-4">
                   <label for="inputSistemaOperativo" class="form-label">Sistema operativo del Host</label>
                   <input type="text"  class="form-control" id="inputSistemaOperativo" placeholder="Ingresa el sistema operativo del Host">
                 </div>
 
 
-                <div class="col-md-4">
-                  <label for="inputRutaSSH" class="form-label">Ruta SSH del Host</label>
-                  <input type="text"  class="form-control" id="inputRutaSSH" placeholder="Ingresa la ruta SSH del Host">
-                </div>
-
                 <div class="d-flex justify-content-end pt-3">
-                  
                   <button type="reset" class="btn btn-outline-secondary me-2" id="buttonClean">Limpiar Formulario</button>                  
                   <label for="fileInputJSON" class="btn btn-secondary me-2">Cargar archivo JSON</label>
-                  <input type="file" id="fileInputJSON" name="fileInput" accept=".json" style="display: none;">
+                  <input type="file" id="fileInputJSON" name="fileInputJSON" accept=".json" style="display: none;">
                   <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Host</button>
                 </div>
               </form>
@@ -125,7 +113,7 @@
 
     </div>
   </div>
-
+  <script src="/web/static/js/createHost.js"></script>
 </body>
 
 </html>
