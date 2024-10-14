@@ -90,6 +90,7 @@ func main() {
 	//router.POST("/signin", handlers.Signin)
 
 	router.GET("/GetHost", handlers.GetHosts)
+	router.DELETE("/DeleteHost", handlers.DeleteHost)
 
 	//TODO: Mirar después
 

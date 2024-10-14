@@ -1,46 +1,107 @@
-function showMessageIfNeeded() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const message = urlParams.get('message');
+// Función para agregar un nuevo host a la tabla
+function addHostToTable(host) {
+    // Obtener la instancia de DataTable
+    const dataTable = $('#hostsTable').DataTable();
 
-    if (message) {
-        showMessage(message, 'success');
-    }
+    // Crear una nueva fila con los datos del host
+    const newRow = [
+        '<input type="checkbox" class="host-checkbox" data-id="${host.id}">',
+        dataTable.rows().count() + 1, // Para el número de la fila
+        host.hst_name || "N/A",
+        host.hst_hostname || "N/A",
+        host.ip || "N/A",
+        host.estado || "N/A",
+        host.cpu_total || "N/A",
+        host.almacenamiento_total || "N/A",
+        host.ram_total || "N/A",
+        host.hst_network || "N/A",
+        host.hst_so || "N/A"
+    ];
+
+    // Agregar la nueva fila a la tabla
+    dataTable.row.add(newRow).draw(false); // Agregar fila y actualizar tabla
 }
 
-// Llama a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', showMessageIfNeeded);
+// Llamar a esta función al cargar la página
+function loadHosts() {
+    fetch("/GetHost") // Cambia esto a la ruta donde obtienes los hosts
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById("hostTableBody")
+            tbody.innerHTML = ""
+            data.forEach((host) => {
+                addHostToTable(host);
+            });
 
-function showMessage(message, type) {
-    const messageDiv = document.createElement("div");
-    messageDiv.className = `alert alert-${type === "success" ? "success" : "danger"} alert-dismissible fade show alert-message`;
-    messageDiv.role = "alert";
-    messageDiv.textContent = message;
-
-    // Botón de cerrar para el mensaje
-    const closeButton = document.createElement("button");
-    closeButton.type = "button";
-    closeButton.className = "btn-close";
-    closeButton.setAttribute("data-bs-dismiss", "alert");
-    closeButton.setAttribute("aria-label", "Close");
-    messageDiv.appendChild(closeButton);
-
-    // Añadir el mensaje al cuerpo del documento
-    document.body.appendChild(messageDiv);
-
-    // Ocultar el mensaje después de 5 segundos
-    setTimeout(() => {
-        // Utilizar la clase de Bootstrap para la transición de desvanecimiento
-        messageDiv.classList.remove("show");
-        messageDiv.classList.add("fade-out");
-
-        // Eliminar el mensaje del DOM después de que la transición se complete
-        messageDiv.addEventListener("transitionend", () => {
-            if (messageDiv.parentElement) {
-                messageDiv.parentElement.removeChild(messageDiv);
+            if ($.fn.DataTable.isDataTable('#hostsTable')) {
+                $('#hostsTable').DataTable().destroy();
             }
+
+            // Inicializar DataTables
+            $('#hostsTable').DataTable({
+                "paging": true, // Activar la paginación
+                "searching": false, // Activar la búsqueda
+                "ordering": true, // Activar el ordenamiento
+                "info": true, // Mostrar información de paginación
+                "lengthMenu": [5, 10, 20] // Opciones de cantidad de filas por página
+            });
+
+        })
+        .catch(error => {
+            console.error("Error al cargar los hosts:", error);
         });
-    }, 5000); // 5000 ms = 5 segundos
 }
+
+document.addEventListener("DOMContentLoaded", loadHosts);
+
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.host-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
+
+document.getElementById('deleteSelected').addEventListener('click', function() {
+    const checkboxes = document.querySelectorAll('.host-checkbox:checked');
+    const idsToDelete = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-id'));
+
+    if (idsToDelete.length === 0) {
+        alert("Por favor, seleccione al menos un host para eliminar.");
+        return;
+    }
+
+    // Confirmar la eliminación
+    if (confirm(`¿Está seguro de que desea eliminar ${idsToDelete.length} host(s)?`)) {
+        // Realizar la eliminación en el servidor
+        fetch("/deleteHosts", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ ids: idsToDelete })
+        })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    // Actualizar la tabla
+                    loadHosts(); // Recargar la lista de hosts
+                    alert("Hosts eliminados correctamente.");
+                } else {
+                    alert("Error al eliminar hosts: " + result.message);
+                }
+            })
+            .catch(error => {
+                console.error("Error al eliminar hosts:", error);
+            });
+    }
+});
+
+document.getElementById('selectAll').addEventListener('change', function() {
+    const checkboxes = document.querySelectorAll('.host-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = this.checked;
+    });
+});
 
 //Cargar archvio JSON para rellenar los campos
 document.getElementById('fileInputJSON').addEventListener('change', function (e) {
@@ -54,14 +115,12 @@ document.getElementById('fileInputJSON').addEventListener('change', function (e)
             var jsonData = JSON.parse(e.target.result);
 
             document.getElementById('inputNameHost').value = jsonData.hst_name;
-            document.getElementById('inputMacHost').value = jsonData.hst_mac;
             document.getElementById('inputIpHost').value = jsonData.hst_ip;
             document.getElementById('inputUserName').value = jsonData.hst_hostname;
             document.getElementById('inputRAM').value = jsonData.hst_ram;
             document.getElementById('inputCPUHost').value = jsonData.hst_cpu;
             document.getElementById('inputAlmacenamiento').value = jsonData.hst_storage;
             document.getElementById('inputAdaptadorRed').value = jsonData.hst_network;
-            document.getElementById('inputRutaSSH').value = jsonData.hst_sshroute;
             document.getElementById('inputSistemaOperativo').value = jsonData.hst_so;
         } catch (err) {
             alert('Error al cargar el archivo JSON: ' + err.message);
@@ -72,20 +131,18 @@ document.getElementById('fileInputJSON').addEventListener('change', function (e)
 
 
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("createHost").addEventListener("submit", function (event) {
+    document.getElementById("buttonCreateHost").addEventListener("click", function (event) {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
         // Crear el objeto con los datos del formulario
         const data = {
             hst_name:       document.getElementById('inputNameHost').value,
-            hst_mac:        document.getElementById('inputMacHost').value,
             hst_ip:         document.getElementById('inputIpHost').value,
             hst_hostname:   document.getElementById('inputUserName').value,
             hst_ram:        parseInt (document.getElementById('inputRAM').value),
             hst_cpu:        parseInt (document.getElementById('inputCPUHost').value),
             hst_storage:    parseInt (document.getElementById('inputAlmacenamiento').value),
             hst_network:    document.getElementById('inputAdaptadorRed').value,
-            hst_sshroute:   document.getElementById('inputRutaSSH').value,
             hst_so:         document.getElementById('inputSistemaOperativo').value,
         };
 
@@ -110,15 +167,29 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(result => {
                 // Mostrar mensaje de éxito
                 if (result.message) {
-                    document.getElementById("successMessage").innerText = result.message;
-                    document.getElementById("successMessage").style.display = "block";
+                    const modalElement = document.getElementById('hostModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+
+                    // Agregar el nuevo host a la tabla
+                    addHostToTable(data, document.getElementById("hostTableBody").childElementCount);
+
+                    const successMessage = document.getElementById("successMessage");
+                    successMessage.innerText = result.message;
+                    successMessage.style.display = "block"; // Mostrar el mensaje
+                    setTimeout(() => {
+                        successMessage.style.display = "none"; // Ocultar después de 5 segundos
+                    }, 5000); // 5000 ms = 5 segundos
                 }
             })
             .catch(error => {
-                // Mostrar mensaje de error
                 const errorMessage = document.getElementById("errorMessage");
                 errorMessage.innerText = error.message;
-                errorMessage.style.display = "block";
+                errorMessage.style.display = "block"; // Mostrar el mensaje
+                setTimeout(() => {
+                    errorMessage.style.display = "none"; // Ocultar después de 5 segundos
+                }, 5000); // 5000 ms = 5 segundos
             });
     });
 });
+

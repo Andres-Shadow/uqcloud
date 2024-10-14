@@ -2,6 +2,7 @@ package Utilities
 
 import (
 	"AppWeb/Config"
+	"AppWeb/DTO"
 	"AppWeb/Models"
 	"bytes"
 	"errors"
@@ -174,30 +175,30 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 	return hosts, nil
 }
 
-func GetHostsFromServer() ([]Models.HostConsult, error) {
+func GetHostsFromServer() (DTO.HostsResponseDTO, error) {
 
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOSTS_URL)
 	log.Println(serverURL)
+	var hostResponseDTO DTO.HostsResponseDTO
 
 	resp, err := http.Get(serverURL)
 	if err != nil {
-		return nil, fmt.Errorf("error al realizar la solicitud: %w", err)
+		return hostResponseDTO, fmt.Errorf("error al realizar la solicitud: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, errors.New("error en la solicitud: estado HTTP no es 200 OK")
+		return hostResponseDTO, errors.New("error en la solicitud: estado HTTP no es 200 OK")
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("error al leer el cuerpo de la respuesta: %w", err)
+		return hostResponseDTO, fmt.Errorf("error al leer el cuerpo de la respuesta: %w", err)
 	}
 
-	var hosts []Models.HostConsult
-	if err := json.Unmarshal(body, &hosts); err != nil {
-		return nil, fmt.Errorf("error al decodificar el JSON: %w", err)
+	if err := json.Unmarshal(body, &hostResponseDTO); err != nil {
+		return hostResponseDTO, fmt.Errorf("error al decodificar el JSON: %w", err)
 	}
 
-	return hosts, nil
+	return hostResponseDTO, nil
 }
