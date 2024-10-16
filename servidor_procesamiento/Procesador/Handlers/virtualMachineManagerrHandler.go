@@ -228,6 +228,9 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	nombre := vars["name"]
 	var err error
 	var virtualMachine entities.Maquina_virtual
+	var keyPath string
+	var filePath string
+	var fileName string
 
 	// verificar que el path param no esté vacío
 	if nombre == "" {
@@ -250,7 +253,7 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	keyPath := "./keys/" + nombre
+	keyPath = "./keys/" + nombre
 
 	err = utilities.ProcessSshPublicKeyConfiguration(keyPath, virtualMachine.Ip)
 
@@ -260,7 +263,8 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	filePath := keyPath + "/id_rsa_test"
+	filePath = keyPath + "/id_rsa_test"
+
 	// Abrir el archivo
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -270,7 +274,7 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 	defer file.Close()
 
 	// Obtener el nombre del archivo para la cabecera
-	fileName := "id_rsa_test"
+	fileName = "id_rsa_test"
 
 	// Establecer encabezados para forzar la descarga
 	w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
