@@ -7,7 +7,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -336,55 +335,6 @@ func GetMachines(c *gin.Context) {
 	c.JSON(http.StatusOK, machines)
 }
 
-// SEGUNDA ITERACION DEKTOP CLOUD
-func Checkhost(c *gin.Context) {
-	session := sessions.Default(c)
-	email := session.Get("email").(string)
-
-	log.Println(email)
-	if email == " " {
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-
-	idHostStr := c.PostForm("host")
-	_, err := strconv.Atoi(idHostStr)
-	if err != nil {
-		log.Println("Error: formato de host invalido", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid host ID"})
-		return
-	}
-
-	var specifications Models.VirtualMachine
-
-	log.Printf("%+v\n", specifications)
-	// Obtener los datos del formulario
-	if err := c.BindJSON(&specifications); err != nil {
-		// Manejar el error si el JSON no es válido o no coincide con la estructura
-		log.Println("Formado inadeciado", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato inadecuado" + err.Error()})
-	}
-
-	// Obtener la dirección IP del cliente
-	clienteIP := c.ClientIP()
-	confirmacion, err := Utilities.CheckStatusMachineFromServer(specifications, clienteIP)
-
-	log.Println("Ip del cliente", clienteIP)
-	if err != nil {
-		log.Println("Error al intentar configurar la VM", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
-	}
-
-	// Verificar el código de estado de la respuesta
-	if confirmacion {
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "Solicitud para chequear maquina virtual enviada con éxito."})
-	} else {
-		log.Println("Error al enviar la VM")
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{"ErrorMessage": "Esta maquina virtual tiene problemas :(  selecciona otra por favor " + err.Error()})
-	}
-}
-
 func ConnectionMachine(c *gin.Context) {
 
 	// Acceder a la sesión
@@ -432,16 +382,3 @@ func ConnectionMachine(c *gin.Context) {
 		"machineName":    machineName,
 	})
 }
-
-/* TODO: Mira para que se utiliza esta función
-func Mvtemp(c *gin.Context) {
-
-	// Deserializa el JSON recibido
-	if err := c.ShouldBindJSON(&vmtemp); err != nil {
-		fmt.Print(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Datos JSON inválidos",
-		})
-		return
-	}
-}*/

@@ -19,7 +19,6 @@ var QUICK_VM = API_PREFIX + "quick-virtual-machine"
 
 // URL asociadas a los host
 var HOSTS_URL = API_PREFIX + "hosts"
-var CHECK_HOST_URL = API_PREFIX + "check-host"
 var HOST_URL = API_PREFIX + "host"
 
 // URL asociadas a los discos
