@@ -12,7 +12,6 @@ import (
 	"servidor_procesamiento/Procesador/Utilities/mapper"
 
 	utilities "servidor_procesamiento/Procesador/Utilities"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -58,90 +57,6 @@ func buildHostList(hosts []map[string]interface{}, status, message string) exter
 	response.Count = count
 
 	return response
-
-}
-
-// Funcion que responde al endpoint encargado de verificar los diferentes host registrados en la base de datos
-func CheckHostHandler(w http.ResponseWriter, r *http.Request) {
-
-	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-	var payload map[string]interface{}
-	decoder := json.NewDecoder(r.Body)
-	if err := decoder.Decode(&payload); err != nil {
-		log.Println("Error al decodificar JSON de la solicitud")
-		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
-		return
-	}
-
-	//Se capturan los datos de la maquina virtual a crear
-	mv := payload["specifications"].(map[string]interface{})
-
-	/*En la base de datos los indices de los host empiezan desde el indice 1
-	si el valor es cero se utiliza para disparar el algoritmo aleatorio
-	*/
-
-	// Intenta obtener el valor de "host_id" como float64 (Ni idea de por que llega el host_id como float) y luego convertir a int
-	var id int
-	switch v := mv["host_id"].(type) {
-	case float64:
-		id = int(v)
-	case int:
-		id = v
-	default:
-		// Maneja el caso en que el valor no es float64 ni int (genera un panic)
-		log.Println("El valor de host_id es nil o no es un float64 ni un int: ", mv["host_id"])
-		id = -1 // Valor predeterminado en caso de error
-	}
-
-	switch {
-	case id == 0:
-		//Se encola la maquina virtual a crear
-		config.GetMu().Lock()
-		config.GetMaquina_virtualQueue().Queue.PushBack(payload)
-		config.GetMu().Unlock()
-
-		//Se imprime el estado actual de la cola
-		fmt.Println("Cantidad de Solicitudes de Especificaciones en la Cola: " + strconv.Itoa(config.GetMaquina_virtualQueue().Queue.Len()))
-
-		// Envía una respuesta al servidor web
-		response := map[string]string{"mensaje": "Mensaje JSON de crear MV recibido correctamente", "centinela": "true"}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-	case id > 0:
-
-		mihost, _ := database.GetHost(int(mv["Host_id"].(float64)))
-		estadossh := utilities.Pacemaker(config.GetPrivateKeyPath(), mihost.Hostname, mihost.Ip)
-		if estadossh {
-			//Se encola la maquina virtual a crear
-			config.GetMu().Lock()
-			config.GetMaquina_virtualQueue().Queue.PushBack(payload)
-			config.GetMu().Unlock()
-
-			//Se imprime el estado actual de la cola
-			fmt.Println("Cantidad de Solicitudes de Especificaciones en la Cola: " + strconv.Itoa(config.GetMaquina_virtualQueue().Queue.Len()))
-
-			// Envía una respuesta al servidor web
-			response := map[string]string{"mensaje": "Mensaje JSON de crear MV recibido correctamente", "centinela": "true"}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusOK)
-			json.NewEncoder(w).Encode(response)
-		} else {
-			// Envía una respuesta al servidor web
-			response := map[string]string{"mensaje": "Esta maquina tiene problemas :(", "centinela": "false", "hostmalo:": strconv.Itoa(id)}
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusBadRequest)
-			json.NewEncoder(w).Encode(response)
-		}
-
-	case id < 0:
-		// Envía una respuesta al cliente.
-		response := map[string]string{"mensaje": "Error de seleccion de maquina", "centinela": "false"}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(response)
-
-	}
 
 }
 
@@ -252,9 +167,9 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 
 func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	hostName := vars["name"]
+	hostId := vars["id"]
 
-	err := database.DeleteHostByName(hostName)
+	err := database.DeleteHostById(hostId)
 
 	if err != nil {
 		log.Println("Error al eliminar el host, no se encontró un host con el nombre asociado")
