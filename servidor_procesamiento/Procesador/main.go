@@ -158,6 +158,9 @@ func manageServer(r *mux.Router) {
 	//End point para crear una máquina rápida
 	r.HandleFunc(apiPrefix+"quick-virtual-machine", handlers.CreateQuickVirtualMachineHandler).Methods("POST")
 
+	//End point para obtener una llave privada con la cual acceder a las máquinas virtuales
+	r.HandleFunc(apiPrefix+"virtual-machine/key/{name}", handlers.GetShhPrivateKeyHandler).Methods("GET")
+
 	/*
 		--------------------
 		| HOST ENDPOINTS   |
