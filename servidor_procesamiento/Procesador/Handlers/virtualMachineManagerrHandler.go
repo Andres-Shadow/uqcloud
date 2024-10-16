@@ -8,10 +8,13 @@ al cual la API responda
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
+	entities "servidor_procesamiento/Procesador/Models/Entities"
 	utilities "servidor_procesamiento/Procesador/Utilities"
 	"strconv"
 
@@ -88,47 +91,6 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 
 }
-
-// Funcion que responde al endpoint encargado de modificar una maquina virtual (en caliente o apagada)
-// func ModifyVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
-
-// 	// Decodifica el JSON recibido en la solicitud en una estructura Specifications.
-// 	var payload map[string]interface{}
-// 	decoder := json.NewDecoder(r.Body)
-// 	if err := decoder.Decode(&payload); err != nil {
-// 		http.Error(w, "Error al decodificar JSON de la solicitud", http.StatusBadRequest)
-// 		log.Println("Error al decodificar JSON de la solicitud")
-// 		return
-// 	}
-
-// 	// Verifica si el JSON recibido en la solicitud no es un JSON vacío
-// 	if payload == nil {
-// 		http.Error(w, "El JSON de la solicitud está vacío", http.StatusBadRequest)
-// 		log.Println("El JSON de la solicitud está vacío")
-// 		return
-// 	}
-
-// 	// Extrae el objeto "specifications" del JSON.
-// 	specificationsData, isPresent := payload["specifications"].(map[string]interface{})
-// 	if !isPresent || specificationsData == nil {
-// 		http.Error(w, "El campo 'specifications' es inválido", http.StatusBadRequest)
-// 		return
-// 	}
-
-// 	//agregar el campo tipo_solicitud al payload
-// 	payload["tipo_solicitud"] = "modify"
-
-// 	// Encola las peticiones.
-// 	config.GetMu().Lock()
-// 	config.GetManagementQueue().Queue.PushBack(payload)
-// 	config.GetMu().Unlock()
-
-// 	// Envía una respuesta al cliente.
-// 	response := map[string]string{"mensaje": "Mensaje JSON de especificaciones para modificar MV recibido correctamente"}
-// 	w.Header().Set("Content-Type", "application/json")
-// 	w.WriteHeader(http.StatusOK)
-// 	json.NewEncoder(w).Encode(response)
-// }
 
 // Funcion que responde al endpoint encargado de eliminar una maquina virtual
 func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
@@ -257,5 +219,73 @@ func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
+
+}
+
+func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
+	// extrae el path param con el correo
+	vars := mux.Vars(r)
+	nombre := vars["name"]
+	var err error
+	var virtualMachine entities.Maquina_virtual
+	var keyPath string
+	var filePath string
+	var fileName string
+
+	// verificar que el path param no esté vacío
+	if nombre == "" {
+		log.Println("No se especificó el nombre de la maquina virtual")
+		http.Error(w, "El nombre de la máquina virtual es obligatorio", http.StatusBadRequest)
+	}
+
+	log.Println("Obteniendo la máquina virtual con nombre: ", nombre)
+
+	virtualMachine, err = database.GetVM(nombre)
+
+	if err != nil {
+		http.Error(w, "No se encontró una maquina virtual con el nombre especificado", http.StatusBadRequest)
+		return
+	}
+
+	if virtualMachine.Estado == "Apagado" {
+		log.Println("La máquina virtual está apagada")
+		http.Error(w, "La máquina virtual está apagada", http.StatusBadRequest)
+		return
+	}
+
+	keyPath = "./keys/" + nombre
+
+	err = utilities.ProcessSshPublicKeyConfiguration(keyPath, virtualMachine.Ip)
+
+	if err != nil {
+		log.Println("Error al generar la llave privada")
+		http.Error(w, "Error al generar la llave privada", http.StatusBadRequest)
+		return
+	}
+
+	filePath = keyPath + "/id_rsa_test"
+
+	// Abrir el archivo
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(w, "No se pudo abrir el archivo", http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	// Obtener el nombre del archivo para la cabecera
+	fileName = "id_rsa_test"
+
+	// Establecer encabezados para forzar la descarga
+	w.Header().Set("Content-Disposition", "attachment; filename="+fileName)
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Transfer-Encoding", "binary")
+
+	// Escribir el archivo en la respuesta
+	_, err = io.Copy(w, file)
+	if err != nil {
+		http.Error(w, "No se pudo enviar el archivo", http.StatusInternalServerError)
+		return
+	}
 
 }

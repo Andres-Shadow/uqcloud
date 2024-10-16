@@ -10,6 +10,7 @@ import (
 	dto "servidor_procesamiento/Procesador/Models/Dto"
 	external "servidor_procesamiento/Procesador/Models/External"
 	"servidor_procesamiento/Procesador/Utilities/mapper"
+	"strconv"
 
 	utilities "servidor_procesamiento/Procesador/Utilities"
 
@@ -169,7 +170,14 @@ func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	hostId := vars["id"]
 
-	err := database.DeleteHostById(hostId)
+	id, err := strconv.Atoi(hostId)
+	if err != nil {
+		log.Println("Error al convertir el ID del host a entero")
+		http.Error(w, "ID del host inválido", http.StatusBadRequest)
+		return
+	}
+
+	err = database.DeleteHostById(id)
 
 	if err != nil {
 		log.Println("Error al eliminar el host, no se encontró un host con el nombre asociado")
