@@ -105,20 +105,7 @@ label {
   box-shadow: 0 0 1px 1px #2ecc71;
 }
 
-/* podria usar este en lugar del de arriba */
-/* .card-input-element:checked + .card {
-  border: 2px solid #007bff;
-} */
-
-
 /* Cards for "Detalles Avanzados" > Selecciona Host */
-
-/* TODO: POR QUE NO PUEDO CAMBIAR EL TAMAÑO DEL <i> CON CSS? SOLO PUEDO EN EL HTML */
-/* .host-card-body i {
-  font-size: 80px !important;
-} */
-
-/* TOCA QUE PONERLE EL HIJUEPUTA !IMPORATNTE PORQUE SINO NO SE MUESTRA EN LA PAGINA DIOSMIO*/
 .host-card-body label {
   display: flex !important;
   flex-direction: column !important;

@@ -76,25 +76,20 @@ func main() {
 		userGroup.GET("/control-machine", handlers.ControlMachine)
 		userGroup.GET("/control-machine/create-machine", handlers.CreateMachinePage)
 		userGroup.GET("/connection-machine", handlers.ConnectionMachine)
-		// router.GET("actualizaciones-maquinas", handlers.ActualizacionesMaquinas)
 	}
 
 	router.GET("/GetHost", handlers.GetHosts)
 
-	//TODO: Mirar después
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
 
 	// API ROUTES
-	router.POST("/api/quick-machine", handlers.QuickMachine)
-
 	router.GET("/api/machines", handlers.GetMachines)
-
+	router.POST("/api/quick-machine", handlers.QuickMachine)
 	router.POST("/api/createMachine", handlers.MainSend)
 	router.POST("/api/startMachine", handlers.StartMachine)
 	router.POST("/api/stopMachine", handlers.StopMachine)
 	router.POST("/api/deleteMachine", handlers.DeleteMachine)
-
 	router.POST("/api/loginTemp", handlers.LoginTemp)
 
 	// Ruta para cerrar sesión
