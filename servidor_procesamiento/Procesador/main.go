@@ -66,10 +66,6 @@ func main() {
 	//go checkTime(privateKeyPath)
 	// Función que verifica la cola de cuentas constantemente.
 	go jobs.CheckManagementQueueChanges()
-	// Función que verifica la cola de imagenes docker constantemente.
-	go jobs.CheckImagesQueueChanges()
-	// Función que verifica la cola de contenedores constantemente.
-	go jobs.CheckContainerQueueChanges()
 	// Inicia el servidor HTTP en el puerto 8081.
 	fmt.Println("Servidor escuchando en el puerto 8081...")
 	if err := http.ListenAndServe(":8081", r); err != nil {
@@ -162,6 +158,9 @@ func manageServer(r *mux.Router) {
 	//End point para crear una máquina rápida
 	r.HandleFunc(apiPrefix+"quick-virtual-machine", handlers.CreateQuickVirtualMachineHandler).Methods("POST")
 
+	//End point para obtener una llave privada con la cual acceder a las máquinas virtuales
+	r.HandleFunc(apiPrefix+"virtual-machine/key/{name}", handlers.GetShhPrivateKeyHandler).Methods("GET")
+
 	/*
 		--------------------
 		| HOST ENDPOINTS   |
@@ -171,9 +170,6 @@ func manageServer(r *mux.Router) {
 	//Endpoint para consultar los Host
 	r.HandleFunc(apiPrefix+"hosts", handlers.ConsultHostsHandler).Methods("GET")
 
-	//Endpoint para checkear el Host seleccionado por el usuario caso de uso asignacioon de recursos
-	r.HandleFunc(apiPrefix+"check-host", handlers.CheckHostHandler).Methods("GET")
-
 	//Endpoint para consultar los Host
 	r.HandleFunc(apiPrefix+"host/{email}", handlers.ConsultHostHandler).Methods("GET")
 
@@ -181,7 +177,7 @@ func manageServer(r *mux.Router) {
 	r.HandleFunc(apiPrefix+"host", handlers.AddHostHandler).Methods("POST")
 
 	//Endpoint para eliminar un host
-	r.HandleFunc(apiPrefix+"host/{name}", handlers.DeleteHostHandler).Methods("DELETE")
+	r.HandleFunc(apiPrefix+"host/{id}", handlers.DeleteHostHandler).Methods("DELETE")
 
 	//Endpoint para registro rapido de host
 	r.HandleFunc(apiPrefix+"host-fast-register", handlers.FastRegisterHostsHandler).Methods("POST")
@@ -234,33 +230,4 @@ func manageServer(r *mux.Router) {
 	//Endpoint para consultar las metricas
 	r.HandleFunc(apiPrefix+"metrics", handlers.ConsultMetricsHandler).Methods("GET")
 
-	/*
-		--------------------
-		| DOCKER ENDPOINTS |
-		-------------------
-	*/
-
-	// //Endpoint para crear imagen docker desde dockerhub
-	// r.HandleFunc(apiPrefix+"dockerhub_image", handlers.CreateImageDockerHubHandler).Methods("POST")
-
-	// //Endpoint para crear imagen docker desde archivo tar
-	// r.HandleFunc(apiPrefix+"tar_image", handlers.CreateImageDockerTarHandler).Methods("POST")
-
-	// //Endpoint para crear imagen docker desde archivo Dockerfile
-	// r.HandleFunc(apiPrefix+"dockerfile_image", handlers.CreateImageDockerfileHandler).Methods("POST")
-
-	// //Endpoint para eliminar imagen docker
-	// r.HandleFunc(apiPrefix+"docker_image", handlers.DeleteDockerImageHandler).Methods("DELETE")
-
-	// //Endpoint para consultar las imagenes de docker en una maquina virtual
-	// r.HandleFunc(apiPrefix+"virtual_machine_images", handlers.CheckVirtualMachineDockerImagesHandler).Methods("GET")
-
-	// //Endpoint para crear contenedor
-	// r.HandleFunc(apiPrefix+"docker", handlers.CreateDockerHandler).Methods("POST")
-
-	// //Endpoint para administrar el listado de contenedores en una maquina virtual
-	// r.HandleFunc(apiPrefix+"docker", handlers.ManageDockerImagesHandler).Methods("PUT")
-
-	// //Endpoint para consultar los contenedores de una maquina virtual
-	// r.HandleFunc(apiPrefix+"virtual_machine_docker", handlers.CheckContainersHandler).Methods("GET")
 }

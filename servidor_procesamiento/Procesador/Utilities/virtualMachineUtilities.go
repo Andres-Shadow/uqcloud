@@ -255,7 +255,7 @@ func UpdateVirtualMachinesActualStatus() {
 		return
 	}
 
-	log.Println("Maquinas virtuales registradas la base de datos: ", maquinas)
+	// log.Println("Maquinas virtuales registradas la base de datos: ", maquinas)
 
 	/* Se comparan con las maquinas virtuales que estan realmente en los hosts utilizando VBoxManage remotamente
 	y se eliminan de la base de datos las maquinas virtuales que no estan realmente en los hosts*/

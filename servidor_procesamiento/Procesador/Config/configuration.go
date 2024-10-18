@@ -23,8 +23,6 @@ var privateKeyPath string // Ruta del archivo de clave privada
 var (
 	maquina_virtualesQueue internal.Maquina_virtualQueue
 	managementQueue        internal.ManagementQueue
-	docker_imagesQueue     internal.Docker_imagesQueue
-	docker_contenedorQueue internal.Docker_contenedorQueue
 	mu                     sync.Mutex
 	LastQueueSize          int
 )
@@ -79,8 +77,6 @@ func GetPrivateKeyPath() string {
 func InitQueues() {
 	maquina_virtualesQueue.Queue = list.New()
 	managementQueue.Queue = list.New()
-	docker_imagesQueue.Queue = list.New()
-	docker_contenedorQueue.Queue = list.New()
 }
 
 // ====== Getters para las variables globales ======
@@ -91,14 +87,6 @@ func GetMaquina_virtualQueue() *internal.Maquina_virtualQueue {
 
 func GetManagementQueue() *internal.ManagementQueue {
 	return &managementQueue
-}
-
-func GetDocker_imagesQueue() *internal.Docker_imagesQueue {
-	return &docker_imagesQueue
-}
-
-func GetDocker_contenedorQueue() *internal.Docker_contenedorQueue {
-	return &docker_contenedorQueue
 }
 
 func GetMu() *sync.Mutex {
