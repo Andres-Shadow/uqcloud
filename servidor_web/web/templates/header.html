@@ -50,16 +50,13 @@
   <script>
     $(document).ready(function () {
       $("#createMachine").on("click", function () {
-        // Obtener el valor seleccionado del campo "osCreate"
-        var distribucion = "alpine" // TODO: CAMBIAR LUEGO QUE ESTO YA NO MANDE OS A LOGINTEMP Y CAMBIAR LOGINTEMP
-
         document.getElementById("createMachine").classList.add("disabled"); // desactivado pero con bootrap (visual)
         document.getElementById("createMachine").setAttribute("disabled", true); // desactivado nativo (funcional, ya no se le puededar cli)
 
         $.ajax({
           type: "POST",
           url: "/api/loginTemp",
-          data: { osCreate: distribucion }, // Incluir el valor en los datos de la solicitud
+          data: {},
           success: function (response) {
             console.log("Inicio de sesión como invitado exitoso");
             window.location.href = "/mainpage/control-machine/create-machine";
