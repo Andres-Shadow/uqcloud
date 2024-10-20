@@ -5,8 +5,8 @@ function addHostToTable(host) {
 
     // Crear una nueva fila con los datos del host
     const newRow = [
-        '<input type="checkbox" class="host-checkbox" data-id="${host.id}">',
-        dataTable.rows().count() + 1, // Para el número de la fila
+        '<input type="checkbox" class="host-checkbox" data-id="${host.id}" value="${host.id}">',
+        host.id || "N/A",
         host.hst_name || "N/A",
         host.hst_hostname || "N/A",
         host.ip || "N/A",
@@ -61,47 +61,57 @@ document.getElementById('selectAll').addEventListener('change', function() {
     });
 });
 
-document.getElementById('deleteSelected').addEventListener('click', function() {
-    const checkboxes = document.querySelectorAll('.host-checkbox:checked');
-    const idsToDelete = Array.from(checkboxes).map(checkbox => checkbox.getAttribute('data-id'));
+document.getElementById('botonEliminar').addEventListener('click', function() {
+    // Obtener todos los checkboxes seleccionados
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    const hostIds = [];
 
-    if (idsToDelete.length === 0) {
-        alert("Por favor, seleccione al menos un host para eliminar.");
+    // Recorrer los checkboxes y obtener los IDs de los hosts seleccionados
+    checkboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        const id = row.querySelector('td:nth-child(2)').innerText; // Asegurarse de que este selector obtiene la columna de ID
+        hostIds.push(parseInt(id));
+    });
+
+    // Verificar si hay hosts seleccionados
+    if (hostIds.length === 0) {
+        alert('Por favor, selecciona al menos un host para eliminar.');
         return;
     }
 
-    // Confirmar la eliminación
-    if (confirm(`¿Está seguro de que desea eliminar ${idsToDelete.length} host(s)?`)) {
-        // Realizar la eliminación en el servidor
-        fetch("/deleteHosts", {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ ids: idsToDelete })
-        })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    // Actualizar la tabla
-                    loadHosts(); // Recargar la lista de hosts
-                    alert("Hosts eliminados correctamente.");
-                } else {
-                    alert("Error al eliminar hosts: " + result.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error al eliminar hosts:", error);
-            });
+    // Confirmar eliminación
+    const confirmDelete = confirm(`¿Estás seguro de que deseas eliminar los siguientes hosts: ${hostIds.join(', ')}?`);
+    if (!confirmDelete) {
+        return;
     }
+
+    // Crear el JSON con los IDs de los hosts seleccionados
+    const data = {
+        hostIds: hostIds
+    };
+
+    // Hacer la petición POST a la ruta /deleteHosts
+    fetch('/deleteHosts', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Success:', data);
+            alert('Los hosts seleccionados han sido eliminados exitosamente.');
+            // Aquí puedes agregar código para actualizar la tabla después de eliminar los hosts
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+            alert('Hubo un error al intentar eliminar los hosts. Por favor, inténtalo de nuevo.');
+        });
 });
 
-document.getElementById('selectAll').addEventListener('change', function() {
-    const checkboxes = document.querySelectorAll('.host-checkbox');
-    checkboxes.forEach(checkbox => {
-        checkbox.checked = this.checked;
-    });
-});
+
+
 
 //Cargar archvio JSON para rellenar los campos
 document.getElementById('fileInputJSON').addEventListener('change', function (e) {

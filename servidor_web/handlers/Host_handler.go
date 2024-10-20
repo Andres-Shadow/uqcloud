@@ -6,16 +6,14 @@ import (
 	"AppWeb/Utilities"
 	"bytes"
 	"errors"
-	"io/ioutil"
-	"log"
-	"strconv"
-
 	"fmt"
-	"net/http"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
 )
 
 func CreateHostPage(c *gin.Context) {
@@ -91,18 +89,26 @@ func GetHosts(c *gin.Context) {
 }
 
 func DeleteHost(c *gin.Context) {
-	var ids []int
-	if err := c.ShouldBindJSON(&ids); err != nil {
+	var requestData struct {
+		HostIds []int `json:"hostIds"` // Estructura para recibir los IDs de los hosts
+	}
+
+	// Intentamos enlazar el JSON desde el cuerpo de la solicitud
+	if err := c.ShouldBindJSON(&requestData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato de ID inválido"})
 		return
 	}
 
+	// Verificar que se recibieron los IDs correctamente
+	log.Printf("IDs recibidos para eliminar: %v", requestData.HostIds)
+
 	var deletedHosts []int
 	var errors []string
 
-	// Iterar sobre cada ID y hacer la solicitud DELETE al servidor externo
-	for _, id := range ids {
-		serverURL := fmt.Sprintf("http://%s:%s%s"+strconv.Itoa(id), Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
+	for _, id := range requestData.HostIds {
+		serverURL := fmt.Sprintf("http://%s:%s%s/", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
+		serverURL = serverURL + strconv.Itoa(id)
+		log.Printf("Server URL: %s", serverURL)
 
 		req, err := http.NewRequest("DELETE", serverURL, bytes.NewBuffer(nil))
 		if err != nil {
@@ -118,7 +124,6 @@ func DeleteHost(c *gin.Context) {
 		}
 		defer resp.Body.Close()
 
-		// Verificar el código de estado de la respuesta
 		if resp.StatusCode == http.StatusOK {
 			deletedHosts = append(deletedHosts, id)
 		} else {
@@ -126,7 +131,6 @@ func DeleteHost(c *gin.Context) {
 		}
 	}
 
-	// Devolver los resultados
 	if len(errors) > 0 {
 		c.JSON(http.StatusPartialContent, gin.H{
 			"deleted": deletedHosts,
