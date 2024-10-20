@@ -40,7 +40,7 @@ func CreateNewDisk(c *gin.Context) {
 	//Registrar el disk
 	// Definir la URL del servidor
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL)
-
+	log.Printf(serverURL)
 	if err := Utilities.RegisterElements(serverURL, newDisk); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al registro el disco"})
 		return

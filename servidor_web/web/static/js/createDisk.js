@@ -1,29 +1,5 @@
-function showMessageIfNeeded() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const message = urlParams.get('message');
-
-    if (message) {
-        showMessage(message, 'success');
-    }
-}
-
-// Llama a la función cuando se carga la página
-document.addEventListener('DOMContentLoaded', showMessageIfNeeded);
-
-function showMessage(message, type) {
-    const messageBox = document.getElementById(type === 'success' ? 'successMessage' : 'errorMessage');
-    messageBox.textContent = message;
-    messageBox.style.display = 'block'; // Muestra el mensaje
-
-    // Oculta el mensaje después de 5 segundos
-    setTimeout(() => {
-        messageBox.style.display = 'none';
-    }, 5000);
-}
-
-
 document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("createForm").addEventListener("submit", function (event) {
+    document.getElementById("buttonCreateDisc").addEventListener("click", function (event) {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
 
         // Crear el objeto con los datos del formulario
@@ -57,8 +33,19 @@ document.addEventListener("DOMContentLoaded", function() {
             .then(result => {
                 // Mostrar mensaje de éxito
                 if (result.message) {
-                    document.getElementById("successMessage").innerText = result.message;
-                    document.getElementById("successMessage").style.display = "block";
+                    const modalElement = document.getElementById('diskModal');
+                    const modal = bootstrap.Modal.getInstance(modalElement);
+                    modal.hide();
+
+                    //Todo agregar funcion para añadir un nuevo elemento a la tabla
+
+                    const successMessage = document.getElementById("successMessage")
+                    successMessage.innerText = result.message;
+                    successMessage.style.display = "block";
+                    setTimeout(()=>{
+                        successMessage.style.display = "none"
+                    }, 5000)
+
                 }
             })
             .catch(error => {
@@ -66,6 +53,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 const errorMessage = document.getElementById("errorMessage");
                 errorMessage.innerText = error.message;
                 errorMessage.style.display = "block";
+                setTimeout(()=>{
+                    errorMessage.style.display = "none";
+                }, 5000)
             });
     });
 });
