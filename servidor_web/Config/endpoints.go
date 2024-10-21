@@ -7,7 +7,7 @@ var PUERTO = "8081"
 
 var API_PREFIX = "/api/v1/"
 
-//URL LOGIN
+// URL LOGIN
 var LOGIN_URL = API_PREFIX + "login"
 var TEMP_USER_ACCOUNT = API_PREFIX + "temp-user"
 

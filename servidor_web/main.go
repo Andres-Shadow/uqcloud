@@ -68,6 +68,7 @@ func main() {
 		adminGroup.GET("/dashboard", handlers.DashboardHandler)
 		adminGroup.GET("/create-host", handlers.CreateHostPage)
 		adminGroup.GET("/create-disk", handlers.CreateDiskPage)
+		//adminGroup.DELETE("/deleteHosts", handlers.DeleteHost)
 	}
 
 	// --- RUTAS DE USUARIO COMUN ---
@@ -79,6 +80,7 @@ func main() {
 	}
 
 	router.GET("/GetHost", handlers.GetHosts)
+	router.POST("/deleteHosts", handlers.DeleteHost)
 
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)
