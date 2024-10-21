@@ -1,13 +1,18 @@
 package utilities
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
 	"database/sql"
+	"encoding/pem"
 	"fmt"
 	"log"
 	"net"
 	"os"
+	"os/exec"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"golang.org/x/crypto/ssh"
@@ -73,26 +78,13 @@ func Pacemaker(rutallaveprivata string, usuario string, ip string) bool {
 
 	defer session.Close()
 
-	command := "ls " + "C:/Discos"
+	command := "ls " + "C:/Uqcloud"
 	if err := session.Run(command); err != nil {
 		logger.Println("El archivo no existe en la ruta especificada:", err)
 		return false
 	}
 
 	return salida
-}
-
-/*
-Funciòn que establece un disparador cada 10 minutos el cual invoca la funciòn checkMachineTime
-*/
-
-func CheckTime(privateKeyPath string) {
-
-	timeTicker := time.NewTicker(10 * time.Minute) // Se ejecuta cada diez minutos
-
-	for range timeTicker.C {
-		go CheckMachineTime(privateKeyPath)
-	}
 }
 
 /*
@@ -154,8 +146,6 @@ Funciòn que se encarga de realizar la configuraciòn SSH con el host por medio 
 
 func ConfigureSSHPassword(user string) (*ssh.ClientConfig, error) {
 
-	fmt.Println("\nconfigurarSSH")
-
 	config := &ssh.ClientConfig{
 		User: user,
 		Auth: []ssh.AuthMethod{
@@ -165,4 +155,131 @@ func ConfigureSSHPassword(user string) (*ssh.ClientConfig, error) {
 	}
 
 	return config, nil
+}
+
+func ProcessSshPublicKeyConfiguration(fileRoute, ip string) error {
+	bitSize := 4096
+
+	//crear la carpeta en la ruta
+	err := os.MkdirAll(fileRoute, 0700)
+	if err != nil {
+		log.Fatal(err.Error())
+		return err
+	}
+
+	savePrivateFileTo := fileRoute + "/id_rsa_test"
+	savePublicFileTo := fileRoute + "/id_rsa_test.pub"
+
+	privateKey, err := GeneratePrivateKey(bitSize)
+	if err != nil {
+		log.Fatal(err.Error())
+		return err
+	}
+
+	publicKeyBytes, err := GeneratePublicKey(&privateKey.PublicKey)
+	if err != nil {
+		log.Fatal(err.Error())
+		return err
+	}
+
+	privateKeyBytes := EncodePrivateKeyToPEM(privateKey)
+
+	err = WriteKeyToFile(privateKeyBytes, savePrivateFileTo)
+	if err != nil {
+		log.Fatal(err.Error())
+		return err
+	}
+
+	err = WriteKeyToFile([]byte(publicKeyBytes), savePublicFileTo)
+	if err != nil {
+		log.Fatal(err.Error())
+		return err
+	}
+
+	// Enviar la clave pública por SSH
+	err = SendPublicKeyViaSSH("uqcloud", ip, "./id_rsa", savePublicFileTo)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	return nil
+}
+
+// generatePrivateKey creates a RSA Private Key of specified byte size
+func GeneratePrivateKey(bitSize int) (*rsa.PrivateKey, error) {
+	// Private Key generation
+	privateKey, err := rsa.GenerateKey(rand.Reader, bitSize)
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate Private Key
+	err = privateKey.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	log.Println("Private Key generated")
+	return privateKey, nil
+}
+
+// encodePrivateKeyToPEM encodes Private Key from RSA to PEM format
+func EncodePrivateKeyToPEM(privateKey *rsa.PrivateKey) []byte {
+	// Get ASN.1 DER format
+	privDER := x509.MarshalPKCS1PrivateKey(privateKey)
+
+	// pem.Block
+	privBlock := pem.Block{
+		Type:    "RSA PRIVATE KEY",
+		Headers: nil,
+		Bytes:   privDER,
+	}
+
+	// Private key in PEM format
+	privatePEM := pem.EncodeToMemory(&privBlock)
+
+	return privatePEM
+}
+
+// generatePublicKey take a rsa.PublicKey and return bytes suitable for writing to .pub file
+// returns in the format "ssh-rsa ..."
+func GeneratePublicKey(privatekey *rsa.PublicKey) ([]byte, error) {
+	publicRsaKey, err := ssh.NewPublicKey(privatekey)
+	if err != nil {
+		return nil, err
+	}
+
+	pubKeyBytes := ssh.MarshalAuthorizedKey(publicRsaKey)
+
+	log.Println("Public key generated")
+	return pubKeyBytes, nil
+}
+
+// writeKeyToFile writes keys to a file
+func WriteKeyToFile(keyBytes []byte, saveFileTo string) error {
+	err := os.WriteFile(saveFileTo, keyBytes, 0600)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Key saved to: %s", saveFileTo)
+	return nil
+}
+
+// sendPublicKeyViaSSH sends the public key to a remote server using SSH
+func SendPublicKeyViaSSH(user, host, privateKeyPath, publicKeyPath string) error {
+	cmd := exec.Command("scp", "-i", privateKeyPath, publicKeyPath, fmt.Sprintf("%s@%s:.", user, host))
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error sending public key: %v, output: %s", err, string(output))
+	}
+
+	cmd2 := exec.Command("ssh", "-i", privateKeyPath, fmt.Sprintf("%s@%s", user, host), "bash -s < ./init.sh")
+	output2, err2 := cmd2.CombinedOutput()
+	if err2 != nil {
+		return fmt.Errorf("error executing init.sh: %v, output: %s", err2, string(output2))
+	}
+
+	log.Printf("Public key sent to %s@%s", user, host)
+	return nil
 }

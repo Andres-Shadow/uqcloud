@@ -4,7 +4,7 @@ import (
 	"log"
 	"math/rand"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -50,7 +50,6 @@ Funciòn que se encarga de generar un correo aleatorio para las cuentas de lo si
 */
 
 func generateRandomEmail() string {
-
 	email := GenerateRandomString(5) + "@temp.com"
 	return email
 }
@@ -71,31 +70,4 @@ func GenerateRandomString(length int) string {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(b)
-}
-
-/*
-Funciòn que permite crear màquina virtuales temporales para los usuarios con rol "invitado"
-Esta funciòn crea las especificaciones para crear una màquina virtual con recursos mìnimos
-finalmente encola la solicitud de creaciòn
-
-@email Paràmetro que contiene el email del usuario al cual le va a pertencer la MV
-@clientIP Paràmetro que contiene la direcciòn IP desde la cual se està generando la peticiòn
-*/
-
-func CreateTempVM(email string, clientIP string, distribucion_SO string) {
-
-	// maquina_virtual := models.Maquina_virtual{
-	// 	Nombre:                         "Guest",
-	// 	Sistema_operativo:              "Linux",
-	// 	Distribucion_sistema_operativo: distribucion_SO,
-	// 	Ram:                            1024,
-	// 	Cpu:                            2,
-	// 	Persona_email:                  email,
-	// }
-
-	// payload := map[string]interface{}{
-	// 	"specifications": maquina_virtual,
-	// 	"clientIP":       clientIP,
-	// }
-
 }

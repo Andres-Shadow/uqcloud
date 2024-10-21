@@ -4,14 +4,13 @@ import (
 	"log"
 	"os"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
+	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
 func CreateQuickVirtualMachine(clientIP string) string {
-
-	distro := os.Getenv("DEFAULT_QUICK_VM_DISTRO")
 
 	persona := models.Persona{
 		Nombre:   "Usuario",
@@ -33,19 +32,23 @@ func CreateQuickVirtualMachine(clientIP string) string {
 		return ""
 	}
 
-	generateQuickVirtualMachine(persona.Email, clientIP, distro)
+	generateQuickVirtualMachine(persona.Email, clientIP)
 
 	return persona.Email
 }
 
-func generateQuickVirtualMachine(email string, clientIP string, distro string) {
+func generateQuickVirtualMachine(email string, clientIP string) {
+
+	distro := os.Getenv("DEFAULT_QUICK_VM_DISTRO")
+	ram, _ := strconv.Atoi(os.Getenv("DEFAULT_QUICK_RAM"))
+	cpu, _ := strconv.Atoi(os.Getenv("DEFAULT_QUICK_CPU"))
 
 	maquina_virtual := models.Maquina_virtual{
 		Nombre:                         "QuickGuest",
 		Sistema_operativo:              "Linux",
 		Distribucion_sistema_operativo: distro,
-		Ram:                            1024,
-		Cpu:                            1,
+		Ram:                            ram,
+		Cpu:                            cpu,
 		Persona_email:                  email,
 		Hostname:                       "aleatorio",
 	}

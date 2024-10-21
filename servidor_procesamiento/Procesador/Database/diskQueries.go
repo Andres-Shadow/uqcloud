@@ -1,9 +1,9 @@
 package database
 
 import (
-	_"database/sql"
+	_ "database/sql"
 	"log"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 
 	"gorm.io/gorm"
 )
@@ -15,22 +15,6 @@ Funciòn que permite obtener un disco que cumpla con los paràmetros especificad
 @id_host Paràmetro que representa el identificador ùnico del host en el cual se està buscando el disco
 @Return Retorna el disco en caso de que exista y cumpla con las condiciones mencionadas anterormente
 */
-// func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id_host int) (models.Disco, error) {
-
-// 	var disco models.Disco
-// 	err := database.DB.QueryRow("Select * from disco where sistema_operativo = ? and distribucion_sistema_operativo =? and host_id = ?", sistema_operativo, distribucion_sistema_operativo, id_host).Scan(&disco.Id, &disco.Nombre, &disco.Ruta_ubicacion, &disco.Sistema_operativo, &disco.Distribucion_sistema_operativo, &disco.arquitectura, &disco.Host_id)
-// 	err := DB.QueryRow("Select * from disco where sistema_operativo = ? and distribucion_sistema_operativo =? and host_id = ?", sistema_operativo, distribucion_sistema_operativo, id_host).Scan(&disco.Id, &disco.Nombre, &disco.Ruta_ubicacion, &disco.Sistema_operativo, &disco.Distribucion_sistema_operativo, &disco.Arquitectura, &disco.Host_id)
-// 	if err != nil {
-// 		if err == sql.ErrNoRows {
-// 			log.Println("No se encontrò un disco: " + sistema_operativo + " " + distribucion_sistema_operativo)
-// 		} else {
-// 			log.Println("Hubo un error al realizar la consulta: " + err.Error())
-// 		}
-// 		return disco, err
-// 	}
-// 	return disco, nil
-// }
-
 
 func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id_host int) (models.Disco, error) {
 
@@ -47,11 +31,39 @@ func GetDisk(sistema_operativo string, distribucion_sistema_operativo string, id
 	return disco, nil
 }
 
-
 func CreateDisck(disco models.Disco) error {
 	err := DATABASE.Create(&disco).Error
 	if err != nil {
 		log.Println("Hubo un error al crear el disco: " + err.Error())
+		return err
+	}
+	return nil
+}
+
+func ListUniquesDisks() ([]models.Disco, error) {
+	var disks []models.Disco
+	err := DATABASE.Select("DISTINCT distribucion_sistema_operativo").Find(&disks).Error
+	if err != nil {
+		log.Println("Hubo un error al listar los discos únicos: " + err.Error())
+		return disks, err
+	}
+	return disks, nil
+}
+
+func ListHostWhereDiskExists(diskSo string) ([]models.Host, error) {
+	var hosts []models.Host
+	err := DATABASE.Joins("JOIN disco ON host.id = disco.host_id").Where("disco.distribucion_sistema_operativo = ?", diskSo).Find(&hosts).Error
+	if err != nil {
+		log.Println("Hubo un error al listar los hosts donde existe el disco: " + err.Error())
+		return hosts, err
+	}
+	return hosts, nil
+}
+
+func DeleteDiskFromHost(hostId string, diskSo string) error {
+	err := DATABASE.Where("host_id = ? AND sistema_operativo = ?", hostId, diskSo).Delete(&models.Disco{}).Error
+	if err != nil {
+		log.Println("Hubo un error al eliminar el disco: " + err.Error())
 		return err
 	}
 	return nil

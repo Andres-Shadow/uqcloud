@@ -7,7 +7,7 @@ import (
 	"regexp"
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
-	models "servidor_procesamiento/Procesador/Models"
+	models "servidor_procesamiento/Procesador/Models/Entities"
 	"strings"
 
 	"time"
@@ -255,7 +255,7 @@ func UpdateVirtualMachinesActualStatus() {
 		return
 	}
 
-	log.Println("Maquinas virtuales registradas la base de datos: ", maquinas)
+	// log.Println("Maquinas virtuales registradas la base de datos: ", maquinas)
 
 	/* Se comparan con las maquinas virtuales que estan realmente en los hosts utilizando VBoxManage remotamente
 	y se eliminan de la base de datos las maquinas virtuales que no estan realmente en los hosts*/
