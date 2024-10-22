@@ -4,16 +4,16 @@ import (
 	"AppWeb/Config"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
+	"bytes"
 	"errors"
-	"io/ioutil"
-	"log"
-
 	"fmt"
-	"net/http"
-
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"strconv"
 )
 
 func CreateHostPage(c *gin.Context) {
@@ -64,8 +64,8 @@ func CreateHostFromRequest(c *gin.Context) (Models.Host, error) {
 		return Models.Host{}, err
 	}
 
-	if newHost.Name == "" || newHost.Mac == "" || newHost.Ip == "" || newHost.Hostname == "" || newHost.Ram_total <= 0 || newHost.Cpu_total <= 0 ||
-		newHost.Almacenamiento_total <= 0 || newHost.Adaptador_red == "" || newHost.Ruta_llave_ssh_pub == "" || newHost.Sistema_operativo == "" {
+	if newHost.Name == "" || newHost.Ip == "" || newHost.Hostname == "" || newHost.Ram_total <= 0 || newHost.Cpu_total <= 0 ||
+		newHost.Almacenamiento_total <= 0 || newHost.Adaptador_red == "" || newHost.Sistema_operativo == "" {
 		log.Println("Error existen campos vacios")
 		return Models.Host{}, errors.New("Error existen campos vacios")
 
@@ -75,15 +75,68 @@ func CreateHostFromRequest(c *gin.Context) (Models.Host, error) {
 }
 
 func GetHosts(c *gin.Context) {
-	hosts, err := Utilities.GetHostsFromServer()
+	hostDTO, err := Utilities.GetHostsFromServer()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener los hosts"})
 		return
 	}
 
-	for _, host := range hosts {
+	for _, host := range hostDTO.Data {
 		log.Println("HOST GETHOSTS: ", host)
 	}
 
-	c.JSON(http.StatusOK, hosts)
+	c.JSON(http.StatusOK, hostDTO.Data)
+}
+
+func DeleteHost(c *gin.Context) {
+	var requestData struct {
+		HostIds []int `json:"hostIds"` // Estructura para recibir los IDs de los hosts
+	}
+
+	// Intentamos enlazar el JSON desde el cuerpo de la solicitud
+	if err := c.ShouldBindJSON(&requestData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato de ID inválido"})
+		return
+	}
+
+	// Verificar que se recibieron los IDs correctamente
+	log.Printf("IDs recibidos para eliminar: %v", requestData.HostIds)
+
+	var deletedHosts []int
+	var errors []string
+
+	for _, id := range requestData.HostIds {
+		serverURL := fmt.Sprintf("http://%s:%s%s/", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOST_URL)
+		serverURL = serverURL + strconv.Itoa(id)
+		log.Printf("Server URL: %s", serverURL)
+
+		req, err := http.NewRequest("DELETE", serverURL, bytes.NewBuffer(nil))
+		if err != nil {
+			errors = append(errors, "Error al crear la solicitud para el ID "+strconv.Itoa(id))
+			continue
+		}
+
+		client := &http.Client{}
+		resp, err := client.Do(req)
+		if err != nil {
+			errors = append(errors, "Error al enviar la solicitud para el ID "+strconv.Itoa(id))
+			continue
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusOK {
+			deletedHosts = append(deletedHosts, id)
+		} else {
+			errors = append(errors, "No se pudo eliminar el host con ID "+strconv.Itoa(id))
+		}
+	}
+
+	if len(errors) > 0 {
+		c.JSON(http.StatusPartialContent, gin.H{
+			"deleted": deletedHosts,
+			"errors":  errors,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"deleted": deletedHosts, "message": "Todos los hosts eliminados exitosamente"})
+	}
 }

@@ -17,24 +17,34 @@
       QuickCloud
       <!-- <img style="width: 1.9rem;" src="/web/static/img/quickcloud.png" alt=""> -->
     </a>
-
-    <!-- Navbar-->
-    <ul class="navbar-nav d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
-          aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-          <!-- <li><a class="dropdown-item" href="#!">Ajustes?</a></li>
-          <li><a class="dropdown-item" href="#!">Activity Log?</a></li>
-          <li>
-            <hr class="dropdown-divider" />
-          </li> -->
-          <li><a class="btn btn-danger w-100 text-center" href="/logout">Desconectarse</a></li>
-        </ul>
-      </li>
-    </ul>
+  <!-- Botón para activar el modal -->
+    <button type="button" class="btn btn-danger ms-auto me-3" data-bs-toggle="modal" data-bs-target="#warningModal" style="left: 15px">
+      Terminar sesión
+    </button>
 
   </nav>
+
+  <!-- Modal de advertencia -->
+  <div class="modal fade" id="warningModal" tabindex="-1" aria-labelledby="warningModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="warningModalLabel">Advertencia</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          ¡CUIDADO! Si terminas la sesión perderás el acceso a las máquinas virtuales que hayas creado.
+          Recuerda que estás máquinas virtuales son de corta duración y se eliminarán si terminas la sesión.
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <a class="btn btn-danger text-center" href="/logout">Terminar sesión</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
 </body>
 
 {{end}}

@@ -9,3 +9,14 @@ datasources:
     jsonData:
       timeInterval: "10s"
     uid: prometheusdatasource
+
+  - name: MySQL_UQCloud
+    type: mysql
+    access: proxy
+    url: database:3306
+    user: grafana
+    database: uqcloud
+    jsonData:
+      tlsSkipVerify: true
+    secureJsonData:
+      password: "grafana"
