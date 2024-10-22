@@ -73,7 +73,6 @@ func ErrorMessage() string {
 }
 
 // Funcion para el Login Temporal de un usuario
-// ToDo: Esta función puede cambiar en el futuro
 func LoginTemp(c *gin.Context) {
 	session := sessions.Default(c)
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.TEMP_USER_ACCOUNT)
@@ -214,72 +213,13 @@ func QuickMachine(c *gin.Context) {
 }
 
 func Logout(c *gin.Context) {
-
 	// Acceder a la sesión
 	session := sessions.Default(c)
-	// Eliminar la información de la sesión
+
+	// Eliminar toda la información de la sesión
 	session.Clear()
 	session.Save()
 
 	// Redirigir al usuario a la página de inicio de sesión u otra página
 	c.Redirect(http.StatusFound, "/")
 }
-
-/*TODO: Funcion no se utiliza revisar si se puede eliminar o simplemente comentar
-func GuestLoginSend(c *gin.Context) {
-	// Acceder a la sesión
-	session := sessions.Default(c)
-	email := session.Get("email")
-
-	if email == nil {
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-
-	userEmail := email.(string)
-
-	// Obtener los datos del formulario
-	vmname := c.PostForm("vmnameCreate")
-	if vmname == "" {
-		// Si el nombre de la máquina virtual está vacío, mostrar un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "El nombre de la máquina virtual no puede estar vacío.",
-		})
-		return
-	}
-	ditOs := c.PostForm("osCreate")
-	memoryStr := c.PostForm("memoryCreate")
-	memory, err := strconv.Atoi(memoryStr)
-	cpuStr := c.PostForm("cpuCreate")
-	cpu, _ := strconv.Atoi(cpuStr)
-	os := "Linux"
-
-	// Crear una estructura Account y convertirla a JSON
-	maquina_virtual := Models.VirtualMachine{Name: vmname, Sistema_operativo: os, Distrubucion_SO: ditOs, Ram: memory, Cpu: cpu, Person_Email: userEmail}
-	clientIP := c.ClientIP()
-
-	payload := map[string]interface{}{
-		"specifications": maquina_virtual,
-		"clientIP":       clientIP,
-	}
-
-	jsonData, err := json.Marshal(payload)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	if sendJSONMachineToServer(jsonData) {
-		// Registro exitoso, muestra un mensaje de éxito en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"SuccessMessage": "Solicitud para crear màquina virtual enviada con èxito.",
-		})
-	} else {
-		// Registro erróneo, muestra un mensaje de error en el HTML
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-			"ErrorMessage": "Error al enviar la solicitud para crear màquina virtual. Intente de nuevo",
-		})
-	}
-}
-*/

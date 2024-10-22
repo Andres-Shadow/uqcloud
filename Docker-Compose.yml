@@ -46,6 +46,7 @@ services:
       - general
     volumes:
     - mysql-data:/var/lib/mysql
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       MYSQL_DATABASE: uqcloud
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -87,6 +88,9 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ALLOW_EMBEDDING=true  # Permitir embebidos
+      # Para configurar por defecto el usuario y contraseña de Grafana
+      # - GF_SECURITY_ADMIN_PASSWORD=password
+      # - GF_SECURITY_ADMIN_USER=user
     volumes:
       - ./metrics_config/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped

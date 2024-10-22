@@ -7,7 +7,6 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -20,15 +19,10 @@ func ControlMachine(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
-	//TODO: Se debe adaptar para las sesiones de usuarios temporales
-	/*ToDo: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
-	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
-	 */
 	log.Println("El email es:", email)
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/admin")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 
@@ -48,11 +42,7 @@ func ControlMachine(c *gin.Context) {
 		machines = []Models.VirtualMachine{}
 	}
 
-	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
-	session.Set("machinesChange", true)
 	session.Save()
-
-	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
 
 	if len(hosts) <= 0 {
@@ -61,12 +51,11 @@ func ControlMachine(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "controlMachine.html", gin.H{
-		"email":          session.Get("email").(string),
-		"rol":            session.Get("rol").(uint8),
-		"machines":       machines,
-		"machinesChange": machinesChange,
-		"hosts":          hosts,
-		"clientIP":       clientIP,
+		"email":    session.Get("email").(string),
+		"rol":      session.Get("rol").(uint8),
+		"machines": machines,
+		"hosts":    hosts,
+		"clientIP": clientIP,
 	})
 }
 
@@ -75,38 +64,24 @@ func CreateMachinePage(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
-	//TODO: Se debe adaptar para las sesiones de usuarios temporales
-	/*TODO: Se debería hacer un metodo aparte para ajustador lo de la verificación del usuario
-	* Esto se utiliza en muchas parte pero primero debemos definir como se va a tratar este tipo de usuarios
-	 */
 	log.Println(email)
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/admin")
+		// Si no se ha logueado (usando /admin o usando los botones de creación de vm, entonces redirijalo al index)
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 
 	hosts, _ := Utilities.CheckAvaibleHost()
 
-	// for _, host := range hosts {
-	// 	log.Println("---hostName: ", host.Name)
-	// 	log.Println("---host: ", host)
-	// }
-
-	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
-	session.Set("machinesChange", true)
 	session.Save()
-
-	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
 
 	c.HTML(http.StatusOK, "create-machine.html", gin.H{
-		"email":          session.Get("email").(string),
-		"rol":            session.Get("rol").(uint8),
-		"machinesChange": machinesChange, // TODO: Esta si será necesaria?
-		"hosts":          hosts,
-		"clientIP":       clientIP,
+		"email":    session.Get("email").(string),
+		"rol":      session.Get("rol").(uint8),
+		"hosts":    hosts,
+		"clientIP": clientIP,
 	})
 }
 
@@ -116,12 +91,10 @@ func MainSend(c *gin.Context) {
 	session := sessions.Default(c)
 	email := session.Get("email")
 
-	//Se podría hacer una función solo para verificar lo del Email, pero antes se debería definir como manejar los usuarios temporales
 	log.Println(email)
 	if email == nil {
 		log.Println("Error: Email vacio/invalido")
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusFound, "/")
 		return
 	}
 
@@ -336,55 +309,6 @@ func GetMachines(c *gin.Context) {
 	c.JSON(http.StatusOK, machines)
 }
 
-// SEGUNDA ITERACION DEKTOP CLOUD
-func Checkhost(c *gin.Context) {
-	session := sessions.Default(c)
-	email := session.Get("email").(string)
-
-	log.Println(email)
-	if email == " " {
-		// Si el usuario no está autenticado, redirige a la página de inicio de sesión
-		c.Redirect(http.StatusFound, "/login")
-		return
-	}
-
-	idHostStr := c.PostForm("host")
-	_, err := strconv.Atoi(idHostStr)
-	if err != nil {
-		log.Println("Error: formato de host invalido", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid host ID"})
-		return
-	}
-
-	var specifications Models.VirtualMachine
-
-	log.Printf("%+v\n", specifications)
-	// Obtener los datos del formulario
-	if err := c.BindJSON(&specifications); err != nil {
-		// Manejar el error si el JSON no es válido o no coincide con la estructura
-		log.Println("Formado inadeciado", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Formato inadecuado" + err.Error()})
-	}
-
-	// Obtener la dirección IP del cliente
-	clienteIP := c.ClientIP()
-	confirmacion, err := Utilities.CheckStatusMachineFromServer(specifications, clienteIP)
-
-	log.Println("Ip del cliente", clienteIP)
-	if err != nil {
-		log.Println("Error al intentar configurar la VM", err.Error())
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Error al intentar configurar la maquina " + err.Error()})
-	}
-
-	// Verificar el código de estado de la respuesta
-	if confirmacion {
-		c.HTML(http.StatusOK, "controlMachine.html", gin.H{"SuccessMessage": "Solicitud para chequear maquina virtual enviada con éxito."})
-	} else {
-		log.Println("Error al enviar la VM")
-		c.HTML(http.StatusInternalServerError, "controlMachine.html", gin.H{"ErrorMessage": "Esta maquina virtual tiene problemas :(  selecciona otra por favor " + err.Error()})
-	}
-}
-
 func ConnectionMachine(c *gin.Context) {
 
 	// Acceder a la sesión
@@ -409,11 +333,7 @@ func ConnectionMachine(c *gin.Context) {
 		machines = []Models.VirtualMachine{}
 	}
 
-	// Agregar la variable booleana `machinesChange` a la sesión y establecerla en true
-	session.Set("machinesChange", true)
 	session.Save()
-
-	machinesChange := session.Get("machinesChange")
 	clientIP := c.ClientIP()
 
 	if len(hosts) <= 0 {
@@ -422,26 +342,12 @@ func ConnectionMachine(c *gin.Context) {
 	}
 
 	c.HTML(http.StatusOK, "sshMachine.html", gin.H{
-		"email":          session.Get("email").(string),
-		"rol":            session.Get("rol").(uint8),
-		"machines":       machines,
-		"machinesChange": machinesChange,
-		"hosts":          hosts,
-		"clientIP":       clientIP,
-		"machineIP":      machineIP,
-		"machineName":    machineName,
+		"email":       session.Get("email").(string),
+		"rol":         session.Get("rol").(uint8),
+		"machines":    machines,
+		"hosts":       hosts,
+		"clientIP":    clientIP,
+		"machineIP":   machineIP,
+		"machineName": machineName,
 	})
 }
-
-/* TODO: Mira para que se utiliza esta función
-func Mvtemp(c *gin.Context) {
-
-	// Deserializa el JSON recibido
-	if err := c.ShouldBindJSON(&vmtemp); err != nil {
-		fmt.Print(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Datos JSON inválidos",
-		})
-		return
-	}
-}*/

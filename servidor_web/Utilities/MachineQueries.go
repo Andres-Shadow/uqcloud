@@ -255,26 +255,3 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 
 	return confirmacion, nil
 }
-
-// Consultar estado de la maquina virtual
-func CheckStatusMachineFromServer(VM Models.VirtualMachine, clienteIp string) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.CHECK_HOST_URL)
-
-	// ESTO NO SE DEBE MANDAR, ES UN METODO GET NO PERMITE PAYLOAD
-	// Crear el objeto JSON con los datos del cliente
-	payload := map[string]interface{}{
-		"clientIP":       clienteIp,
-		"ubicacion":      VM.Host_id,
-		"specifications": VM,
-	}
-
-	confirmacion, err := SendRequest("GET", serverURL, payload)
-
-	if err != nil {
-		log.Println("Error al crear la solicitud HTTP", err.Error())
-		return false, err
-	}
-
-	return confirmacion, nil
-
-}
