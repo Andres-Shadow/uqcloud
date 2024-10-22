@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AppWeb/Config"
+	"AppWeb/DTO"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
 	"bytes"
@@ -89,9 +90,7 @@ func GetHosts(c *gin.Context) {
 }
 
 func DeleteHost(c *gin.Context) {
-	var requestData struct {
-		HostIds []int `json:"hostIds"` // Estructura para recibir los IDs de los hosts
-	}
+	var requestData DTO.HostIDDTO
 
 	// Intentamos enlazar el JSON desde el cuerpo de la solicitud
 	if err := c.ShouldBindJSON(&requestData); err != nil {

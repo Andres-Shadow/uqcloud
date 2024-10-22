@@ -1,3 +1,52 @@
+// Función para obtener los discos y llenar la primera columna
+function getDisks() {
+    $.ajax({
+        url: '/getDisks',  // El endpoint para obtener los discos
+        method: 'GET',
+        success: function(disks) {
+            $('#diskTableBody').empty();  // Limpiar cualquier fila anterior
+            disks.forEach(disk => {
+                const diskName = disk.dsk_so_distro;
+                const newRow = `<tr>
+                          <td><input type="checkbox"></td>
+                          <td>${diskName}</td>
+                          <td id="hosts-${diskName}">Cargando...</td>
+                        </tr>`;
+                $('#diskTableBody').append(newRow);
+                getHostsForDisk(diskName);  // Llamar para obtener los hosts asociados
+            });
+        },
+        error: function() {
+            alert('Error al obtener los discos.');
+        }
+    });
+}
+
+// Función para obtener los hosts asociados a cada disco
+function getHostsForDisk(diskName) {
+    $.ajax({
+        url: `/getHostOfDisk/${diskName}`,  // El endpoint para obtener los hosts del disco
+        method: 'GET',
+        success: function(hosts) {
+            let hostsText = 'Ninguno';  // Valor por defecto si no hay hosts
+            if (hosts.length > 0) {
+                hostsText = hosts.map(host => host.hst_name).join(', ');  // Unir los nombres de los hosts
+            }
+            $(`#hosts-${diskName}`).text(hostsText);  // Actualizar la columna de hosts
+        },
+        error: function() {
+            $(`#hosts-${diskName}`).text('Error al cargar los hosts');
+        }
+    });
+}
+
+// Llamar a la función para cargar los discos al cargar la página
+$(document).ready(function() {
+    getDisks();
+});
+
+
+
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("buttonCreateDisc").addEventListener("click", function (event) {
         event.preventDefault(); // Prevenir el comportamiento por defecto del formulario
@@ -37,7 +86,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     const modal = bootstrap.Modal.getInstance(modalElement);
                     modal.hide();
 
-                    //Todo agregar funcion para añadir un nuevo elemento a la tabla
+                    getDisks(data,document.getElementById("diskTableBody").childElementCount)
 
                     const successMessage = document.getElementById("successMessage")
                     successMessage.innerText = result.message;

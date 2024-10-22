@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"AppWeb/Config"
+	"AppWeb/DTO"
 	"AppWeb/Models"
 	"AppWeb/Utilities"
 	"encoding/json"
@@ -72,4 +73,52 @@ func CreateDiskFromRequest(c *gin.Context) (Models.Disk, error) {
 	}
 
 	return newDisk, nil
+}
+
+func GetDiskFromRequest(c *gin.Context) {
+	diskNames, err := Utilities.GetDiskNamesFromServer()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se ha podido completar la consulta de los discos"})
+		return
+	}
+
+	for _, diskName := range diskNames.Data {
+		log.Println("DISCOS OBTENIDOS", diskName)
+	}
+	c.JSON(http.StatusOK, diskNames.Data)
+}
+
+func GetHostOfDiskFormRequest(c *gin.Context) {
+	DiskName := c.Param("diskName")
+	log.Println("DISCO A BUSCAR HOST: ", DiskName)
+	hostsOftDisk, err := Utilities.GetHostsOfDiskFromServer(DiskName)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se ha podido completar la consulta"})
+		return
+	}
+	hostsOftDiskUnique := removeDuplicate(hostsOftDisk)
+	log.Println("Lista de host: ", hostsOftDiskUnique.Data)
+
+	c.JSON(http.StatusOK, hostsOftDiskUnique.Data)
+}
+
+func removeDuplicate(hostsOftDisk DTO.HostsOfDisksResponseDTO) DTO.HostsOfDisksResponseDTO {
+	seen := make(map[int]bool)
+	// Crear un nuevo slice para almacenar los hosts únicos
+	var uniqueHosts []DTO.HostInfoDTO
+
+	// Iterar sobre los hosts y agregar solo los que no se han visto antes
+	for _, host := range hostsOftDisk.Data {
+		if !seen[host.HostID] {
+			// Si no hemos visto el hst_id, agregarlo a los hosts únicos
+			uniqueHosts = append(uniqueHosts, host)
+			// Marcar el hst_id como visto
+			seen[host.HostID] = true
+		}
+	}
+
+	// Actualizar la respuesta con los hosts únicos
+	hostsOftDisk.Data = uniqueHosts
+	return hostsOftDisk
 }

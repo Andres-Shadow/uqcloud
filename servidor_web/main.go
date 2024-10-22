@@ -92,6 +92,8 @@ func main() {
 
 	router.GET("/GetHost", handlers.GetHosts)
 	router.POST("/deleteHosts", handlers.DeleteHost)
+	router.GET("/getDisks", handlers.GetDiskFromRequest)
+	router.GET("/getHostOfDisk/:diskName", handlers.GetHostOfDiskFormRequest)
 
 	//TODO: Mirar después
 
