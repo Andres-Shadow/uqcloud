@@ -8,7 +8,6 @@ function getDisks() {
             disks.forEach(disk => {
                 const diskName = disk.dsk_so_distro;
                 const newRow = `<tr>
-                          <td><input type="checkbox"></td>
                           <td>${diskName}</td>
                           <td id="hosts-${diskName}">Cargando...</td>
                         </tr>`;
@@ -22,22 +21,47 @@ function getDisks() {
     });
 }
 
-// Función para obtener los hosts asociados a cada disco
+// Función para obtener los hosts de un disco
 function getHostsForDisk(diskName) {
     $.ajax({
-        url: `/getHostOfDisk/${diskName}`,  // El endpoint para obtener los hosts del disco
+        url: `/hostOfDisk/${diskName}`,
         method: 'GET',
         success: function(hosts) {
-            let hostsText = 'Ninguno';  // Valor por defecto si no hay hosts
+            let hostsText = 'Ninguno';
             if (hosts.length > 0) {
-                hostsText = hosts.map(host => host.hst_name).join(', ');  // Unir los nombres de los hosts
+                hostsText = hosts.map(host => {
+                    return `<span>${host.hst_name}
+                                <button class="btn btn-danger btn-sm delete-host-btn" data-disk="${diskName}" data-hostid="${host.hst_id}" data-hostname="${host.hst_name}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </span>`;
+                }).join(', '); // Separa cada host con una coma
             }
-            $(`#hosts-${diskName}`).text(hostsText);  // Actualizar la columna de hosts
+            document.querySelector(`#hosts-${diskName}`).innerHTML = hostsText;
+
+            // Asignar eventos de eliminación a los botones
+            assignDeleteHostEvents();
         },
         error: function() {
-            $(`#hosts-${diskName}`).text('Error al cargar los hosts');
+            console.error(`Error al cargar los hosts para ${diskName}`);
         }
     });
+}
+
+
+// Función para agregar el disco a la tabla
+function addDiskToTable(diskName) {
+    // Crear una nueva fila para la tabla
+    const newRow = `<tr>
+                        <td>${diskName}</td>
+                        <td id="hosts-${diskName}">Cargando...</td>
+                    </tr>`;
+
+    // Agregar la nueva fila al cuerpo de la tabla
+    document.getElementById('diskTableBody').insertAdjacentHTML('beforeend', newRow);
+
+    // Llamar a la función que obtiene los hosts asociados al disco recién creado
+    getHostsForDisk(diskName);
 }
 
 // Llamar a la función para cargar los discos al cargar la página
@@ -45,7 +69,49 @@ $(document).ready(function() {
     getDisks();
 });
 
+// Función para asignar eventos de eliminación a cada botón de host
+function assignDeleteHostEvents() {
+    const deleteButtons = document.querySelectorAll('.delete-host-btn');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const diskName = this.getAttribute('data-disk');
+            const hostId = this.getAttribute('data-hostid');
+            const hostName = this.getAttribute('data-hostname');
 
+            // Mostrar confirmación antes de eliminar
+            const confirmation = confirm(`¿Está seguro de que desea eliminar el host ${hostName} del disco ${diskName}?`);
+            if (confirmation) {
+                deleteHostFromDisk(diskName, hostId, this);
+            }
+        });
+    });
+}
+
+// Función para eliminar el host del disco
+function deleteHostFromDisk(diskName, hostId, buttonElement) {
+    // Realizar la petición de eliminación
+    fetch(`/hostOfDisk/${diskName}?host_id=${hostId}`, {
+        method: 'DELETE'
+    })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {
+                    throw new Error(err.error);
+                });
+            }
+            return response.json();
+        })
+        .then(result => {
+            alert(`Host eliminado exitosamente: ${result.message}`);
+
+            // Eliminar el host de la tabla visualmente
+            const hostElement = buttonElement.parentNode;
+            hostElement.remove();
+        })
+        .catch(error => {
+            alert(`Error al eliminar el host: ${error.message}`);
+        });
+}
 
 document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("buttonCreateDisc").addEventListener("click", function (event) {

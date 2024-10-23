@@ -69,7 +69,7 @@ func GetHostsOfDiskFromServer(DiskName string) (DTO.HostsOfDisksResponseDTO, err
 }
 
 func DeleteHostOfDiskFromServer(DiskName string, HostID int) (bool, error) {
-	serverURL := fmt.Sprintf("http://%s:%s%s/%s?host_id=%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL, DiskName, HostID)
+	serverURL := fmt.Sprintf("http://%s:%s%s/%s?host_id=%d", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL, DiskName, HostID)
 	log.Println(serverURL)
 
 	req, err := http.NewRequest("DELETE", serverURL, bytes.NewBuffer(nil))

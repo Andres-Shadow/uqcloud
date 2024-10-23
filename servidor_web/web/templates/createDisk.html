@@ -21,6 +21,7 @@
 
   <!-- DataTables CSS -->
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
   <!-- jQuery (necesario para DataTables) -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -67,14 +68,12 @@
                   <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#diskModal">
                     Crear Disk
                   </button>
-                  <button class="btn btn-danger" id="botonEliminar">Eliminar Seleccionados</button>
                 </div>
 
                 <div>
                   <table id="disksTable" class="table table-responsive table-bordered table-striped">
                     <thead>
                     <tr>
-                      <th><input type="checkbox" id="selectAll"></th>
                       <th scope="col">Nombre</th>
                       <th scope="col">Host Asociados</th>
                     </tr>
