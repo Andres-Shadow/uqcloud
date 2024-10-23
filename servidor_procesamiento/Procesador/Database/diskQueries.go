@@ -4,6 +4,7 @@ import (
 	_ "database/sql"
 	"log"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	"strconv"
 
 	"gorm.io/gorm"
 )
@@ -61,7 +62,8 @@ func ListHostWhereDiskExists(diskSo string) ([]models.Host, error) {
 }
 
 func DeleteDiskFromHost(hostId string, diskSo string) error {
-	err := DATABASE.Where("host_id = ? AND sistema_operativo = ?", hostId, diskSo).Delete(&models.Disco{}).Error
+	id, _ := strconv.Atoi(hostId)
+	err := DATABASE.Unscoped().Where("host_id = ? AND distribucion_sistema_operativo = ?", id, diskSo).Delete(&models.Disco{}).Error
 	if err != nil {
 		log.Println("Hubo un error al eliminar el disco: " + err.Error())
 		return err
