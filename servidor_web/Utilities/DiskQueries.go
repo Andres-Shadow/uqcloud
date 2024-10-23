@@ -3,6 +3,7 @@ package Utilities
 import (
 	"AppWeb/Config"
 	"AppWeb/DTO"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -65,4 +66,27 @@ func GetHostsOfDiskFromServer(DiskName string) (DTO.HostsOfDisksResponseDTO, err
 
 	return hostDisk, nil
 
+}
+
+func DeleteHostOfDiskFromServer(DiskName string, HostID int) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:%s%s/%s?host_id=%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.DISK_VM_URL, DiskName, HostID)
+	log.Println(serverURL)
+
+	req, err := http.NewRequest("DELETE", serverURL, bytes.NewBuffer(nil))
+	if err != nil {
+		return false, fmt.Errorf("Error al realizar la solicutud: %w", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return false, fmt.Errorf("Error al realizar la solicitud: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return false, fmt.Errorf("Error al obtener la respuesta: %w", err)
+	}
+
+	return true, nil
 }

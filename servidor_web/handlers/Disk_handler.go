@@ -8,12 +8,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/gin-contrib/sessions"
-	"github.com/gin-gonic/gin"
+	"strconv"
 )
 
 func CreateDiskPage(c *gin.Context) {
@@ -88,9 +88,9 @@ func GetDiskFromRequest(c *gin.Context) {
 	c.JSON(http.StatusOK, diskNames.Data)
 }
 
-func GetHostOfDiskFormRequest(c *gin.Context) {
+func GetHostOfDiskFromRequest(c *gin.Context) {
 	DiskName := c.Param("diskName")
-	log.Println("DISCO A BUSCAR HOST: ", DiskName)
+	log.Println("DISCO A BUSCAR LOS HOSTS: ", DiskName)
 	hostsOftDisk, err := Utilities.GetHostsOfDiskFromServer(DiskName)
 
 	if err != nil {
@@ -101,6 +101,22 @@ func GetHostOfDiskFormRequest(c *gin.Context) {
 	log.Println("Lista de host: ", hostsOftDiskUnique.Data)
 
 	c.JSON(http.StatusOK, hostsOftDiskUnique.Data)
+}
+
+func DeleteHostOfDiskFrormRequest(c *gin.Context) {
+	DiskName := c.Param("diskName")
+	HostId, _ := strconv.Atoi(c.Query("host_id"))
+
+	log.Println("NOMBRE DEL DISCO: ", DiskName)
+	log.Println("HOST A DESASOCIAR: ", HostId)
+
+	_, err := Utilities.DeleteHostOfDiskFromServer(DiskName, HostId)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al eliminar el host del disco"})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Deleted Host", "Nombre del disco": DiskName, "Host a desasociar": HostId})
 }
 
 func removeDuplicate(hostsOftDisk DTO.HostsOfDisksResponseDTO) DTO.HostsOfDisksResponseDTO {
