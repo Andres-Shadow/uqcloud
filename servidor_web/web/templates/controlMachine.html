@@ -13,7 +13,7 @@
 
   <!-- JS propios (como estos usan JQuery deben estar despues de importar JQuery) -->
   <script src="/web/static/js/mainpage.js"></script>
-  <script src="/web/static/js/controleMachineScripts.js"></script>
+  <script src="/web/static/js/controlMachineScripts.js"></script>
 
   <!-- Bootstrap -->
   <link href="/web/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
@@ -67,16 +67,17 @@
           <div class="table mt-3" style="background-color: white; border-radius: 10px;">
             <table id="machine-table">
               <thead>
-                <tr>
+                <tr style="background-color: #a2afdc;">
                   <th>Nombre</th>
+                  <th>Estado</th>
                   <th>IP</th>
                   <th>Distribución</th>
-                  <th>Estado</th>
+                  <th>Conexión</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                <!-- Los datos se cargan aquí dinámicamente -->
+                <!-- Los datos se cargan aquí dinámicamente desde controle-->
               </tbody>
             </table>
           </div>

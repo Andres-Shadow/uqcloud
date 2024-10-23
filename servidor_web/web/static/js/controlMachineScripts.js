@@ -90,42 +90,68 @@ function actualizarTabla() {
             $("#machine-table tbody").empty();
 
             data.forEach(function (machine) {
-                let backgroundColor;
+                let vmState;
                 switch (machine.vm_state) {
                     case "Apagado":
-                        backgroundColor = "#e06666ff";
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-minus"></i> ${machine.vm_state}`                        
                         break;
                     case "Encendido":
-                        backgroundColor = "#93c47dff";
+                        vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`
                         break;
                     case "Procesando":
-                        backgroundColor = "#83DEE3";
+                        vmState = `<i style="color: #2f89fc;" class="fa-regular fa-clock"></i> ${machine.vm_state}`
                         break;
                     default:
-                        backgroundColor = "";
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-exclamation"> </i> Error`
                 }
 
-                const ipDisplay = machine.vm_ip ? machine.vm_state === 'Encendido' ? `${machine.vm_ip} <a href="http://${machine.vm_ip}:4200" target="_blank"><i class="fa-solid fa-up-right-from-square ms-2"></i></a>` : `${machine.vm_ip}` : "No asignada";
+                const ipDisplay = machine.vm_ip ? machine.vm_state === 'Encendido' ? `${machine.vm_ip} <a href="http://${machine.vm_ip}:4200" target="_blank"><i class="fa-solid fa-up-right-from-square ms-2"></i></a>` : `${machine.vm_ip}` : `<i>No asignada</i>`;
+
+                // Estas badges son sacadas de "https://shields.io/badges" por si se agregan mas distribuciones ahí
+                let distribucion;
+                switch (machine.vm_so_distro) {
+                    case "Fedora":
+                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Fedora-blue?style=flat&logo=fedora&logoColor=white"></img>`;
+                        break;
+                    case "Debian":
+                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Debian-%23A81D33?style=flat&logo=debian&logoColor=white">`
+                        break;
+                    case "Alpine":
+                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Alpine-%230D597F?style=flat&logo=alpinelinux&logoColor=white">`
+                        break;
+                    case "Ubuntu":
+                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat&logo=ubuntu&logoColor=white">`
+                        break;
+                    default:
+                        vmState = `https://img.shields.io/badge/Sin%20distribucion-red`
+                }
+
+                const conexion = `
+                    <a >
+                        <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                    </a>
+                `;
 
                 const actionButtons = `
                     <div class="">
                         <button class="btn btn-link p-0 me-1" onclick="changeStateMachine('${machine.vm_name}', '${machine.vm_state === 'Apagado' ? 'startMachine' : 'stopMachine'}')">
-                            <i class="fa ${machine.vm_state === 'Apagado' ? 'fa-power-off' : 'fa-stop-circle'} icon-large" title="${machine.vm_state === 'Apagado' ? 'Start' : 'Stop'}"></i>
+                            <i class="fa ${machine.vm_state === 'Apagado' ? 'fa-power-off' : 'fa-stop-circle'} icon-large" title="${machine.vm_state === 'Apagado' ? 'Encender máquina' : 'Apagar máquina'}"></i>
                         </button>
                         <button class="btn btn-link p-0 me-1" onclick="abrirVentanaEmergenteInformacion('${machine.vm_name}', '${machine.vm_so}', '${machine.vm_so_distro}', '${machine.vm_ip}', '${machine.vm_ram}', '${machine.vm_cpu}', '${machine.vm_state}', '${machine.vm_hostname}')">
-                            <i class="fa fa-info-circle icon-large" title="Info"></i>
+                            <i class="fa fa-info-circle icon-large" title="Información"></i>
                         </button>
                         <button class="btn btn-link p-0 me-1" onclick="abrirVentanaEmergenteEliminacion('${machine.vm_name}')" ${machine.vm_state !== 'Apagado' ? 'disabled' : ''}>
-                            <i class="fa fa-trash icon-large" title="Delete"></i>
+                            <i class="fa fa-trash icon-large" title="Eliminar máquina"></i>
                         </button>
                     </div>`;
-
+    
                 const row = `
-                    <tr style="background-color: ${backgroundColor}">
+                    <tr>
                         <td>${machine.vm_name}</td>
+                        <td>${vmState}</td>
                         <td>${ipDisplay}</td>
-                        <td>${machine.vm_so_distro}</td>
-                        <td>${machine.vm_state}</td>
+                        <td>${distribucion}</td>
+                        <td>${conexion}</td>
                         <td class="button-column">${actionButtons}</td>
                     </tr>`;
 
