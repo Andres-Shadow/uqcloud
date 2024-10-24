@@ -127,9 +127,9 @@ function actualizarTabla() {
                 }
 
                 const conexion = `
-                    <a >
+                    <button onclick="getSSHKey('${machine.vm_name}')">
                         <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
-                    </a>
+                    </button>
                 `;
 
                 const actionButtons = `
@@ -171,6 +171,36 @@ function changeStateMachine(vm_name, state) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', },
         body: JSON.stringify({ vm_name: vm_name, }),
+    })
+        .then(response => {
+            if (response.status === 200) {
+                return response.json();
+            } else if (response.status === 400 || response.status === 500) {
+                return response.json();
+            } else {
+                throw new Error('Error en el servidor web | response status raro');
+            }
+        })
+        .then(data => {
+            if (data.SuccessMessage) {
+                const successMessage = data.SuccessMessage;
+                showAlert(successMessage, "success");
+            } else if (data.ErrorMessage) {
+                const errorMessage = data.ErrorMessage;
+                showAlert(errorMessage, "danger");
+            }
+        })
+        .catch(error => {
+            showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+            console.error('Error: ' + error);
+        })
+}
+
+function getSSHKey(vm_name) {
+    fetch('/api/sshKeyMachine/' + vm_name, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', },
+        body: null,
     })
         .then(response => {
             if (response.status === 200) {

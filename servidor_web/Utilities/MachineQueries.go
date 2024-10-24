@@ -240,7 +240,7 @@ func StopMachineFromServer(nombre string, clientIP string) (bool, error) {
 func DeleteMachineFromServer(nombre string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, nombre)
 
-	// ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
+	// TODO: ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
 	payload := map[string]interface{}{
 		"tipo_solicitud": "delete",
 		"nombreVM":       nombre,
@@ -248,6 +248,19 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 
 	confirmacion, err := SendRequest("DELETE", serverURL, payload)
 
+	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
+		return false, err
+	}
+
+	return confirmacion, nil
+}
+
+// Este metodo obtiene la llave asignada (por el servidor de procesamiento) a la vm
+func GetSSHKeyFromServer(vmName string) (bool, error) {
+	serverURL := fmt.Sprintf("http://%s:%s%s/key/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, vmName)
+
+	confirmacion, err := SendRequest("GET", serverURL, nil)
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())
 		return false, err

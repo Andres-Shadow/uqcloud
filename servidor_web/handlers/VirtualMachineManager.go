@@ -309,6 +309,23 @@ func GetMachines(c *gin.Context) {
 	c.JSON(http.StatusOK, machines)
 }
 
+func GetSSHKeyMachine(c *gin.Context) {
+	machineName := c.Param("vm_name")
+
+	if machineName == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No se envió el nombre de la máquina"})
+		return
+	}
+
+	keyMachine, err := Utilities.GetSSHKeyFromServer(machineName)
+	if err != nil {
+		c.JSON(http.StatusNoContent, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, keyMachine)
+}
+
 func ConnectionMachine(c *gin.Context) {
 
 	// Acceder a la sesión
