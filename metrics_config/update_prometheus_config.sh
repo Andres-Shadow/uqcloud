@@ -38,7 +38,7 @@ EOL
     echo "Archivo prometheus.yml actualizado."
 }
 
-# Bucle infinito para actualizar cada 15 segundos
+# Bucle infinito para actualizar cada 3 segundos
 while true; do
     update_prometheus_config
     echo "Prometheus ha recargado su configuración."

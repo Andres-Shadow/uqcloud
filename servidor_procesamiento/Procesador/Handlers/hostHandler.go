@@ -188,6 +188,9 @@ func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
 	// recarga la lsita de host contemplados en roundrobin
 	config.RoundRobinManager.UpdateHosts(database.GetHosts())
 
+	// Recargar configuración de Prometheus
+	config.ReloadPrometheusConfig()
+
 	confirmation := map[string]bool{"eliminacion de host": true}
 	response := utilities.BuildGenericResponse(confirmation, "success", "Eliminación del host exitosa")
 	fmt.Println("Eliminación del host exitosa")
