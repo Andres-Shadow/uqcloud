@@ -110,7 +110,8 @@ func ReloadPrometheusConfig() {
 	}
 
 	go func() {
-		time.Sleep(4 * time.Second) // Espera antes de enviar la solicitud
+		// Esta espera es para evitar que se envíe la solicitud antes de que el script de metrics_config actualice la lista de hosts
+		time.Sleep(4 * time.Second)
 
 		client := &http.Client{}
 		resp, err := client.Do(req)
