@@ -15,7 +15,8 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	entities "servidor_procesamiento/Procesador/Models/Entities"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	apiutilities "servidor_procesamiento/Procesador/Utilities/ApiUtilities"
+	systemutilities "servidor_procesamiento/Procesador/Utilities/SystemUtilities"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -52,7 +53,7 @@ func CreateVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Envía una respuesta al cliente.
 	confirmation := map[string]string{"mensaje": "Mensaje JSON de crear MV recibido correctamente"}
 
-	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON de crear MV recibido correctamente")
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON de crear MV recibido correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -83,7 +84,7 @@ func ConsultVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := utilities.BuildGenericResponse(machines, "Success", "Máquinas virtuales consultadas correctamente")
+	response := apiutilities.BuildGenericResponse(machines, "Success", "Máquinas virtuales consultadas correctamente")
 
 	// Respondemos con la lista de máquinas virtuales en formato JSON
 	w.Header().Set("Content-Type", "application/json")
@@ -117,7 +118,7 @@ func DeleteVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Envía una respuesta al cliente.
 	confirmation := map[string]string{"mensaje": "Mensaje JSON para eliminar MV recibido correctamente"}
 
-	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para eliminar MV recibido correctamente")
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para eliminar MV recibido correctamente")
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -173,7 +174,7 @@ func StartVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Envía una respuesta al cliente.
 	confirmation := map[string]string{"mensaje": mensaje}
 
-	response := utilities.BuildGenericResponse(confirmation, "Success", mensaje)
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", mensaje)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -215,7 +216,7 @@ func StopVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 	// Envía una respuesta al cliente.
 	confirmation := map[string]string{"mensaje": "Mensaje JSON para apagar MV recibido correctamente"}
 
-	response := utilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para apagar MV recibido correctamente")
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", "Mensaje JSON para apagar MV recibido correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -255,7 +256,7 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 
 	keyPath = "./keys/" + nombre
 
-	err = utilities.ProcessSshPublicKeyConfiguration(keyPath, virtualMachine.Ip)
+	err = systemutilities.ProcessSshPublicKeyConfiguration(keyPath, virtualMachine.Ip)
 
 	if err != nil {
 		log.Println("Error al generar la llave privada")

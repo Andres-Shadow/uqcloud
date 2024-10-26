@@ -6,7 +6,7 @@ import (
 	"log"
 	config "servidor_procesamiento/Procesador/Config"
 	models "servidor_procesamiento/Procesador/Models/Entities"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	virtualmachineutilities "servidor_procesamiento/Procesador/Utilities/VirtualMachineUtilities"
 	"time"
 )
 
@@ -79,14 +79,14 @@ func CheckVirtualMachinesQueueChanges() {
 						log.Printf("Recuperado de un pánico en CreateVM: %v", r)
 					}
 				}()
-				utilities.CreateVM(specifications, clientIP)
+				virtualmachineutilities.CreateVM(specifications, clientIP)
 			}(specifications, clientIP)
 
 			mu.Lock()
 			config.GetMaquina_virtualQueue().Queue.Remove(firstElement)
 			mu.Unlock()
 
-			utilities.PrintVirtualMachine(specifications, true)
+			virtualmachineutilities.PrintVirtualMachine(specifications, true)
 		}
 
 		// Espera un segundo antes de verificar nuevamente.

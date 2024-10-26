@@ -9,10 +9,9 @@ import (
 	database "servidor_procesamiento/Procesador/Database"
 	dto "servidor_procesamiento/Procesador/Models/Dto"
 	external "servidor_procesamiento/Procesador/Models/External"
-	"servidor_procesamiento/Procesador/Utilities/mapper"
+	apiutilities "servidor_procesamiento/Procesador/Utilities/ApiUtilities"
+	hostutilities "servidor_procesamiento/Procesador/Utilities/HostUtilities"
 	"strconv"
-
-	utilities "servidor_procesamiento/Procesador/Utilities"
 
 	"github.com/gorilla/mux"
 )
@@ -107,7 +106,7 @@ func AddHostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	converted := mapper.ToHostFromDTO(host)
+	converted := apiutilities.ToHostFromDTO(host)
 
 	err := database.AddHost(converted)
 
@@ -149,7 +148,7 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Llamar a utilidades con las IPs
-	utilities.FastRegisterHosts(ips)
+	hostutilities.FastRegisterHosts(ips)
 
 	// Recargar configuración de Prometheus
 	config.ReloadPrometheusConfig()
@@ -158,7 +157,7 @@ func FastRegisterHostsHandler(w http.ResponseWriter, r *http.Request) {
 	config.RoundRobinManager.UpdateHosts(database.GetHosts())
 
 	confirmation := map[string]bool{"registro rapido correcto": true}
-	response := utilities.BuildGenericResponse(confirmation, "success", "Registro rapido de los hosts exitoso")
+	response := apiutilities.BuildGenericResponse(confirmation, "success", "Registro rapido de los hosts exitoso")
 	fmt.Println("Registro de hosts exitoso")
 
 	w.Header().Set("Content-Type", "application/json")
@@ -192,7 +191,7 @@ func DeleteHostHandler(w http.ResponseWriter, r *http.Request) {
 	config.ReloadPrometheusConfig()
 
 	confirmation := map[string]bool{"eliminacion de host": true}
-	response := utilities.BuildGenericResponse(confirmation, "success", "Eliminación del host exitosa")
+	response := apiutilities.BuildGenericResponse(confirmation, "success", "Eliminación del host exitosa")
 	fmt.Println("Eliminación del host exitosa")
 
 	w.Header().Set("Content-Type", "application/json")

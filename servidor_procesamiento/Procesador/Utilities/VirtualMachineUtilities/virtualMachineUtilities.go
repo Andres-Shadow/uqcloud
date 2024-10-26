@@ -1,4 +1,4 @@
-package utilities
+package virtualmachineutilities
 
 import (
 	"encoding/json"
@@ -8,6 +8,7 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	systemutilities "servidor_procesamiento/Procesador/Utilities/SystemUtilities"
 	"strings"
 
 	"time"
@@ -92,9 +93,9 @@ Funciòn que se encarga de realizar la configuraciòn SSH con el host
 @privateKeyPath Paràmetro que contiene la ruta de la llave privada SSH
 */
 func ConfigureSSH(user string, privateKeyPath string) (*ssh.ClientConfig, error) {
-	authMethod, err := privateKeyFile(privateKeyPath)
+	authMethod, err := systemutilities.PrivateKeyFile(privateKeyPath)
 	fmt.Println("authMethod", authMethod)
-	fmt.Println(privateKeyFile(privateKeyPath))
+	fmt.Println(systemutilities.PrivateKeyFile(privateKeyPath))
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +123,7 @@ func IsRunning(nameVM string, hostIP string, config *ssh.ClientConfig) (bool, er
 	command := "VBoxManage showvminfo " + "\"" + nameVM + "\"" + " | findstr /C:\"State:\""
 	running := false
 
-	salida, err := SendSSHCommand(hostIP, command, config)
+	salida, err := systemutilities.SendSSHCommand(hostIP, command, config)
 	if err != nil {
 		log.Println("Error al ejecutar el comando para obtener el estado de la màquina:", err)
 		return running, err
@@ -185,13 +186,13 @@ func DeleteVM(virtualMachineName string) string {
 
 	} else {
 		//Envìa el comando para desconectar el disco de la MV
-		_, err4 := SendSSHCommand(host.Ip, disconnectCommand, config)
+		_, err4 := systemutilities.SendSSHCommand(host.Ip, disconnectCommand, config)
 		if err4 != nil {
 			log.Println("Error al desconectar el disco de la MV:", err4)
 			return "Error al desconectar el disco de la MV"
 		}
 		//Envìa el comando para eliminar la MV del host
-		_, err5 := SendSSHCommand(host.Ip, deleteCommand, config)
+		_, err5 := systemutilities.SendSSHCommand(host.Ip, deleteCommand, config)
 		if err5 != nil {
 			log.Println("Error al eliminar la MV:", err5)
 			return "Error al eliminar la MV"
@@ -293,7 +294,7 @@ func ExistVirtualMachineInHost(nombreVM string) bool {
 
 	command := "VBoxManage list vms"
 	// Obtiene la lista de máquinas virtuales en el host
-	salida, err := SendSSHCommand(host.Ip, command, config)
+	salida, err := systemutilities.SendSSHCommand(host.Ip, command, config)
 	if err != nil {
 		log.Println("Error al obtener la lista de MVs:", err)
 		return false

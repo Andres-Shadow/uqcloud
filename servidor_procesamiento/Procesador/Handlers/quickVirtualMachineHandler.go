@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	virtualmachineutilities "servidor_procesamiento/Procesador/Utilities/VirtualMachineUtilities"
 )
 
 func CreateQuickVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,7 +18,7 @@ func CreateQuickVirtualMachineHandler(w http.ResponseWriter, r *http.Request) {
 
 	//ip del localhost ->
 	clientIP := datos["ip"].(string)
-	email := utilities.CreateQuickVirtualMachine(clientIP)
+	email := virtualmachineutilities.CreateQuickVirtualMachine(clientIP)
 
 	response := map[string]string{"mensaje": email}
 	w.Header().Set("Content-Type", "application/json")
