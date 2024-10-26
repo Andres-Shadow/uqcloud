@@ -1,4 +1,4 @@
-package utilities
+package userutilities
 
 import (
 	"log"
@@ -25,7 +25,7 @@ func CreateTempAccount() string {
 	persona := models.Persona{
 		Nombre:   "Usuario",
 		Apellido: "Invitado",
-		Email:    generateRandomEmail(),
+		Email:    GenerateRandomEmail(),
 		Rol:      0,
 	}
 
@@ -49,7 +49,7 @@ func CreateTempAccount() string {
 Funciòn que se encarga de generar un correo aleatorio para las cuentas de lo sinvitados las cuales son temporales
 */
 
-func generateRandomEmail() string {
+func GenerateRandomEmail() string {
 	email := GenerateRandomString(5) + "@temp.com"
 	return email
 }

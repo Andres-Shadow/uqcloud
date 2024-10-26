@@ -7,10 +7,8 @@ import (
 	"net/http"
 	database "servidor_procesamiento/Procesador/Database"
 	dto "servidor_procesamiento/Procesador/Models/Dto"
-	utilities "servidor_procesamiento/Procesador/Utilities"
-	"servidor_procesamiento/Procesador/Utilities/mapper"
+	apiutilities "servidor_procesamiento/Procesador/Utilities/ApiUtilities"
 	"strings"
-
 	"github.com/gorilla/mux"
 )
 
@@ -34,7 +32,7 @@ func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
 
 	disco.Ruta_ubicacion = rutaDisco
 
-	convertedDisk := mapper.ToDiscoFromDTO(disco)
+	convertedDisk := apiutilities.ToDiscoFromDTO(disco)
 
 	err := database.CreateDisck(convertedDisk)
 
@@ -46,7 +44,7 @@ func AddDiskHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Registro del disco exitoso")
 	confirmation := map[string]bool{"registro_correcto": true}
 
-	response := utilities.BuildGenericResponse(confirmation, "Success", "Registro del disco exitoso")
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", "Registro del disco exitoso")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -60,8 +58,8 @@ func GetDisksHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mapped := mapper.ToDTOFromDiskDistroList(disks)
-	response := utilities.BuildGenericResponse(mapped, "Success", "Discos obtenidos correctamente")
+	mapped := apiutilities.ToDTOFromDiskDistroList(disks)
+	response := apiutilities.BuildGenericResponse(mapped, "Success", "Discos obtenidos correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -78,8 +76,8 @@ func GetHostsWithDiskHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mapped := mapper.ToDTOFromHostWithDiskList(hosts)
-	response := utilities.BuildGenericResponse(mapped, "Success", "Hosts obtenidos correctamente")
+	mapped := apiutilities.ToDTOFromHostWithDiskList(hosts)
+	response := apiutilities.BuildGenericResponse(mapped, "Success", "Hosts obtenidos correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
@@ -101,7 +99,7 @@ func DeleteDiskHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	confirmation := map[string]bool{"eliminacion_correcta": true}
-	response := utilities.BuildGenericResponse(confirmation, "Success", "Disco eliminado correctamente")
+	response := apiutilities.BuildGenericResponse(confirmation, "Success", "Disco eliminado correctamente")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)

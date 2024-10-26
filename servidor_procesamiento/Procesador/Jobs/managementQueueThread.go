@@ -3,7 +3,7 @@ package jobs
 import (
 	"fmt"
 	config "servidor_procesamiento/Procesador/Config"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	virtualmachineutilities "servidor_procesamiento/Procesador/Utilities/VirtualMachineUtilities"
 	"strings"
 	"time"
 )
@@ -35,17 +35,17 @@ func CheckManagementQueueChanges() {
 			switch strings.ToLower(tipoSolicitud) {
 			case "delete":
 				nameVM, _ := data["nombreVM"].(string)
-				go utilities.DeleteVM(nameVM)
+				go virtualmachineutilities.DeleteVM(nameVM)
 
 			case "start":
 				nameVM, _ := data["nombreVM"].(string)
 				clientIP, _ := data["clientIP"].(string)
-				go utilities.StartVM(nameVM, clientIP)
+				go virtualmachineutilities.StartVM(nameVM, clientIP)
 
 			case "stop":
 				nameVM, _ := data["nombreVM"].(string)
 				clientIP, _ := data["clientIP"].(string)
-				go utilities.TurnOffVM(nameVM, clientIP)
+				go virtualmachineutilities.TurnOffVM(nameVM, clientIP)
 
 			default:
 				fmt.Println("Tipo de solicitud no válido:", tipoSolicitud)

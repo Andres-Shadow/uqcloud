@@ -10,7 +10,8 @@ import (
 	handlers "servidor_procesamiento/Procesador/Handlers"
 	jobs "servidor_procesamiento/Procesador/Jobs"
 	models "servidor_procesamiento/Procesador/Models/Entities"
-	utilities "servidor_procesamiento/Procesador/Utilities"
+	hostutilities "servidor_procesamiento/Procesador/Utilities/HostUtilities"
+	virtualmachineutilities "servidor_procesamiento/Procesador/Utilities/VirtualMachineUtilities"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/mux"
@@ -97,7 +98,7 @@ func setDatabase() {
 
 	// Actualizar las máquinas virtuales que estén disponibles realmente en los hosts
 	// Esto se hace para que haya congruencia entre la BD y las VM existentes realmente
-	utilities.UpdateVirtualMachinesActualStatus()
+	virtualmachineutilities.UpdateVirtualMachinesActualStatus()
 }
 
 // Función para precargar los datos de los hosts de la sala B y C (No cambian)
@@ -112,7 +113,7 @@ func registerHostData() {
 	// Verificar que no hayan hosts registrados
 	if count == 0 {
 		fmt.Println("Preregistrando datos de hosts...")
-		utilities.PreregisterHostJsonData()
+		hostutilities.PreregisterHostJsonData()
 	} else {
 		fmt.Println("Ya existen hosts registrados")
 	}

@@ -1,10 +1,11 @@
-package utilities
+package virtualmachineutilities
 
 import (
 	"log"
 	"os"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	userutilities "servidor_procesamiento/Procesador/Utilities/UserUtilities"
 	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
@@ -15,7 +16,7 @@ func CreateQuickVirtualMachine(clientIP string) string {
 	persona := models.Persona{
 		Nombre:   "Usuario",
 		Apellido: "Invitado",
-		Email:    generateRandomEmail(),
+		Email:    userutilities.GenerateRandomEmail(),
 		Rol:      0,
 	}
 
