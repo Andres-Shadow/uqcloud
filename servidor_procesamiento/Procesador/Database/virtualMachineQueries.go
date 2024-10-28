@@ -74,7 +74,6 @@ func ConsultMachines(persona models.Persona) ([]models.Maquina_virtual, error) {
 	var machines []models.Maquina_virtual
 	var err error
 
-	// log.Println("email: ", persona.Email)
 
 	if persona.Rol == 1 {
 		err = DATABASE.Table("maquina_virtual as m").
@@ -95,7 +94,7 @@ func ConsultMachines(persona models.Persona) ([]models.Maquina_virtual, error) {
 	}
 
 	if len(machines) == 0 {
-		return machines, errors.New("no Machines Found")
+		return machines, errors.New("no se encontraron máquinas")
 	}
 	return machines, nil
 }
