@@ -268,13 +268,13 @@ func WriteKeyToFile(keyBytes []byte, saveFileTo string) error {
 
 // sendPublicKeyViaSSH sends the public key to a remote server using SSH
 func SendPublicKeyViaSSH(user, host, privateKeyPath, publicKeyPath string) error {
-	cmd := exec.Command("scp", "-i", privateKeyPath, publicKeyPath, fmt.Sprintf("%s@%s:.", user, host))
+	cmd := exec.Command("scp", "-o", "StrictHostKeyChecking=no", "-i", privateKeyPath, publicKeyPath, fmt.Sprintf("%s@%s:.", user, host))
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return fmt.Errorf("error sending public key: %v, output: %s", err, string(output))
 	}
 
-	cmd2 := exec.Command("ssh", "-i", privateKeyPath, fmt.Sprintf("%s@%s", user, host), "bash -s < ./init.sh")
+	cmd2 := exec.Command("ssh", "-o", "StrictHostKeyChecking=no", "-i", privateKeyPath, fmt.Sprintf("%s@%s", user, host), "bash", "-s", "<", "./init.sh")
 	output2, err2 := cmd2.CombinedOutput()
 	if err2 != nil {
 		return fmt.Errorf("error executing init.sh: %v, output: %s", err2, string(output2))
