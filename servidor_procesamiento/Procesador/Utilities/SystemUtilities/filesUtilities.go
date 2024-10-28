@@ -1,4 +1,4 @@
-package utilities
+package systemutilities
 
 import (
 	"log"
@@ -34,7 +34,7 @@ func PublicKeyFile(file string) ssh.AuthMethod {
 Esta funciòn carga y devuelve la llave privada SSH desde la ruta especificada
 @file Paràmetro que contiene la ruta de la llave privada
 */
-func privateKeyFile(file string) (ssh.AuthMethod, error) {
+func PrivateKeyFile(file string) (ssh.AuthMethod, error) {
 	buffer, err := os.ReadFile(file)
 	if err != nil {
 		return nil, err

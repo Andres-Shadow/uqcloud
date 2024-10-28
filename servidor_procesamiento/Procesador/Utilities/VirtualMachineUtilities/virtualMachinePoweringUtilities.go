@@ -1,4 +1,4 @@
-package utilities
+package virtualmachineutilities
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	systemutilities "servidor_procesamiento/Procesador/Utilities/SystemUtilities"
 	"strings"
 	"time"
 
@@ -117,7 +118,7 @@ func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.Client
 	startVMCommand := getStartVMCommand(clientIP, nameVM)
 
 	// verifica el envio del comando ssh
-	if _, err = SendSSHCommand(host.Ip, startVMCommand, conf); err != nil {
+	if _, err = systemutilities.SendSSHCommand(host.Ip, startVMCommand, conf); err != nil {
 		log.Println("Error al enviar el comando para encender la MV:", err)
 		return "Error al enviar el comando para encender la MV: " + err.Error()
 	}
@@ -144,7 +145,7 @@ func startVMSequence(nameVM, clientIP string, host models.Host, conf *ssh.Client
 
 // funcion que retorna el comando para encender la màquina virtual según las condiciones deseadas
 func getStartVMCommand(clientIP, nameVM string) string {
-	if _, err := IsAHostIp(clientIP); err == nil {
+	if _, err := systemutilities.IsAHostIp(clientIP); err == nil {
 		return "VBoxManage startvm " + "\"" + nameVM + "\""
 	}
 	return "VBoxManage startvm " + "\"" + nameVM + "\"" + " --type headless"
@@ -169,7 +170,7 @@ func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (st
 		fmt.Println("Obteniendo direcciòn IP de la màquina " + nameVM + "...")
 
 		// envia el comando ssh para obtener la direcciòn IP o reiniciar si es necesario
-		ipAddress, _ = SendSSHCommand(host.Ip, getIpCommand, conf)
+		ipAddress, _ = systemutilities.SendSSHCommand(host.Ip, getIpCommand, conf)
 
 		// limpia el output de virtual box para obtener la direcciòn IP
 		// VirtualBox -> "Value: 192.168.x.x"
@@ -200,7 +201,7 @@ func getVMIPAddress(nameVM string, host models.Host, conf *ssh.ClientConfig) (st
 
 // funcion encargada de reiniar la màquina virtual
 func rebootVM(hostIP, rebootCommand string, conf *ssh.ClientConfig) error {
-	_, err := SendSSHCommand(hostIP, rebootCommand, conf)
+	_, err := systemutilities.SendSSHCommand(hostIP, rebootCommand, conf)
 	if err != nil {
 		log.Println("Error al reiniciar la MV:", err)
 	}
@@ -242,7 +243,7 @@ func powerOffVMSequence(nameVM string, host models.Host, config *ssh.ClientConfi
 	}
 
 	// envia el comando ssh para apagar la màquina virtual
-	_, err = SendSSHCommand(host.Ip, powerOffCommand, config)
+	_, err = systemutilities.SendSSHCommand(host.Ip, powerOffCommand, config)
 	if err != nil {
 		log.Println("Error al enviar el comando para apagar la MV:", err)
 		return "Error al enviar el comando para apagar la MV" + err.Error()
@@ -292,7 +293,7 @@ func waitForShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) 
 func forceShutdown(nameVM string, host models.Host, config *ssh.ClientConfig) error {
 	var powerOffCommand string = "VBoxManage controlvm \"" + nameVM + "\" poweroff"
 	var err error
-	_, err = SendSSHCommand(host.Ip, powerOffCommand, config)
+	_, err = systemutilities.SendSSHCommand(host.Ip, powerOffCommand, config)
 	if err != nil {
 		log.Println("Error al enviar el comando para apagar la MV:", err)
 		return fmt.Errorf("error al enviar el comando para apagar la MV")

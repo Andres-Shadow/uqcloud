@@ -1,4 +1,4 @@
-package utilities
+package virtualmachineutilities
 
 import (
 	"fmt"
@@ -6,6 +6,9 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	hostutilities "servidor_procesamiento/Procesador/Utilities/HostUtilities"
+	systemutilities "servidor_procesamiento/Procesador/Utilities/SystemUtilities"
+	userutilities "servidor_procesamiento/Procesador/Utilities/UserUtilities"
 
 	"strconv"
 	"time"
@@ -26,7 +29,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 	var disco models.Disco
 	var err error
 	var host models.Host
-	caracteres := GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
+	caracteres := userutilities.GenerateRandomString(4) //Genera 4 caracteres alfanumèricos para concatenarlos al nombre de la MV
 	var virtualMachineName string = specs.Nombre + "_" + caracteres
 	var availableResources bool = false
 	var estadossh bool = true
@@ -51,13 +54,13 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		// Bucle para seleccionar un host con recursos disponibles
 		for !availableResources && count > 0 {
 			aux, _ := database.SelectHost()
-			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+			estadossh = systemutilities.Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
 
 			// Si el estado de SSH es falso, rompe el bucle
 			if !estadossh {
 				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
 			} else {
-				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				availableResources = hostutilities.ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
 				if availableResources {
 					host = aux
 					break
@@ -85,13 +88,13 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 			fmt.Println("Obteniendo el host siguiente: " + config.RoundRobinManager.GetNextHost().Nombre)
 			aux := config.RoundRobinManager.GetNextHost()
-			estadossh = Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
+			estadossh = systemutilities.Pacemaker(config.GetPrivateKeyPath(), aux.Hostname, aux.Ip)
 
 			// Si el estado de SSH es falso, rompe el bucle
 			if !estadossh {
 				log.Println("Conexión SSH fallida con el host:", aux.Hostname)
 			} else {
-				availableResources = ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
+				availableResources = hostutilities.ValidateHostResourceAvailability(specs.Cpu, specs.Ram, aux)
 				if availableResources {
 					host = aux
 					break
@@ -113,7 +116,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 
 	} else {
 
-		host, err = GetHostByName(specs.Hostname)
+		host, err = hostutilities.GetHostByName(specs.Hostname)
 
 		if err != nil {
 			log.Println("Error al obtener el host por nombre:", err)
@@ -123,7 +126,7 @@ func CreateVM(specs models.Maquina_virtual, clientIP string) string {
 		log.Println("Host seleccionado: ", host.Nombre)
 
 		//se verifica el ssh de la maquina fisica con el marcapasos
-		estadossh := Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
+		estadossh := systemutilities.Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip)
 		if estadossh {
 			//Obtenemos el disco multiconexion del host previamente obtenido
 			disco, err = database.GetDisk(specs.Sistema_operativo, specs.Distribucion_sistema_operativo, host.Id)
@@ -190,7 +193,7 @@ func configureAndCreateVM(host models.Host, specs models.Maquina_virtual, nameVM
 	}
 
 	for _, command := range commands {
-		if _, err := SendSSHCommand(host.Ip, command, config); err != nil {
+		if _, err := systemutilities.SendSSHCommand(host.Ip, command, config); err != nil {
 			log.Println("Error al ejecutar comando:", err)
 			return false
 		}

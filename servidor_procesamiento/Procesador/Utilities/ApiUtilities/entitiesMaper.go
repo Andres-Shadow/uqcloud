@@ -1,4 +1,4 @@
-package mapper
+package apiutilities
 
 import (
 	dto "servidor_procesamiento/Procesador/Models/Dto"

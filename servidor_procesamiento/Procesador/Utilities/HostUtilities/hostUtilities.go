@@ -1,4 +1,4 @@
-package utilities
+package hostutilities
 
 import (
 	"bufio"
@@ -12,6 +12,7 @@ import (
 	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
+	systemutilities "servidor_procesamiento/Procesador/Utilities/SystemUtilities"
 	"strconv"
 	"strings"
 )
@@ -68,7 +69,8 @@ func GetHostWithMostResources() (models.Host, error) {
 
 	for _, host := range registeredHosts {
 		//verficar que el host este vivo con el marcapasos
-		if Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
+
+		if systemutilities.Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
 			//hace una llamada http a la ip de los host:9182/metrics
 			//para obtener la cantidad de ram usada
 			request, err := http.NewRequest("GET", "http://"+host.Ip+":9182/metrics", nil)
@@ -185,7 +187,7 @@ func PreregisterHostJsonData() {
 		// Crear una rutina de go para el siguiente fragmento de codigo
 		go func() {
 			// Verificar si el host se encuentra disponible utilizando Pacemaker mandando la ruta de la llave privada y la info del host
-			if !Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
+			if !systemutilities.Pacemaker(config.GetPrivateKeyPath(), host.Hostname, host.Ip) {
 				log.Printf("Host no disponible: %s", host.Nombre)
 			} else {
 				SetUpHostAndDisk(host)
