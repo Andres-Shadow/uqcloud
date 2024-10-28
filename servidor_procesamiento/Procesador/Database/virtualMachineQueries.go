@@ -135,7 +135,21 @@ func UpdateVirtualMachineRam(newRam int, nombre string) error {
 }
 
 func UpdateVirtualMachineState(nombre, newState string) error {
-	err := DATABASE.Model(&models.Maquina_virtual{}).Where("nombre = ?", nombre).Update("estado", newState).Error
+
+	var ip string
+	var err error
+
+	if newState == "Apagado" {
+		ip = ""
+	}
+
+	err = DATABASE.Model(&models.Maquina_virtual{}).Where("nombre = ?", nombre).Update("estado", newState).Error
+	if err != nil {
+		return err
+	}
+
+	err = DATABASE.Model(&models.Maquina_virtual{}).Where("nombre = ?", nombre).Update("ip", ip).Error
+
 	if err != nil {
 		return err
 	}
