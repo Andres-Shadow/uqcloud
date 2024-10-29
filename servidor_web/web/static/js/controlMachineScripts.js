@@ -91,18 +91,39 @@ function actualizarTabla() {
 
             data.forEach(function (machine) {
                 let vmState;
+                let conexion;
                 switch (machine.vm_state) {
                     case "Apagado":
-                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-minus"></i> ${machine.vm_state}`                        
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-minus"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button disabled>
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     case "Encendido":
-                        vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`
+                        vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button onclick="getSSHKey('${machine.vm_name}')">
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     case "Procesando":
-                        vmState = `<i style="color: #2f89fc;" class="fa-regular fa-clock"></i> ${machine.vm_state}`
+                        vmState = `<i style="color: #2f89fc;" class="fa-regular fa-clock"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button disabled>
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     default:
-                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-exclamation"> </i> Error`
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-exclamation"> </i> Error`;
+                        conexion = `
+                            <button>
+                                <i class="fa-solid fa-triangle-exclamation"></i> <small><strong>ERROR</strong></small>
+                            </button>
+                        `;
                 }
 
                 const ipDisplay = machine.vm_ip ? machine.vm_state === 'Encendido' ? `${machine.vm_ip} <a href="http://${machine.vm_ip}:4200" target="_blank"><i class="fa-solid fa-up-right-from-square ms-2"></i></a>` : `${machine.vm_ip}` : `<i>No asignada</i>`;
@@ -124,13 +145,7 @@ function actualizarTabla() {
                         break;
                     default:
                         vmState = `https://img.shields.io/badge/Sin%20distribucion-red`
-                }
-
-                const conexion = `
-                    <button onclick="getSSHKey('${machine.vm_name}')">
-                        <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
-                    </button>
-                `;
+                }                
 
                 const actionButtons = `
                     <div class="">
