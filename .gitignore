@@ -4,7 +4,6 @@
 *JSONS.txt
 *id_rsa
 *hostRegistration.sql
-metrics_config/prometheus.yml
 
 # IDE
 .idea/

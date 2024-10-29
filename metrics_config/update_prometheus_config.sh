@@ -16,7 +16,7 @@ update_prometheus_config() {
 
     # Extraer las IPs de los hosts y agregar el puerto, rodear con comillas simples
     hosts=$(cat /tmp/hosts.json)
-    ips=$(echo "$hosts" | jq -r '.[] | .ip + ":9182"' | awk '{printf " '\''%s'\'',", $0}' | sed 's/,$//')
+    ips=$(echo "$hosts" | jq -r '.data[] | .ip + ":9182"' | awk '{printf " '\''%s'\'',", $0}' | sed 's/,$//')
 
     # Crear el nuevo archivo de configuración
     cat > "$PROMETHEUS_CONFIG" <<EOL
