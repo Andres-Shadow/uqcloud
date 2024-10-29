@@ -24,7 +24,7 @@ function addHostToTable(host) {
 
 // Llamar a esta función al cargar la página
 function loadHosts() {
-    fetch("/GetHost") // Cambia esto a la ruta donde obtienes los hosts
+    fetch("/GetHost")
         .then(response => response.json())
         .then(data => {
             const tbody = document.getElementById("hostTableBody")

@@ -1,6 +1,6 @@
-# PORFAVOR NO BORRAR ESTO:
-# EJECUTAR PRIMERO EL SIGUIENTE COMANDO PARA CREAR LA RED DE DOCKER:
-# docker network create uqcloud
+# Descripción: Archivo de configuración de Docker Compose para la orquestación de los servicios de la aplicación UQCloud.
+# Autores: Equipo de Iteración 3 Seminario de Grado Desktop Cloud:
+# Sebastian Burgos Puentes, Jose ALejandro Zambrano, Andres Dussan, Julian Acosta.
 
 services:
   #servicio del servidor de procesamiento
@@ -10,9 +10,6 @@ services:
       - "8081:8081"
     expose:
       - "8081"
-    networks:
-      - general
-      - uqcloud
     environment:
       - DATABASE=database 
       - DB_PASSWORD=${DB_PASSWORD}
@@ -28,8 +25,6 @@ services:
       - "8080:8080"
     expose:
       - "8080"
-    networks:
-      - general
     environment:
       - servidor_procesamiento=procesamiento
     depends_on:
@@ -42,8 +37,6 @@ services:
       - "3307:3306"
     expose:
       - "3307"
-    networks:
-      - general
     volumes:
     - mysql-data:/var/lib/mysql
     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
@@ -63,22 +56,16 @@ services:
       - '--web.enable-lifecycle'
     volumes:
       - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr 
-    networks:
-      - general
-      - uqcloud
     restart: unless-stopped
   
   # Servicio del actualizador de configuración de Prometheus
   prometheus-config:
     build: ./metrics_config
     volumes:
-      - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr  # Compartir archivo con Prometheus
+      - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr 
       - ./metrics_config/update_prometheus_config.sh:/etc/prometheus/update_prometheus_config.sh:x
     depends_on:
       - procesamiento
-    networks:
-      - general
-      - uqcloud
 
   # Servicio de Grafana para visualización de métricas
   grafana:
@@ -94,15 +81,7 @@ services:
     volumes:
       - ./metrics_config/grafana/provisioning:/etc/grafana/provisioning/
     restart: unless-stopped
-    networks:
-      - general
-      - uqcloud
 
 volumes:
   mysql-data:
     driver: local
-
-networks:
-  uqcloud:
-    external: true  
-  general:                                       

@@ -176,7 +176,6 @@ func CheckAvaibleHost() ([]Models.Host, error) {
 }
 
 func GetHostsFromServer() (DTO.HostsResponseDTO, error) {
-
 	serverURL := fmt.Sprintf("http://%s:%s%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.HOSTS_URL)
 	log.Println(serverURL)
 	var hostResponseDTO DTO.HostsResponseDTO
