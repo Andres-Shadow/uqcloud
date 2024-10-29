@@ -23,6 +23,7 @@ var HOST_URL = API_PREFIX + "host"
 
 // URL asociadas a los discos
 var DISK_VM_URL = API_PREFIX + "disk"
+var DISK_NAMES_URL = API_PREFIX + "disks"
 
 // URL asociadas a las metricas
 var METRICS_URL = API_PREFIX + "metrics"

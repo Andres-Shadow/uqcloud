@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Crear Disco</title>
+  <title>Administrar Discos</title>
 
   <link rel="stylesheet"  href="/web/static/css/createDisk.css">
   <link rel="icon" type="image/x-icon" href="/web/static/img/favicon.ico" />
@@ -16,8 +16,19 @@
 
   <!-- FontAwesome Icons -->
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>  
-  
+  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+  <!-- jQuery (necesario para DataTables) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- DataTables JS -->
+  <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+
   <script src="/web/static/js/mainpage.js"></script>
   <script src="/web/static/js/createDisk.js"></script>
 
@@ -46,71 +57,116 @@
                 <button type="button" class="close" data-bs-dismiss="alert" aria-label="close"></button>
               </div>
 
-              <form class="row g-3 mx-3 my-2" id="createForm" method="post" action="/createDisk" onsubmit="return showSuccessMessage()">
+              <form class="row g-3 mx-3 my-2">
                 <h1>
                   <i class="bi bi-disc-fill"></i> 
-                  Crear Discos
+                  Administrar Discos
                 </h1>
                 <hr class="mt-3">
-
-                <div class="col-md-6">
-                  <label for="inputSelectName" class="form-label">Nombre del disco</label>
-                  <select id="inputSelectName" class="form-select">
-                    <option value="" disabled selected>Seleccione el nombre del disco</option>
-                    <option value="Alpine">Alpine</option>
-                    <option value="Debian">Debian</option>
-                    <option value="Fedora">Fedora</option>
-                    <option value="Ubuntu">Ubuntu</option>
-                  </select>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#diskModal">
+                    Crear Disk
+                  </button>
                 </div>
 
-                <div class="col-md-6">
-                  <label for="inputSelectDistribution" class="form-label">Distribución del sistema operativo</label>
-                  <select id="inputSelectDistribution" class="form-select">
-                    <option value="" disabled selected>Seleccione el tipo de distribución</option>
-                    <option value="Alpine">Alpine</option>
-                    <option value="Debian">Debian</option>
-                    <option value="Fedora">Fedora</option>
-                    <option value="Ubuntu">Ubuntu</option>
-                  </select>
+                <div>
+                  <table id="disksTable" class="table table-responsive table-bordered table-striped">
+                    <thead>
+                    <tr>
+                      <th scope="col">Nombre</th>
+                      <th scope="col">Host Asociados</th>
+                    </tr>
+                    </thead>
+                    <tbody id="diskTableBody">
+
+                    </tbody>
+                  </table>
                 </div>
 
-                <div class="col-md-6">
-                  <label for="inputRouteDisk" class="form-label">Ruta del disco</label>
-                  <input type="text" class="form-control" id="inputRouteDisk" placeholder="Ingresa la ruta donde esta el disco">
-                  <small class="form-text text-muted">Ejemplo C:/uqcloud/Alpine.vdi</small>
-                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="diskModal" tabindex="-1" aria-labelledby="diskModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="diskModalLabel">Crea Disk</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form class="row custom-spacing" id="createDiskForm">
+                          <div class="row">
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputSelectName" class="form-label">Nombre del disco</label>
+                              <select id="inputSelectName" class="form-select">
+                                <option value="" disabled selected>Seleccione el nombre del disco</option>
+                                <option value="Alpine">Alpine</option>
+                                <option value="Debian">Debian</option>
+                                <option value="Fedora">Fedora</option>
+                                <option value="Ubuntu">Ubuntu</option>
+                              </select>
+                            </div>
 
-                <div class="col-md-6">
-                  <label for="inputSelectArchitecture" class="form-label">Arquitectura</label>
-                  <select id="inputSelectArchitecture" class="form-select">
-                    <option value="" disabled selected>Seleccione el tipo de Arquitectura</option>
-                    <option value="64">64</option>
-                    <option value="32">32</option>
-                  </select>
-                </div>
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputSelectDistribution" class="form-label">Distribución del sistema operativo</label>
+                              <select id="inputSelectDistribution" class="form-select">
+                                <option value="" disabled selected>Seleccione el tipo de distribución</option>
+                                <option value="Alpine">Alpine</option>
+                                <option value="Debian">Debian</option>
+                                <option value="Fedora">Fedora</option>
+                                <option value="Ubuntu">Ubuntu</option>
+                              </select>
+                            </div>
+                          </div>
 
-                <div class="col-md-6">
-                  <label for="inputSelectSystem" class="form-label">Sistema operativo</label>
-                  <select id="inputSelectSystem" class="form-select">
-                    <option value="" disabled selected>Seleccione el sistema operativo</option>
-                    <option value="Linux">Linux</option>
-                    <option value="Windows">Windows</option>
-                    <option value="MacOS">MacOS</option>
-                  </select>
-                </div>
+                          <div class="row">
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputRouteDisk" class="form-label">Ruta del disco</label>
+                              <input type="text" class="form-control" id="inputRouteDisk" placeholder="Ingresa la ruta donde esta el disco">
+                              <small class="form-text text-muted">Ejemplo C:/uqcloud/Alpine.vdi</small>
+                            </div>
 
-                <div class="col-md-6">
-                  <label for="inputSelectHost" class="form-label">Host asociado</label>
-                  <select id="inputSelectHost" class="form-select">
-                    <option value="" disabled selected>Seleccione el host</option>
-                    <!--- Las opciones se rellenan dinamicamente según los hosts registrados --->
-                  </select>
-                </div>
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputSelectArchitecture" class="form-label">Arquitectura</label>
+                              <select id="inputSelectArchitecture" class="form-select">
+                                <option value="" disabled selected>Seleccione el tipo de Arquitectura</option>
+                                <option value="64">64</option>
+                                <option value="32">32</option>
+                              </select>
+                            </div>
+                          </div>
 
-                <div class="d-flex justify-content-end pt-3">
-                  <button type="reset" class="btn btn-outline-secondary me-2" id="buttonClean">Limpiar Formulario</button>
-                  <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Disco</button>
+                          <div class="row" >
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputSelectSystem" class="form-label">Sistema operativo</label>
+                              <select id="inputSelectSystem" class="form-select">
+                                <option value="" disabled selected>Seleccione el sistema operativo</option>
+                                <option value="Linux">Linux</option>
+                                <option value="Windows">Windows</option>
+                                <option value="MacOS">MacOS</option>
+                              </select>
+                            </div>
+
+                            <div class="col-md-6" style="margin-bottom: 15px;">
+                              <label for="inputSelectHost" class="form-label">Host asociado</label>
+                              <select id="inputSelectHost" class="form-select">
+                                <option value="" disabled selected>Seleccione el host</option>
+                                <!--- Las opciones se rellenan dinamicamente según los hosts registrados --->
+                              </select>
+                            </div>
+                          </div>
+
+
+                        </form>
+
+                        <div class="modal-footer">
+                          <div class="d-flex justify-content-end pt-3">
+                            <button type="reset" class="btn btn-outline-secondary me-2" id="buttonClean">Limpiar Formulario</button>
+                            <button type="submit" class="btn btn-primary" id="buttonCreateDisc">Crear Disco</button>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
               </form>

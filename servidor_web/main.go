@@ -81,6 +81,9 @@ func main() {
 
 	router.GET("/GetHost", handlers.GetHosts)
 	router.POST("/deleteHosts", handlers.DeleteHost)
+	router.GET("/getDisks", handlers.GetDiskFromRequest)
+	router.GET("/hostOfDisk/:diskName", handlers.GetHostOfDiskFromRequest)
+	router.DELETE("/hostOfDisk/:diskName", handlers.DeleteHostOfDiskFrormRequest)
 
 	router.POST("/createHost", handlers.CreateNewHost)
 	router.POST("/createDisk", handlers.CreateNewDisk)

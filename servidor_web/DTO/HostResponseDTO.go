@@ -16,3 +16,7 @@ type HostsResponseDTO struct {
 	Count   int       `json:"count"`
 	Data    []HostDTO `json:"data"`
 }
+
+type HostIDDTO struct {
+	HostIds []int `json:"hostIds"`
+}
