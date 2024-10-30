@@ -62,6 +62,8 @@ services:
   prometheus-config:
     build: ./metrics_config
     volumes:
+      # Se copia nuevamente el archivo prometheus ya que va a sincronizar el archivo de configuración del servicio de Prometheus
+      # de arriba por medio del volumen, es como un puente ya que el script lo va a estar modificando 
       - ./metrics_config/prometheus.yml:/etc/prometheus/prometheus.yml:wr 
       - ./metrics_config/update_prometheus_config.sh:/etc/prometheus/update_prometheus_config.sh:x
     depends_on:
