@@ -90,6 +90,7 @@ func main() {
 
 	// API ROUTES
 	router.GET("/api/machines", handlers.GetMachines)
+	router.GET("/api/sshKeyMachine/:vm_name", handlers.GetSSHKeyMachine)
 	router.POST("/api/quick-machine", handlers.QuickMachine)
 	router.POST("/api/createMachine", handlers.MainSend)
 	router.POST("/api/startMachine", handlers.StartMachine)

@@ -77,6 +77,25 @@ function cerrarVentanaEmergenteEliminar() {
     VentanaEmergenteEliminacion.style.display = "none";
 }
 
+function mostrarNotificationSSH() {
+    var notificacionSSH = document.getElementById("notificacionSSH");
+    notificacionSSH.style.display = "block";
+}
+
+function ocultarNotificationSSH() {
+    var notificacionSSH = document.getElementById("notificacionSSH");
+    notificacionSSH.style.display = "none";
+}
+
+function mostrarNotificationSSHExitosa() {
+    var notificacionSSH = document.getElementById("notificacionSSHExitosa");
+    notificacionSSH.style.display = "block";
+
+    setTimeout(function() {
+        notificacionSSH.style.display = "none";
+    }, 5000);
+}
+
 function actualizarTabla() {
 
     if (ventanaConfiguracionAbierta) {
@@ -91,18 +110,39 @@ function actualizarTabla() {
 
             data.forEach(function (machine) {
                 let vmState;
+                let conexion;
                 switch (machine.vm_state) {
                     case "Apagado":
-                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-minus"></i> ${machine.vm_state}`                        
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-minus"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button disabled>
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     case "Encendido":
-                        vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`
+                        vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button onclick="getSSHKey('${machine.vm_name}')" title="Descargar llave SSH">
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     case "Procesando":
-                        vmState = `<i style="color: #2f89fc;" class="fa-regular fa-clock"></i> ${machine.vm_state}`
+                        vmState = `<i style="color: #2f89fc;" class="fa-regular fa-clock"></i> ${machine.vm_state}`;
+                        conexion = `
+                            <button disabled>
+                                <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+                            </button>
+                        `;
                         break;
                     default:
-                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-exclamation"> </i> Error`
+                        vmState = `<i style="color: #ff304f;" class="fa-solid fa-circle-exclamation"> </i> Error`;
+                        conexion = `
+                            <button>
+                                <i class="fa-solid fa-triangle-exclamation"></i> <small><strong>ERROR</strong></small>
+                            </button>
+                        `;
                 }
 
                 const ipDisplay = machine.vm_ip ? machine.vm_state === 'Encendido' ? `${machine.vm_ip} <a href="http://${machine.vm_ip}:4200" target="_blank"><i class="fa-solid fa-up-right-from-square ms-2"></i></a>` : `${machine.vm_ip}` : `<i>No asignada</i>`;
@@ -111,26 +151,20 @@ function actualizarTabla() {
                 let distribucion;
                 switch (machine.vm_so_distro) {
                     case "Fedora":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Fedora-blue?style=flat&logo=fedora&logoColor=white"></img>`;
+                        distribucion = `<img alt="Fedora" src="https://img.shields.io/badge/Fedora-blue?style=flat&logo=fedora&logoColor=white"></img>`;
                         break;
                     case "Debian":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Debian-%23A81D33?style=flat&logo=debian&logoColor=white">`
+                        distribucion = `<img alt="Debian" src="https://img.shields.io/badge/Debian-%23A81D33?style=flat&logo=debian&logoColor=white">`
                         break;
                     case "Alpine":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Alpine-%230D597F?style=flat&logo=alpinelinux&logoColor=white">`
+                        distribucion = `<img alt="Alpine" src="https://img.shields.io/badge/Alpine-%230D597F?style=flat&logo=alpinelinux&logoColor=white">`
                         break;
                     case "Ubuntu":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat&logo=ubuntu&logoColor=white">`
+                        distribucion = `<img alt="Ubuntu" src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat&logo=ubuntu&logoColor=white">`
                         break;
                     default:
                         vmState = `https://img.shields.io/badge/Sin%20distribucion-red`
-                }
-
-                const conexion = `
-                    <a >
-                        <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
-                    </a>
-                `;
+                }                
 
                 const actionButtons = `
                     <div class="">
@@ -191,6 +225,53 @@ function changeStateMachine(vm_name, state) {
             }
         })
         .catch(error => {
+            showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
+            console.error('Error: ' + error);
+        })
+}
+
+function getSSHKey(vm_name) {
+    mostrarNotificationSSH();
+
+    fetch('/api/sshKeyMachine/' + vm_name, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json', },
+    })
+        .then(response => {
+
+            const contentType = response.headers.get("Content-Type");
+
+            if (response.status === 200 && contentType === "application/octet-stream") {
+                // Datos binarios (lo del archivo que se descarga) (blob: https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+                // response.blob() maneja los datos BINARIOS, haciendo que se pueda crear el archivo a descargar si sabe?
+                return response.blob(); 
+            } else if (response.status === 400 || response.status === 500) {
+                return response.json(); // En caso de error pues se obtiene "JSON"
+            } else {
+                throw new Error("Error en el servidor web");
+            }
+
+        })
+        .then(data => {
+            if (data instanceof Blob) {
+                const url = window.URL.createObjectURL(data);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "id_rsa";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+
+                ocultarNotificationSSH();
+                mostrarNotificationSSHExitosa();
+            } else if (data.error) {
+                ocultarNotificationSSH();
+                showAlert(data.error, "danger");
+            }            
+        })
+        .catch(error => {
+            ocultarNotificationSSH();
             showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
             console.error('Error: ' + error);
         })

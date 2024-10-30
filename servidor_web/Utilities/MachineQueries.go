@@ -240,7 +240,7 @@ func StopMachineFromServer(nombre string, clientIP string) (bool, error) {
 func DeleteMachineFromServer(nombre string) (bool, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, nombre)
 
-	// ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
+	// TODO: ESTO NO SE DEBE MANDAR, ES UN METODO DELETE NO PERMITE PAYLOAD
 	payload := map[string]interface{}{
 		"tipo_solicitud": "delete",
 		"nombreVM":       nombre,
@@ -254,4 +254,30 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 	}
 
 	return confirmacion, nil
+}
+
+// Este metodo obtiene la llave asignada (por el servidor de procesamiento) a la vm
+func GetSSHKeyFromServer(vmName string) (*http.Response, error) {
+	serverURL := fmt.Sprintf("http://%s:%s%s/key/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, vmName)
+
+	req, err := http.NewRequest("GET", serverURL, nil)
+	if err != nil {
+		log.Println("Error al crear la solicitud HTTP", err.Error())
+		return nil, err
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error al realizar la solicutad HTTP", err.Error())
+		return nil, err
+	}
+
+	log.Println("Status de la respuesta del servidor: ", resp.Status)
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Error: La solicitud no fue exitosa, ", err)
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
+	}
+
+	return resp, nil
 }
