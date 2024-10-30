@@ -52,7 +52,7 @@
 
 
           <!-- Notificación para SSH KEY button -->
-          <div id="notificacionPanel" class="notificacion-sshkey hidden">
+          <div id="notificacionSSH" class="notificacion-sshkey" style="display: none;">
             
             <div class="row mx-2 d-flex align-items-center">
               <div class="spinner-border col-auto" role="status">
@@ -60,7 +60,7 @@
               </div>
 
               <div class="col-auto ms-1 align-self-center">
-                <span id="notificacionTexto">
+                <span>
                   <Strong>Espera un momento mientras se genera la llave SSH...</Strong><br>
                   <i>Nota: Al obtener la llave SSH de la máquina, esta se configurará para que<br>
                   solo reciba la llave que se descarga, si pierde la llave, tendrá que generar<br>
@@ -69,6 +69,14 @@
               </div>
             </div>            
 
+          </div>
+
+          <!-- Notificación para Descarga Exitosa de la SSH KEY -->
+          <div id="notificacionSSHExitosa" class="notificacion-sshkey" style="display: none;">
+            <div class="d-flex align-items-center">
+              <i class="bi bi-check-circle-fill text-success me-3" style="font-size: 2rem;"></i>
+              <h6 class="mb-0">¡Llave descargada exitosamente!</h6>
+            </div>
           </div>
           
 

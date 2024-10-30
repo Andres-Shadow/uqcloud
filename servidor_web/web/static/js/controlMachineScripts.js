@@ -77,6 +77,25 @@ function cerrarVentanaEmergenteEliminar() {
     VentanaEmergenteEliminacion.style.display = "none";
 }
 
+function mostrarNotificationSSH() {
+    var notificacionSSH = document.getElementById("notificacionSSH");
+    notificacionSSH.style.display = "block";
+}
+
+function ocultarNotificationSSH() {
+    var notificacionSSH = document.getElementById("notificacionSSH");
+    notificacionSSH.style.display = "none";
+}
+
+function mostrarNotificationSSHExitosa() {
+    var notificacionSSH = document.getElementById("notificacionSSHExitosa");
+    notificacionSSH.style.display = "block";
+
+    setTimeout(function() {
+        notificacionSSH.style.display = "none";
+    }, 5000);
+}
+
 function actualizarTabla() {
 
     if (ventanaConfiguracionAbierta) {
@@ -212,6 +231,8 @@ function changeStateMachine(vm_name, state) {
 }
 
 function getSSHKey(vm_name) {
+    mostrarNotificationSSH();
+
     fetch('/api/sshKeyMachine/' + vm_name, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', },
@@ -241,11 +262,16 @@ function getSSHKey(vm_name) {
                 a.click();
                 a.remove();
                 window.URL.revokeObjectURL(url);
+
+                ocultarNotificationSSH();
+                mostrarNotificationSSHExitosa();
             } else if (data.error) {
+                ocultarNotificationSSH();
                 showAlert(data.error, "danger");
             }            
         })
         .catch(error => {
+            ocultarNotificationSSH();
             showAlert("Error al realizar la solicitud al servidor: " + error, "danger");
             console.error('Error: ' + error);
         })
