@@ -16,12 +16,12 @@
   <script src="/web/static/js/controlMachineScripts.js"></script>
 
   <!-- Bootstrap -->
-  <link href="/web/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="/web/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
 
   <!-- FontAwesome Icons -->
   <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
-  <script src="/web/static/bootstrap/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -50,6 +50,28 @@
 
         <div class="px-4 py-3">
 
+
+          <!-- Notificación para SSH KEY button -->
+          <div id="notificacionPanel" class="notificacion-sshkey hidden">
+            
+            <div class="row mx-2 d-flex align-items-center">
+              <div class="spinner-border col-auto" role="status">
+                <span class="visually-hidden">Generando llave SSH...</span>
+              </div>
+
+              <div class="col-auto ms-1 align-self-center">
+                <span id="notificacionTexto">
+                  <Strong>Espera un momento mientras se genera la llave SSH...</Strong><br>
+                  <i>Nota: Al obtener la llave SSH de la máquina, esta se configurará para que<br>
+                  solo reciba la llave que se descarga, si pierde la llave, tendrá que generar<br>
+                  otra llave, dando click al mismo boton.</i>
+                </span>                
+              </div>
+            </div>            
+
+          </div>
+          
+
           <div style="display: flex; align-items: center; justify-content: space-between;">
             <div>
               <h2 style="color: #333;">Máquinas Virtuales</h2>
@@ -60,12 +82,11 @@
                 Crear Máquina Virtual
                 <i class="fa-solid fa-circle-plus"></i>
               </a>
-
             </div>
           </div>
 
           <div class="table mt-3" style="background-color: white; border-radius: 10px;">
-            <table id="machine-table">
+            <table id="machine-table" style="width: 100%; text-align: center;">
               <thead>
                 <tr style="background-color: #a2afdc;">
                   <th>Nombre</th>
@@ -80,6 +101,20 @@
                 <!-- Los datos se cargan aquí dinámicamente desde controle-->
               </tbody>
             </table>
+          </div>
+
+          <div class="m-0 px-3 py-3 bg-light d-flex align-items-center justify-content-between row">
+            <div class="col-2">
+              <button onclick="">
+                  <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
+              </button>
+            </div>
+
+            <div class="col-10">
+                Descarga una llave SSH privada para conectarse a la máquina virtual. Cada vez que se descarga 
+                una llave, el servidor se encargará de asignar una nueva. <strong> Tenga cuidado con esta funcionalidad
+                y guarde su llave cuidadosamente. </strong>
+            </div>
           </div>
 
 
@@ -214,7 +249,7 @@
         })
       cerrarVentanaEmergenteEliminar();
     }
-
+    
   </script>
 </body>
 

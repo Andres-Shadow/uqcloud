@@ -257,14 +257,27 @@ func DeleteMachineFromServer(nombre string) (bool, error) {
 }
 
 // Este metodo obtiene la llave asignada (por el servidor de procesamiento) a la vm
-func GetSSHKeyFromServer(vmName string) (bool, error) {
+func GetSSHKeyFromServer(vmName string) (*http.Response, error) {
 	serverURL := fmt.Sprintf("http://%s:%s%s/key/%s", Config.ServidorProcesamientoRoute, Config.PUERTO, Config.VIRTUAL_MACHINE_URL, vmName)
 
-	confirmacion, err := SendRequest("GET", serverURL, nil)
+	req, err := http.NewRequest("GET", serverURL, nil)
 	if err != nil {
 		log.Println("Error al crear la solicitud HTTP", err.Error())
-		return false, err
+		return nil, err
 	}
 
-	return confirmacion, nil
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Println("Error al realizar la solicutad HTTP", err.Error())
+		return nil, err
+	}
+
+	log.Println("Status de la respuesta del servidor: ", resp.Status)
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Error: La solicitud no fue exitosa, ", err)
+		return nil, errors.New("la solicitud al servidor no fue exitosa")
+	}
+
+	return resp, nil
 }

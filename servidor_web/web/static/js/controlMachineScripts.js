@@ -104,7 +104,7 @@ function actualizarTabla() {
                     case "Encendido":
                         vmState = `<i style="color: green;" class="fa-regular fa-circle-check"></i> ${machine.vm_state}`;
                         conexion = `
-                            <button onclick="getSSHKey('${machine.vm_name}')">
+                            <button onclick="getSSHKey('${machine.vm_name}')" title="Descargar llave SSH">
                                 <i class="fa-solid fa-key"></i> <small><strong>SSH Key</strong></small>
                             </button>
                         `;
@@ -132,16 +132,16 @@ function actualizarTabla() {
                 let distribucion;
                 switch (machine.vm_so_distro) {
                     case "Fedora":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Fedora-blue?style=flat&logo=fedora&logoColor=white"></img>`;
+                        distribucion = `<img alt="Fedora" src="https://img.shields.io/badge/Fedora-blue?style=flat&logo=fedora&logoColor=white"></img>`;
                         break;
                     case "Debian":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Debian-%23A81D33?style=flat&logo=debian&logoColor=white">`
+                        distribucion = `<img alt="Debian" src="https://img.shields.io/badge/Debian-%23A81D33?style=flat&logo=debian&logoColor=white">`
                         break;
                     case "Alpine":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Alpine-%230D597F?style=flat&logo=alpinelinux&logoColor=white">`
+                        distribucion = `<img alt="Alpine" src="https://img.shields.io/badge/Alpine-%230D597F?style=flat&logo=alpinelinux&logoColor=white">`
                         break;
                     case "Ubuntu":
-                        distribucion = `<img alt="Static Badge" src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat&logo=ubuntu&logoColor=white">`
+                        distribucion = `<img alt="Ubuntu" src="https://img.shields.io/badge/Ubuntu-%23E95420?style=flat&logo=ubuntu&logoColor=white">`
                         break;
                     default:
                         vmState = `https://img.shields.io/badge/Sin%20distribucion-red`
@@ -215,25 +215,35 @@ function getSSHKey(vm_name) {
     fetch('/api/sshKeyMachine/' + vm_name, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json', },
-        body: null,
     })
         .then(response => {
-            if (response.status === 200) {
-                return response.json();
+
+            const contentType = response.headers.get("Content-Type");
+
+            if (response.status === 200 && contentType === "application/octet-stream") {
+                // Datos binarios (lo del archivo que se descarga) (blob: https://developer.mozilla.org/en-US/docs/Web/API/Blob)
+                // response.blob() maneja los datos BINARIOS, haciendo que se pueda crear el archivo a descargar si sabe?
+                return response.blob(); 
             } else if (response.status === 400 || response.status === 500) {
-                return response.json();
+                return response.json(); // En caso de error pues se obtiene "JSON"
             } else {
-                throw new Error('Error en el servidor web | response status raro');
+                throw new Error("Error en el servidor web");
             }
+
         })
         .then(data => {
-            if (data.SuccessMessage) {
-                const successMessage = data.SuccessMessage;
-                showAlert(successMessage, "success");
-            } else if (data.ErrorMessage) {
-                const errorMessage = data.ErrorMessage;
-                showAlert(errorMessage, "danger");
-            }
+            if (data instanceof Blob) {
+                const url = window.URL.createObjectURL(data);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "id_rsa";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+            } else if (data.error) {
+                showAlert(data.error, "danger");
+            }            
         })
         .catch(error => {
             showAlert("Error al realizar la solicitud al servidor: " + error, "danger");

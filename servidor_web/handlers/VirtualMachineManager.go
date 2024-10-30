@@ -5,8 +5,10 @@ import (
 	"AppWeb/Utilities"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -319,11 +321,54 @@ func GetSSHKeyMachine(c *gin.Context) {
 
 	keyMachine, err := Utilities.GetSSHKeyFromServer(machineName)
 	if err != nil {
-		c.JSON(http.StatusNoContent, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al obtener la llave de la maquina. " + err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, keyMachine)
+	keyPath := "./Auth/keys/" + machineName
+
+	// Primero se tiene que crear la carpeta para guardar la llave de la vm
+	if err := os.MkdirAll(keyPath, 0755); err != nil {
+		log.Println("Error al crear el directorio")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear el directorio. " + err.Error()})
+		return
+	}
+
+	// Ahora si se crear el archivo en la carpeta esa
+	sshKeyFile, err := os.Create(keyPath + "/id_rsa")
+	if err != nil {
+		log.Println("Error al crear el archivo: id_rsa")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al crear el archivo: id_rsa. " + err.Error()})
+		return
+	}
+	defer sshKeyFile.Close()
+
+	_, err = io.Copy(sshKeyFile, keyMachine.Body)
+	if err != nil {
+		log.Println("Error al guardar el archivo, ", err.Error())
+		log.Println("Error al guardar el archivo.2, ", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al guardar el archivo" + err.Error()})
+		return
+	}
+
+	c.Header("Content-Disposition", "attachment; filename=id_rsa")
+	c.Header("Content-Type", "application/octet-stream")
+	c.Header("Content-Transfer-Encoding", "binary")
+
+	file, err := os.Open(keyPath + "/id_rsa")
+	if err != nil {
+		log.Println("No se pudo abrir el archivo para descargarlo")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo abrir el archivo para descargarlo" + err.Error()})
+		return
+	}
+	defer file.Close()
+
+	_, err = io.Copy(c.Writer, file)
+	if err != nil {
+		log.Println("Error al enviar el archivo")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error al enviar el archivo"})
+		return
+	}
 }
 
 func ConnectionMachine(c *gin.Context) {
