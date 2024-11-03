@@ -3,10 +3,10 @@ package virtualmachineutilities
 import (
 	"log"
 	"os"
+	config "servidor_procesamiento/Procesador/Config"
 	database "servidor_procesamiento/Procesador/Database"
 	models "servidor_procesamiento/Procesador/Models/Entities"
 	userutilities "servidor_procesamiento/Procesador/Utilities/UserUtilities"
-	"strconv"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -41,8 +41,8 @@ func CreateQuickVirtualMachine(clientIP string) string {
 func generateQuickVirtualMachine(email string, clientIP string) {
 
 	distro := os.Getenv("DEFAULT_QUICK_VM_DISTRO")
-	ram, _ := strconv.Atoi(os.Getenv("DEFAULT_QUICK_RAM"))
-	cpu, _ := strconv.Atoi(os.Getenv("DEFAULT_QUICK_CPU"))
+	ram := config.DEFAULT_QUICK_VM_RAM
+	cpu := config.DEFAULT_QUICK_VM_CPU
 
 	maquina_virtual := models.Maquina_virtual{
 		Nombre:                         "QuickGuest",
