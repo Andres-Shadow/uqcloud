@@ -289,4 +289,12 @@ func GetShhPrivateKeyHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Asegurarse de cerrar el archivo antes de eliminar la carpeta
+	file.Close()
+
+	// Eliminar la carpeta después de enviar el archivo
+	if err := os.RemoveAll(keyPath); err != nil {
+		log.Printf("Error al eliminar la carpeta %s: %v", keyPath, err)
+	}
+
 }
