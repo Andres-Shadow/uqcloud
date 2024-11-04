@@ -5,9 +5,8 @@ import (
 	"math/rand"
 	"time"
 
-	"os"
+	config "servidor_procesamiento/Procesador/Config"
 	models "servidor_procesamiento/Procesador/Models/Entities"
-	"strconv"
 )
 
 // función que recibe un arreglo de ips de los host a registrar rapido
@@ -15,18 +14,22 @@ import (
 func FastRegisterHosts(ips []string) {
 
 	var quickHost models.Host
-	quickHost.Hostname = os.Getenv("QUICK_HOST_HOSTNAME")
-	quickHost.Ram_total, _ = strconv.Atoi(os.Getenv("QUICK_HOST_RAM"))
-	quickHost.Cpu_total, _ = strconv.Atoi(os.Getenv("QUICK_HOST_CPU"))
-	quickHost.Almacenamiento_total, _ = strconv.Atoi(os.Getenv("QUICK_HOST_ALMACENAMIENTO"))
+
+	// Data obtained from the configuration file
+	quickHost.Hostname = config.QUICK_HOST_HOSTNAME
+	quickHost.Ram_total = config.QUICK_HOST_RAM
+	quickHost.Cpu_total = config.QUICK_HOST_CPU
+	quickHost.Almacenamiento_total = config.QUICK_HOST_STORAGE
+	quickHost.Adaptador_red = config.QUICK_HOST_NETWORK
+	quickHost.Sistema_operativo = config.QUICK_HOST_SO
+	quickHost.Distribucion_sistema_operativo = config.QUICK_HOST_SO_DISTRO
+	
+	// Default values for the used aspects in the hosts
 	quickHost.Ram_usada = 0
 	quickHost.Cpu_usada = 0
 	quickHost.Almacenamiento_usado = 0
-	quickHost.Adaptador_red = os.Getenv("QUICK_HOST_NETWORK")
 	quickHost.Estado = "apagado"
-	quickHost.Sistema_operativo = os.Getenv("QUICK_HOST_SO")
-	quickHost.Distribucion_sistema_operativo = os.Getenv("QUICK_HOST_SO_DISTRO")
-
+	
 	for _, ip := range ips {
 		quickHost.Ip = ""
 		quickHost.Ip = ip
