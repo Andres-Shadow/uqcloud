@@ -45,8 +45,6 @@ El **Servidor Web** es una solución UI en Golang utilizando recursos Web3 para 
 - `-key`: Permite especificar una llave privada de conexión SSH diferente a la predeterminada en el paquete `keys`.
 
 ## Requisitos de Despliegue
-- Si se va a desplegar el aplicativo en Docker, crear la network con el siguiente comando:
-  `docker network create uqcloud`
 - Ubicar la llave privada en la carpeta `servidor_procesamiento/Procesador/Keys`
 - Crear los archivos `.env` en el directorio raiz (a mismo nivel del Docker-Compose.yml) y en la carpeta `servidor_procesamiento/Procesador/Environment`, siguiendo los parametros datos en los archivos `example` de cada uno
 
