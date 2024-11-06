@@ -7,15 +7,15 @@ function addHostToTable(host) {
     const newRow = [
         '<input type="checkbox" class="host-checkbox" data-id="${host.id}" value="${host.id}">',
         host.id || "N/A",
+        host.hostname || "N/A",
         host.hst_name || "N/A",
-        host.hst_hostname || "N/A",
         host.ip || "N/A",
         host.estado || "N/A",
         host.cpu_total || "N/A",
         host.almacenamiento_total || "N/A",
         host.ram_total || "N/A",
-        host.hst_network || "N/A",
-        host.hst_so || "N/A"
+        host.adaptador_red || "N/A",
+        host.sistema_operativo || "N/A"
     ];
 
     // Agregar la nueva fila a la tabla
